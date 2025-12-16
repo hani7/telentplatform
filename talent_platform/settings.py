@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "dev-secret-key-change-me"
@@ -50,6 +50,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "talent_platform.wsgi.application"
+
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 DATABASES = {
     "default": {
