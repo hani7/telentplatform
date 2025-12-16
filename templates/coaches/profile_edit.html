@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Profil Entraîneur</h2>
+
+<p>Annonce: <b>{% if profile.is_active %}ACTIVE{% else %}INACTIVE{% endif %}</b></p>
+{% if profile.is_active %}
+  <a href="{% url 'coaches:deactivate_ad' %}">Désactiver annonce</a>
+{% else %}
+  <a href="{% url 'coaches:activate_ad' %}">Activer annonce</a>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <fieldset>
+    <legend>Profil</legend>
+    {{ form.as_p }}
+  </fieldset>
+
+  <fieldset>
+    <legend>Clubs précédents</legend>
+    {{ clubs_fs.management_form }}
+    {% for f in clubs_fs %}
+      <div style="border:1px solid #ddd;padding:10px;margin:10px 0;">
+        {{ f.as_p }}
+      </div>
+    {% endfor %}
+  </fieldset>
+
+  <fieldset>
+    <legend>Fichiers (CV/Photos/Vidéos)</legend>
+    {{ files_fs.management_form }}
+    {% for f in files_fs %}
+      <div style="border:1px solid #ddd;padding:10px;margin:10px 0;">
+        {{ f.as_p }}
+      </div>
+    {% endfor %}
+  </fieldset>
+
+  <button type="submit">Enregistrer</button>
+</form>
+
+<p>Profil public: <a href="{% url 'coaches:public_profile' profile.pk %}">Voir</a></p>
+{% endblock %}

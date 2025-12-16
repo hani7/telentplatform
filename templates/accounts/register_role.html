@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="bg-white p-4 p-md-5 rounded">
+      <h2 class="mb-4">Choisir rôle</h2>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <select name="role" class="form-control">
+            <option value="PLAYER">Joueur</option>
+            <option value="COACH">Entraîneur</option>
+            <option value="AGENT">Agent</option>
+            <option value="CLUB">Club</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">Continuer</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

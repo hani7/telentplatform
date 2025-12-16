@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Créer un Joueur{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="bg-white p-4 p-md-5 rounded">
+      <h2 class="mb-4">Créer un Joueur</h2>
+
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary btn-block" type="submit">Créer compte</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

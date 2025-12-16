@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block title %}Recherche Entraîneurs{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <div>
+        <h2 class="mb-1">Recherche Entraîneurs</h2>
+        <p class="text-muted mb-0">Filtrez par pays, statut, salaire, expérience, diplômes, etc.</p>
+      </div>
+    </div>
+
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <!-- FILTRES -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">Filtres</h5>
+      </div>
+      <div class="card-body">
+
+        <form method="get">
+          <div class="form-row">
+
+            <!-- Pays -->
+            <div class="form-group col-md-4">
+              <label for="country">Pays</label>
+              <input id="country" class="form-control" name="country"
+                     value="{{ request.GET.country|default:'' }}"
+                     placeholder="Ex: DZ, FR, ES...">
+            </div>
+
+            <!-- Nationalité -->
+            <div class="form-group col-md-4">
+              <label for="nationality">Nationalité</label>
+              <input id="nationality" class="form-control" name="nationality"
+                     value="{{ request.GET.nationality|default:'' }}"
+                     placeholder="Ex: Algérienne...">
+            </div>
+
+            <!-- Sexe -->
+            <div class="form-group col-md-4">
+              <label for="gender">Sexe</label>
+              <select id="gender" class="form-control" name="gender">
+                <option value="">--</option>
+                <option value="MALE" {% if request.GET.gender == "MALE" %}selected{% endif %}>Masculin</option>
+                <option value="FEMALE" {% if request.GET.gender == "FEMALE" %}selected{% endif %}>Féminin</option>
+              </select>
+            </div>
+
+            <!-- Statut -->
+            <div class="form-group col-md-4">
+              <label for="status">Statut</label>
+              <select id="status" class="form-control" name="status">
+                <option value="">--</option>
+                <option value="AMATEUR" {% if request.GET.status == "AMATEUR" %}selected{% endif %}>Amateur</option>
+                <option value="PRO" {% if request.GET.status == "PRO" %}selected{% endif %}>Pro</option>
+              </select>
+            </div>
+
+            <!-- Diplôme / mot clé -->
+            <div class="form-group col-md-4">
+              <label for="diploma">Diplôme / Certification (mot clé)</label>
+              <input id="diploma" class="form-control" name="diploma"
+                     value="{{ request.GET.diploma|default:'' }}"
+                     placeholder="Ex: CAF, UEFA, licence...">
+            </div>
+
+            <!-- Objectif recherché -->
+            <div class="form-group col-md-4">
+              <label for="objective">Objectif (Stage / Test / Contrat...)</label>
+              <input id="objective" class="form-control" name="objective"
+                     value="{{ request.GET.objective|default:'' }}"
+                     placeholder="Ex: contrat">
+            </div>
+
+            <!-- Club actuel -->
+            <div class="form-group col-md-4">
+              <label for="club">Club actuel (mot clé)</label>
+              <input id="club" class="form-control" name="club"
+                     value="{{ request.GET.club|default:'' }}"
+                     placeholder="Ex: USMA, MCA...">
+            </div>
+
+            <!-- Division -->
+            <div class="form-group col-md-4">
+              <label for="division">Division</label>
+              <input id="division" class="form-control" name="division"
+                     value="{{ request.GET.division|default:'' }}"
+                     placeholder="Ex: Ligue 1">
+            </div>
+
+            <!-- Salaire min/max -->
+            <div class="form-group col-md-2">
+              <label for="salary_min">Salaire min</label>
+              <input id="salary_min" class="form-control" type="number" step="0.01" min="0"
+                     name="salary_min" value="{{ request.GET.salary_min|default:'' }}">
+            </div>
+            <div class="form-group col-md-2">
+              <label for="salary_max">Salaire max</label>
+              <input id="salary_max" class="form-control" type="number" step="0.01" min="0"
+                     name="salary_max" value="{{ request.GET.salary_max|default:'' }}">
+            </div>
+
+            <!-- Contrat agent -->
+            <div class="form-group col-md-4">
+              <label for="has_agent_contract">Contrat avec agent ?</label>
+              <select id="has_agent_contract" class="form-control" name="has_agent_contract">
+                <option value="">--</option>
+                <option value="1" {% if request.GET.has_agent_contract == "1" %}selected{% endif %}>Oui</option>
+                <option value="0" {% if request.GET.has_agent_contract == "0" %}selected{% endif %}>Non</option>
+              </select>
+            </div>
+
+            <!-- Représentation -->
+            <div class="form-group col-md-4">
+              <label for="represent_self">Se représente lui-même ?</label>
+              <select id="represent_self" class="form-control" name="represent_self">
+                <option value="">--</option>
+                <option value="1" {% if request.GET.represent_self == "1" %}selected{% endif %}>Oui</option>
+                <option value="0" {% if request.GET.represent_self == "0" %}selected{% endif %}>Non</option>
+              </select>
+            </div>
+
+            <!-- Actif -->
+            <div class="form-group col-md-4">
+              <label for="is_active">Annonce active ?</label>
+              <select id="is_active" class="form-control" name="is_active">
+                <option value="">--</option>
+                <option value="1" {% if request.GET.is_active == "1" %}selected{% endif %}>Oui</option>
+                <option value="0" {% if request.GET.is_active == "0" %}selected{% endif %}>Non</option>
+              </select>
+            </div>
+
+          </div>
+
+          <div class="d-flex align-items-center">
+            <button class="btn btn-primary" type="submit">Filtrer</button>
+            <a class="btn btn-outline-secondary ml-2" href="{% url 'coaches:search' %}">Réinitialiser</a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+    <!-- RESULTATS -->
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="mb-0">Résultats</h5>
+        <span class="text-muted small">{{ coaches|length }} résultat(s)</span>
+      </div>
+
+      <div class="card-body p-0">
+        {% if coaches %}
+          <ul class="list-group list-group-flush">
+            {% for c in coaches %}
+              <li class="list-group-item d-flex align-items-center justify-content-between">
+                <div>
+                  <a href="{% url 'coaches:public_profile' c.pk %}">
+                    <strong>{{ c.first_name }} {{ c.last_name }}</strong>
+                  </a>
+                  <div class="text-muted small">
+                    Pays: {{ c.current_club_country|default:"-" }} |
+                    Statut: {{ c.status|default:"-" }} |
+                    Club: {{ c.current_club_name|default:"-" }}
+                  </div>
+                </div>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'coaches:public_profile' c.pk %}">
+                  Voir profil
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="p-4">
+            <p class="mb-0">Aucun résultat</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

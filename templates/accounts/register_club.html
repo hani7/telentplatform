@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Inscription Club{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="bg-white p-4 p-md-5 rounded">
+      <h2 class="mb-2">Créer un compte Club</h2>
+      <p class="text-muted mb-4">Accédez à l’espace Club pour rechercher des joueurs et des entraîneurs.</p>
+
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary btn-block" type="submit">Créer mon compte</button>
+      </form>
+
+      <div class="mt-3 text-center">
+        <a href="{% url 'accounts:login' %}">Vous avez déjà un compte ? Se connecter</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

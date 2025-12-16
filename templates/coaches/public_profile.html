@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Coach: {{ c.first_name }} {{ c.last_name }}</h2>
+<p>Statut: {{ c.status }} | Age: {{ c.age }}</p>
+<p>Diplômes: {{ c.diplomas_certificates|linebreaks }}</p>
+<p>Club actuel: {{ c.current_club_name }} ({{ c.current_club_country }} / {{ c.current_club_division }})</p>
+
+<h3>Fichiers</h3>
+<ul>
+  {% for f in c.files.all %}
+    <li>{{ f.file_type }} - <a href="{{ f.file.url }}">{{ f.title|default:"download" }}</a></li>
+  {% empty %}
+    <li>Aucun fichier</li>
+  {% endfor %}
+</ul>
+{% endblock %}

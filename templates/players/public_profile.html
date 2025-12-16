@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Joueur: {{ p.first_name }} {{ p.last_name }}</h2>
+<p>Poste: {{ p.position }} | Statut: {{ p.status }} | Age: {{ p.age }}</p>
+<p>Club actuel: {{ p.current_club_name }} ({{ p.current_club_country }} / {{ p.current_club_division }})</p>
+
+<h3>Fichiers</h3>
+<ul>
+  {% for f in p.files.all %}
+    <li>{{ f.file_type }} - <a href="{{ f.file.url }}">{{ f.title|default:"download" }}</a></li>
+  {% empty %}
+    <li>Aucun fichier</li>
+  {% endfor %}
+</ul>
+{% endblock %}

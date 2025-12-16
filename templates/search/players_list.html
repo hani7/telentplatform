@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Recherche Joueurs{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+
+    <h2 class="mb-3">Recherche Joueurs</h2>
+
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    {% if not has_filters %}
+      <div class="alert alert-info">
+        Profils joueurs actifs les plus récents.  
+        Utilisez les filtres pour affiner votre recherche.
+      </div>
+    {% else %}
+      <div class="alert alert-success">
+        Résultats filtrés : {{ players|length }} joueur(s)
+      </div>
+    {% endif %}
+
+    <!-- FILTRES -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <strong>Filtres de recherche</strong>
+      </div>
+      <div class="card-body">
+        <form method="get">
+          <div class="form-row">
+
+            <!-- Poste -->
+            <div class="form-group col-md-4">
+              <label>Poste</label>
+              <input class="form-control" name="position"
+                     value="{{ request.GET.position|default:'' }}"
+                     placeholder="Ex: Attaquant, Gardien">
+            </div>
+
+            <!-- Pays -->
+            <div class="form-group col-md-4">
+              <label>Pays</label>
+              <input class="form-control" name="country"
+                     value="{{ request.GET.country|default:'' }}"
+                     placeholder="Ex: Algérie">
+            </div>
+
+            <!-- Statut -->
+            <div class="form-group col-md-4">
+              <label>Statut</label>
+              <select class="form-control" name="status">
+                <option value="">--</option>
+                <option value="AMATEUR" {% if request.GET.status == "AMATEUR" %}selected{% endif %}>Amateur</option>
+                <option value="PRO" {% if request.GET.status == "PRO" %}selected{% endif %}>Professionnel</option>
+              </select>
+            </div>
+
+            <!-- Pied -->
+            <div class="form-group col-md-4">
+              <label>Pied</label>
+              <select class="form-control" name="foot">
+                <option value="">--</option>
+                <option value="LEFT">Gauche</option>
+                <option value="RIGHT">Droit</option>
+                <option value="BOTH">Les deux</option>
+              </select>
+            </div>
+
+            <!-- Taille min -->
+            <div class="form-group col-md-2">
+              <label>Taille min (cm)</label>
+              <input type="number" class="form-control" name="height_min"
+                     value="{{ request.GET.height_min|default:'' }}">
+            </div>
+
+            <!-- Taille max -->
+            <div class="form-group col-md-2">
+              <label>Taille max (cm)</label>
+              <input type="number" class="form-control" name="height_max"
+                     value="{{ request.GET.height_max|default:'' }}">
+            </div>
+
+            <!-- Salaire min -->
+            <div class="form-group col-md-2">
+              <label>Salaire min</label>
+              <input type="number" class="form-control" name="salary_min"
+                     value="{{ request.GET.salary_min|default:'' }}">
+            </div>
+
+            <!-- Salaire max -->
+            <div class="form-group col-md-2">
+              <label>Salaire max</label>
+              <input type="number" class="form-control" name="salary_max"
+                     value="{{ request.GET.salary_max|default:'' }}">
+            </div>
+
+          </div>
+
+          <div class="d-flex">
+            <button class="btn btn-primary" type="submit">Filtrer</button>
+            <a class="btn btn-outline-secondary ml-2" href="{% url 'search:players_list' %}">
+              Réinitialiser
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- RESULTATS -->
+    <div class="card">
+      <div class="card-header">
+        <strong>Résultats</strong>
+      </div>
+
+      <div class="card-body p-0">
+        {% if players %}
+          <ul class="list-group list-group-flush">
+            {% for p in players %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <a href="{% url 'players:public_profile' p.pk %}">
+                    <strong>{{ p.first_name }} {{ p.last_name }}</strong>
+                  </a>
+                  <div class="text-muted small">
+                    Poste : {{ p.position }} |
+                    Pays : {{ p.current_club_country|default:"-" }} |
+                    Statut : {{ p.status }}
+                  </div>
+                </div>
+                <a class="btn btn-sm btn-outline-primary"
+                   href="{% url 'players:public_profile' p.pk %}">
+                  Voir profil
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="p-4">
+            <p class="mb-0">Aucun joueur trouvé</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
