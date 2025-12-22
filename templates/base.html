@@ -1,11 +1,12 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <title>{% block title %}MyFootop{% endblock %}</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
   <!-- FONTS / ICONS -->
@@ -28,10 +29,10 @@
 <body>
   <div class="site-wrap">
 
-    <!-- MOBILE MENU (gardé du template) -->
+    <!-- MOBILE MENU -->
     <div class="site-mobile-menu site-navbar-target">
       <div class="site-mobile-menu-header">
-        <div class="site-mobile-menu-close">
+        <div class="site-mobile-menu-close mt-3">
           <span class="icon-close2 js-menu-toggle"></span>
         </div>
       </div>
@@ -42,9 +43,10 @@
     <header class="site-navbar py-4" role="banner">
       <div class="container">
         <div class="d-flex align-items-center">
+
           <div class="site-logo">
             <a href="{% url 'home' %}">
-              <img src="{% static 'images/logo.png' %}" alt="Logo">
+              <img src="{% static 'images/logo.png' %}" alt="Logo" style="max-height:40px;">
             </a>
           </div>
 
@@ -52,25 +54,31 @@
             <nav class="site-navigation position-relative text-right" role="navigation">
               <ul class="site-menu main-menu js-clone-nav mr-auto d-none d-lg-block">
                 <li><a href="{% url 'home' %}" class="nav-link">Accueil</a></li>
-                <li><a href="{% url 'accounts:login' %}" class="nav-link">Compte</a></li>
-                <li><a href="{% url 'accounts:register_role' %}" class="nav-link"></a></li>
+
+                {% if user.is_authenticated %}
+                  <li><a href="{% url 'accounts:logout' %}" class="nav-link">Déconnexion</a></li>
+                {% else %}
+                  <li><a href="{% url 'accounts:login' %}" class="nav-link">Connexion</a></li>
+                  <li><a href="{% url 'accounts:register_role' %}" class="nav-link">Inscription</a></li>
+                {% endif %}
               </ul>
             </nav>
-            <a href="#" class="d-inline-block d-lg-none site-menu-toggle js-menu-toggle text-black float-right text-white">
+
+            <a href="#" class="d-inline-block d-lg-none site-menu-toggle js-menu-toggle text-white float-right">
               <span class="icon-menu h3 text-white"></span>
             </a>
           </div>
+
         </div>
       </div>
     </header>
-<br><br>
-    <!-- ✅ CONTENT SANS ARRIÈRE-PLAN -->
+
+    <!-- CONTENT -->
     <div class="site-section">
       <div class="container">
         {% block content %}{% endblock %}
       </div>
     </div>
-
 
   </div>
 
