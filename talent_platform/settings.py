@@ -52,7 +52,11 @@ TEMPLATES = [
 WSGI_APPLICATION = "talent_platform.wsgi.application"
 
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = [
+    "footop-4.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 DATABASES = {
     "default": {
