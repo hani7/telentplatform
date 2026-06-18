@@ -2,6 +2,13 @@ from pathlib import Path
 import os
 import dj_database_url
 
+# Load .env if present
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # =========================
@@ -10,13 +17,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
 DEBUG = os.getenv("DEBUG", "1") == "1"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1,foot.baitul.tech,www.foot.baitul.tech"
+).split(",")
 
-# Optionnel (si tu as CSRF issue sur Render / ngrok)
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
-CSRF_TRUSTED_ORIGINS = [o for o in CSRF_TRUSTED_ORIGINS if o]  # remove empty
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS",
+    "https://foot.baitul.tech,https://www.foot.baitul.tech"
+).split(",")
+CSRF_TRUSTED_ORIGINS = [o for o in CSRF_TRUSTED_ORIGINS if o]
 if DEBUG:
-    CSRF_TRUSTED_ORIGINS += ["https://*.ngrok-free.app", "https://*.ngrok-free.dev", "https://*.ngrok.io"]
+    CSRF_TRUSTED_ORIGINS += ["https://*.ngrok-free.app", "https://*.ngrok-free.dev", "https://*.ngrok.io", "http://localhost:8000"]
 
 # =========================
 # APPS
