@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/baitmtzi/foot
+    - /bin/cp -R . $DEPLOYPATH
+    - export PYTHONPATH=/home/baitmtzi/virtualenv/foot/3.12/bin
+    - $PYTHONPATH/pip install -r $DEPLOYPATH/requirements.txt
+    - $PYTHONPATH/python $DEPLOYPATH/manage.py migrate --noinput
+    - $PYTHONPATH/python $DEPLOYPATH/manage.py collectstatic --noinput
