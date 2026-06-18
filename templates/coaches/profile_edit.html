@@ -1,43 +1,354 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>Profil Entraîneur</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profil Entraîneur - FOOTOP</title>
+  <link rel="icon" href="{% static 'img/core-img/favicon.ico' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
 
-<p>Annonce: <b>{% if profile.is_active %}ACTIVE{% else %}INACTIVE{% endif %}</b></p>
-{% if profile.is_active %}
-  <a href="{% url 'coaches:deactivate_ad' %}">Désactiver annonce</a>
-{% else %}
-  <a href="{% url 'coaches:activate_ad' %}">Activer annonce</a>
-{% endif %}
+  <style>
+    html,body{margin:0;padding:0;min-height:100vh}
 
-<form method="post" enctype="multipart/form-data">
-  {% csrf_token %}
-  <fieldset>
-    <legend>Profil</legend>
-    {{ form.as_p }}
-  </fieldset>
+    .pw{min-height:100vh;background-image:url("{% static 'img/bg-img/bg-home.jpg' %}");background-size:cover;background-position:center;position:relative;display:flex;flex-direction:column;align-items:center}
+    .pw-ovl{position:fixed;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.55) 0%,rgba(0,20,8,.93) 100%);z-index:0}
+    .pw-content{position:relative;z-index:1;width:100%;max-width:600px;padding:1.5rem 1rem 6rem;box-sizing:border-box}
 
-  <fieldset>
-    <legend>Clubs précédents</legend>
-    {{ clubs_fs.management_form }}
-    {% for f in clubs_fs %}
-      <div style="border:1px solid #ddd;padding:10px;margin:10px 0;">
-        {{ f.as_p }}
-      </div>
+    .ph{text-align:center;margin-bottom:1.4rem}
+    .ph .logo-wrap{display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+    .ph .logo-wrap img{height:36px;width:auto}
+    .ph h1{color:#fff;font-size:1.3rem;font-weight:700;margin-bottom:.2rem}
+    .ph p{color:rgba(255,255,255,.6);font-size:.82rem;margin:0}
+
+    .steps{display:flex;gap:6px;margin-bottom:1.2rem}
+    .si{flex:1;text-align:center;padding:8px 4px;border-radius:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);font-size:.72rem;font-weight:600;cursor:pointer;transition:all .2s}
+    .si.active{background:#f1b10f;border-color:#f1b10f;color:#000;font-weight:700}
+    .si.done{background:rgba(241,177,15,.2);border-color:rgba(241,177,15,.5);color:#f1b10f}
+
+    .fc{background:rgba(255,255,255,.07);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1.5px solid rgba(255,255,255,.18);border-radius:20px;padding:1.4rem 1.1rem;margin-bottom:1rem;display:none}
+    .fc.active{display:block;animation:fadeUp .25s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+    .fc h5{color:#f1b10f;font-size:1rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:6px}
+    .fc hr{border:none;border-top:1px solid rgba(255,255,255,.12);margin:1rem 0}
+
+    .fc input[type=text],.fc input[type=number],.fc input[type=date],.fc input[type=email],.fc input[type=file],.fc select,.fc textarea{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.22);border-radius:11px;color:#fff;padding:.6rem .9rem;width:100%;font-size:.88rem;box-sizing:border-box;transition:border-color .2s,background .2s;margin-bottom:.6rem}
+    .fc input::placeholder,.fc textarea::placeholder{color:rgba(255,255,255,.38)}
+    .fc input:focus,.fc select:focus,.fc textarea:focus{outline:none;border-color:#f1b10f;background:rgba(255,255,255,.13)}
+    .fc select option{background:#0d2b18;color:#fff}
+    .fc textarea{min-height:80px;resize:vertical}
+
+    .fl{color:rgba(255,255,255,.72);font-size:.8rem;font-weight:600;margin-bottom:4px;display:block}
+
+    .ck{display:flex;align-items:center;gap:8px;margin-bottom:.7rem;color:rgba(255,255,255,.72);font-size:.85rem}
+    .ck input[type=checkbox]{accent-color:#f1b10f;width:18px;height:18px}
+
+    .fsi{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:.9rem;margin-bottom:.7rem}
+    .fsi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+    .fsi-title{color:rgba(255,255,255,.7);font-weight:600;font-size:.85rem}
+    .btn-clear{background:transparent;border:1px solid rgba(220,53,69,.6);color:#dc3545;padding:4px 10px;border-radius:8px;font-size:.75rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:4px}
+    .btn-clear:hover{background:#dc3545;color:#fff}
+
+    .fsi p{margin-bottom:.4rem}
+    .fsi label{color:rgba(255,255,255,.62);font-size:.78rem;font-weight:600;display:block;margin-bottom:2px}
+    .fsi input[type=text],.fsi input[type=number],.fsi input[type=date],.fsi input[type=email],.fsi input[type=file],.fsi select,.fsi textarea{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box;margin-bottom:.4rem}
+    .fsi input:focus,.fsi select:focus,.fsi textarea:focus{outline:none;border-color:#f1b10f;background:rgba(255,255,255,.13)}
+    .fsi select option{background:#0d2b18;color:#fff}
+
+    input[name*="DELETE"],label[for*="DELETE"]{display:none!important}
+    .helptext{font-size:.72rem;color:rgba(255,255,255,.45);margin-top:-4px;margin-bottom:.5rem;display:block}
+    .errorlist{list-style:none;padding:0;margin:0 0 .5rem}
+    .errorlist li{color:#f87171;font-size:.82rem}
+
+    .wnav{display:flex;gap:8px;margin-top:.6rem}
+    .wb{flex:1;padding:12px;border-radius:50px;font-weight:700;font-size:.88rem;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+    .wb-prev{background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)}
+    .wb-prev:hover{background:rgba(255,255,255,.18);color:#fff}
+    .wb-next{background:#f1b10f;color:#000}
+    .wb-next:hover{background:#d9a00d}
+    .wb-sub{background:#1db95b;color:#fff}
+    .wb-sub:hover{background:#17a34a}
+
+    .msg-bar{border-radius:12px;padding:.65rem 1rem;font-size:.85rem;margin-bottom:1rem}
+
+    .footer-outer{position:fixed;bottom:0;left:0;right:0;background:transparent;padding:4px 14px calc(4px + env(safe-area-inset-bottom));z-index:999;display:flex;justify-content:center}
+    .footer-pill{background:#1db95b;border-radius:999px;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;width:100%;max-width:500px}
+    .footer-pill-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.67rem;font-weight:500;padding:4px 14px;border-radius:14px;border:none;transition:all .18s ease;white-space:nowrap;min-width:60px}
+    .footer-pill-item i{font-size:1.45rem;line-height:1}
+    .footer-pill-item.is-active{font-weight:700;color:#fff}
+    .footer-pill-item:hover{color:#fff;background:rgba(0,0,0,.12)}
+  </style>
+</head>
+
+<body>
+<div class="pw">
+  <div class="pw-ovl"></div>
+
+  <div class="pw-content">
+
+    <div class="ph">
+      <div class="logo-wrap"><img src="{% static 'img/core-img/footop-logo-white.png' %}" alt="FOOTOP"></div>
+      <h1><i class="ti ti-whistle" style="color:#f1b10f"></i> Profil Entraîneur</h1>
+      <p>Complète ton profil pour le rendre visible aux clubs et agents</p>
+    </div>
+
+    {% for msg in messages %}
+      <div class="msg-bar alert alert-{% if msg.tags == 'success' %}success{% elif msg.tags == 'error' %}danger{% else %}info{% endif %}">{{ msg }}</div>
     {% endfor %}
-  </fieldset>
 
-  <fieldset>
-    <legend>Fichiers (CV/Photos/Vidéos)</legend>
-    {{ files_fs.management_form }}
-    {% for f in files_fs %}
-      <div style="border:1px solid #ddd;padding:10px;margin:10px 0;">
-        {{ f.as_p }}
+    <div class="steps">
+      <div class="si active" onclick="goStep(1)"><i class="ti ti-user"></i> Infos</div>
+      <div class="si" onclick="goStep(2)"><i class="ti ti-building"></i> Clubs</div>
+      <div class="si" onclick="goStep(3)"><i class="ti ti-file-upload"></i> Fichiers</div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="pForm">
+      {% csrf_token %}
+
+      <!-- ═══ STEP 1: Informations ═══ -->
+      <div class="fc active" data-step="1">
+        <h5><i class="ti ti-user"></i> Informations de l'entraîneur</h5>
+
+        <div class="row g-2">
+          <div class="col-6">
+            {{ form.first_name.errors }}
+            <span class="fl">{{ form.first_name.label }}</span>
+            {{ form.first_name }}
+          </div>
+          <div class="col-6">
+            {{ form.last_name.errors }}
+            <span class="fl">{{ form.last_name.label }}</span>
+            {{ form.last_name }}
+          </div>
+          <div class="col-6">
+            {{ form.birth_date.errors }}
+            <span class="fl">{{ form.birth_date.label }}</span>
+            {{ form.birth_date }}
+          </div>
+          <div class="col-6">
+            {{ form.birth_place.errors }}
+            <span class="fl">{{ form.birth_place.label }}</span>
+            {{ form.birth_place }}
+          </div>
+          <div class="col-6">
+            {{ form.nationality.errors }}
+            <span class="fl">{{ form.nationality.label }}</span>
+            {{ form.nationality }}
+          </div>
+          <div class="col-6">
+            {{ form.gender.errors }}
+            <span class="fl">{{ form.gender.label }}</span>
+            {{ form.gender }}
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="row g-2">
+          <div class="col-12">
+            {{ form.diplomas_certificates.errors }}
+            <span class="fl">{{ form.diplomas_certificates.label }}</span>
+            {{ form.diplomas_certificates }}
+          </div>
+          <div class="col-6">
+            {{ form.status.errors }}
+            <span class="fl">{{ form.status.label }}</span>
+            {{ form.status }}
+          </div>
+          <div class="col-12">
+            {{ form.achievements.errors }}
+            <span class="fl">{{ form.achievements.label }}</span>
+            {{ form.achievements }}
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="row g-2">
+          <div class="col-6">
+            {{ form.current_club_name.errors }}
+            <span class="fl">{{ form.current_club_name.label }}</span>
+            {{ form.current_club_name }}
+          </div>
+          <div class="col-6">
+            {{ form.current_club_country.errors }}
+            <span class="fl">{{ form.current_club_country.label }}</span>
+            {{ form.current_club_country }}
+          </div>
+          <div class="col-4">
+            {{ form.current_club_division.errors }}
+            <span class="fl">{{ form.current_club_division.label }}</span>
+            {{ form.current_club_division }}
+          </div>
+          <div class="col-4">
+            {{ form.current_club_start.errors }}
+            <span class="fl">{{ form.current_club_start.label }}</span>
+            {{ form.current_club_start }}
+          </div>
+          <div class="col-4">
+            {{ form.current_club_end.errors }}
+            <span class="fl">{{ form.current_club_end.label }}</span>
+            {{ form.current_club_end }}
+          </div>
+          <div class="col-6">
+            {{ form.contract_end_date.errors }}
+            <span class="fl">{{ form.contract_end_date.label }}</span>
+            {{ form.contract_end_date }}
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="row g-2">
+          <div class="col-6">
+            {{ form.salary_min.errors }}
+            <span class="fl">{{ form.salary_min.label }}</span>
+            {{ form.salary_min }}
+          </div>
+          <div class="col-6">
+            {{ form.salary_max.errors }}
+            <span class="fl">{{ form.salary_max.label }}</span>
+            {{ form.salary_max }}
+          </div>
+          <div class="col-12">
+            {{ form.search_objective.errors }}
+            <span class="fl">{{ form.search_objective.label }}</span>
+            {{ form.search_objective }}
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="ck">{{ form.has_agent_contract }} <label>{{ form.has_agent_contract.label }}</label></div>
+        <div id="agent-wrap" style="display:none">
+          <div class="row g-2">
+            <div class="col-6">
+              {{ form.agent_full_name.errors }}
+              <span class="fl">{{ form.agent_full_name.label }}</span>
+              {{ form.agent_full_name }}
+            </div>
+            <div class="col-6">
+              {{ form.agent_id.errors }}
+              <span class="fl">{{ form.agent_id.label }}</span>
+              {{ form.agent_id }}
+            </div>
+          </div>
+        </div>
+
+        <div class="ck">{{ form.represent_self }} <label>{{ form.represent_self.label }}</label></div>
+
+        <hr>
+
+        <div class="row g-2">
+          <div class="col-12">
+            {{ form.target_club_notes.errors }}
+            <span class="fl">{{ form.target_club_notes.label }}</span>
+            {{ form.target_club_notes }}
+          </div>
+          <div class="col-12">
+            {{ form.visibility_mode.errors }}
+            <span class="fl">{{ form.visibility_mode.label }}</span>
+            {{ form.visibility_mode }}
+          </div>
+        </div>
       </div>
-    {% endfor %}
-  </fieldset>
 
-  <button type="submit">Enregistrer</button>
-</form>
+      <!-- ═══ STEP 2: Clubs précédents ═══ -->
+      <div class="fc" data-step="2">
+        <h5><i class="ti ti-building"></i> Clubs précédents</h5>
+        <p style="color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:1rem">Ajoute tes expériences dans des clubs</p>
+        {{ clubs_fs.management_form }}
+        {% for f in clubs_fs %}
+          <div class="fsi">
+            <div class="fsi-head">
+              <span class="fsi-title">Club {{ forloop.counter }}</span>
+              <button type="button" class="btn-clear" onclick="clearBlock(this)"><i class="ti ti-eraser"></i> Vider</button>
+            </div>
+            {{ f.as_p }}
+            {{ f.DELETE }}
+          </div>
+        {% endfor %}
+      </div>
 
-<p>Profil public: <a href="{% url 'coaches:public_profile' profile.pk %}">Voir</a></p>
-{% endblock %}
+      <!-- ═══ STEP 3: Fichiers ═══ -->
+      <div class="fc" data-step="3">
+        <h5><i class="ti ti-file-upload"></i> Fichiers (CV / Diplômes / Photos)</h5>
+        <p style="color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:1rem">Ajoute au moins un fichier pour compléter ton profil</p>
+        {{ files_fs.management_form }}
+        {% for f in files_fs %}
+          <div class="fsi">
+            <div class="fsi-head">
+              <span class="fsi-title">Fichier {{ forloop.counter }}</span>
+              <button type="button" class="btn-clear" onclick="clearBlock(this)"><i class="ti ti-eraser"></i> Vider</button>
+            </div>
+            {{ f.as_p }}
+            {{ f.DELETE }}
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Nav -->
+      <div class="wnav">
+        <button type="button" class="wb wb-prev" id="prevBtn" style="display:none"><i class="ti ti-arrow-left"></i> Précédent</button>
+        <button type="button" class="wb wb-next" id="nextBtn">Suivant <i class="ti ti-arrow-right"></i></button>
+        <button type="submit" class="wb wb-sub" id="subBtn" style="display:none"><i class="ti ti-check"></i> Enregistrer</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer-outer">
+  <nav class="footer-pill">
+    <a href="/coaches/me/" class="footer-pill-item is-active"><i class="ti ti-user-circle"></i><span>Profil</span></a>
+    <a href="/coaches/me/complete/" class="footer-pill-item"><i class="ti ti-eye"></i><span>Aperçu</span></a>
+    <a href="/offers/my/" class="footer-pill-item"><i class="ti ti-clipboard-list"></i><span>Offres</span></a>
+    <a href="/accounts/logout/" class="footer-pill-item"><i class="ti ti-logout"></i><span>Déconnexion</span></a>
+  </nav>
+</div>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script>
+  let cur=1;const tot=3;
+  const tabs=document.querySelectorAll('.si');
+  const cards=document.querySelectorAll('.fc');
+  const prev=document.getElementById('prevBtn');
+  const next=document.getElementById('nextBtn');
+  const sub=document.getElementById('subBtn');
+
+  function goStep(s){
+    cur=s;
+    cards.forEach(c=>{c.classList.toggle('active',+c.dataset.step===s)});
+    tabs.forEach((t,i)=>{t.classList.remove('active','done');if(i+1===s)t.classList.add('active');else if(i+1<s)t.classList.add('done')});
+    prev.style.display=s===1?'none':'flex';
+    next.style.display=s===tot?'none':'flex';
+    sub.style.display=s===tot?'flex':'none';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  next.addEventListener('click',()=>{if(cur<tot){cur++;goStep(cur)}});
+  prev.addEventListener('click',()=>{if(cur>1){cur--;goStep(cur)}});
+
+  function clearBlock(btn){
+    const b=btn.closest('.fsi');if(!b)return;
+    b.querySelectorAll('input[type=text],input[type=number],input[type=date],input[type=email],input[type=file]').forEach(i=>i.value='');
+    b.querySelectorAll('textarea').forEach(t=>t.value='');
+    b.querySelectorAll('select').forEach(s=>s.selectedIndex=0);
+    b.style.borderColor='rgba(241,177,15,.4)';setTimeout(()=>b.style.borderColor='',400);
+  }
+
+  (function(){
+    const ac=document.querySelector('input[name=has_agent_contract]');
+    const aw=document.getElementById('agent-wrap');
+    if(ac&&aw){const t=()=>aw.style.display=ac.checked?'block':'none';ac.addEventListener('change',t);t()}
+  })();
+</script>
+<script src="{% static 'js/searchable-dropdown.js' %}"></script>
+<script>initSearchableDropdowns();</script>
+</body>
+</html>

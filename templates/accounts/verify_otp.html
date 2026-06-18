@@ -1,0 +1,331 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="FOOTOP - Vérification email">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme-color" content="#1e9751">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title>Vérification Email - FOOTOP</title>
+
+  <link rel="icon" href="{% static 'img/core-img/favicon.ico' %}">
+  <link rel="apple-touch-icon" href="{% static 'img/icons/icon-96x96.png' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+
+  <style>
+    html, body { margin: 0; padding: 0; min-height: 100vh; }
+
+    .otp-page-wrapper {
+      min-height: 100vh;
+      background-image: url("{% static 'img/bg-img/bg-home.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .otp-page-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,20,8,0.92) 100%);
+      z-index: 0;
+    }
+
+    .otp-page-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      padding: 1.5rem 1.25rem 2rem;
+      box-sizing: border-box;
+    }
+
+    .otp-back-btn {
+      position: fixed;
+      top: 1.1rem;
+      left: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 1.5px solid rgba(255,255,255,0.4);
+      color: #fff;
+      font-size: 1.2rem;
+      text-decoration: none;
+      transition: background 0.2s;
+      z-index: 10;
+    }
+    .otp-back-btn:hover { background: rgba(255,255,255,0.25); color: #fff; }
+
+    .otp-page-header {
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
+    .otp-logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .otp-logo-wrap img {
+      height: 38px;
+      width: auto;
+      image-rendering: -webkit-optimize-contrast;
+    }
+    .otp-page-header h1 {
+      color: #fff;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+    .otp-page-header p {
+      color: rgba(255,255,255,0.65);
+      font-size: 0.85rem;
+      margin: 0;
+    }
+    .otp-email-highlight {
+      color: #f1b10f;
+      font-weight: 600;
+    }
+
+    .otp-form-card {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1.5px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 1.8rem 1.25rem;
+    }
+
+    .otp-input-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .otp-digit {
+      width: 48px;
+      height: 56px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: 12px;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .otp-digit:focus {
+      border-color: #f1b10f;
+      background: rgba(255,255,255,0.15);
+    }
+    /* hidden real input */
+    #otp_code { display: none; }
+
+    .otp-submit-btn {
+      border-radius: 50px;
+      padding: 0.75rem;
+      font-weight: 600;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    .otp-error {
+      background: rgba(255, 100, 100, 0.15);
+      border: 1px solid rgba(255, 100, 100, 0.4);
+      border-radius: 10px;
+      color: #ff9999;
+      font-size: 0.83rem;
+      padding: 0.6rem 1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .otp-resend-area {
+      text-align: center;
+      margin-top: 1.2rem;
+      color: rgba(255,255,255,0.65);
+      font-size: 0.88rem;
+    }
+    .otp-resend-btn {
+      background: none;
+      border: none;
+      color: #f1b10f;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: none;
+    }
+    .otp-resend-btn:hover { text-decoration: underline; color: #f1b10f; }
+
+    .otp-info-msg {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: rgba(255,255,255,0.9);
+      font-size: 0.83rem;
+      padding: 0.6rem 1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div id="preloader">
+    <div class="spinner-grow text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+
+  <div class="otp-page-wrapper">
+    <div class="otp-page-overlay"></div>
+
+    <a href="{% url 'accounts:register_role' %}" class="otp-back-btn">
+      <i class="ti ti-arrow-left"></i>
+    </a>
+
+    <div class="otp-page-content">
+
+      <!-- Header -->
+      <div class="otp-page-header">
+        <div class="otp-logo-wrap">
+          <img src="{% static 'img/core-img/footop-logo-white.png' %}" alt="FOOTOP">
+        </div>
+        <h1>Vérification Email</h1>
+        <p>
+          Un code à 6 chiffres a été envoyé à<br>
+          <span class="otp-email-highlight">{{ email }}</span>
+        </p>
+      </div>
+
+      <!-- Form Card -->
+      <div class="otp-form-card">
+
+        {% if messages %}
+          {% for msg in messages %}
+            <div class="otp-info-msg"><i class="ti ti-mail"></i> {{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+
+        {% if error %}
+          <div class="otp-error"><i class="ti ti-alert-circle"></i> {{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="{% url 'accounts:verify_otp' %}" id="otp-form">
+          {% csrf_token %}
+
+          <!-- 6 visual digit boxes -->
+          <div class="otp-input-row">
+            <input class="otp-digit" type="text" maxlength="1" pattern="[0-9]" inputmode="numeric" id="d1">
+            <input class="otp-digit" type="text" maxlength="1" pattern="[0-9]" inputmode="numeric" id="d2">
+            <input class="otp-digit" type="text" maxlength="1" pattern="[0-9]" inputmode="numeric" id="d3">
+            <input class="otp-digit" type="text" maxlength="1" pattern="[0-9]" inputmode="numeric" id="d4">
+            <input class="otp-digit" type="text" maxlength="1" pattern="[0-9]" inputmode="numeric" id="d5">
+            <input class="otp-digit" type="text" maxlength="1" pattern="[0-9]" inputmode="numeric" id="d6">
+          </div>
+
+          <!-- Hidden combined field submitted to Django -->
+          <input type="hidden" name="otp_code" id="otp_code">
+
+          <button class="btn btn-warning otp-submit-btn" type="submit">
+            Vérifier <i class="ti ti-shield-check"></i>
+          </button>
+        </form>
+      </div>
+
+      <!-- Resend -->
+      <div class="otp-resend-area">
+        <span>Vous n'avez pas reçu le code ? &nbsp;</span>
+        <form method="post" action="{% url 'accounts:resend_otp' %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="otp-resend-btn">Renvoyer le code</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/internet-status.js' %}"></script>
+  <script src="{% static 'js/active.js' %}"></script>
+  <script src="{% static 'js/pwa.js' %}"></script>
+
+  <script>
+    // ── OTP digit boxes logic ──────────────────────────────────────────────
+    const digits = [
+      document.getElementById('d1'),
+      document.getElementById('d2'),
+      document.getElementById('d3'),
+      document.getElementById('d4'),
+      document.getElementById('d5'),
+      document.getElementById('d6'),
+    ];
+    const hiddenInput = document.getElementById('otp_code');
+
+    digits.forEach((input, idx) => {
+      input.addEventListener('input', (e) => {
+        // Allow only numbers
+        input.value = input.value.replace(/[^0-9]/g, '');
+        if (input.value.length === 1 && idx < 5) {
+          digits[idx + 1].focus();
+        }
+        syncHidden();
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && input.value === '' && idx > 0) {
+          digits[idx - 1].focus();
+        }
+      });
+
+      // Handle paste on first box
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+        pasted.split('').slice(0, 6).forEach((ch, i) => {
+          if (digits[i]) digits[i].value = ch;
+        });
+        const lastFilled = Math.min(pasted.length, 5);
+        digits[lastFilled].focus();
+        syncHidden();
+      });
+    });
+
+    function syncHidden() {
+      hiddenInput.value = digits.map(d => d.value).join('');
+    }
+
+    // Auto-submit when all 6 digits filled
+    function checkAutoSubmit() {
+      if (digits.every(d => d.value.length === 1)) {
+        syncHidden();
+        document.getElementById('otp-form').submit();
+      }
+    }
+    digits.forEach(d => d.addEventListener('input', checkAutoSubmit));
+
+    // Focus first box on load
+    digits[0].focus();
+
+    // Pre-fill digits if error (re-render keeps them empty, that's fine)
+  </script>
+</body>
+</html>

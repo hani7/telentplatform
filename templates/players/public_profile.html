@@ -1,15 +1,300 @@
 {% extends "base.html" %}
-{% block content %}
-<h2>Joueur: {{ p.first_name }} {{ p.last_name }}</h2>
-<p>Poste: {{ p.position }} | Statut: {{ p.status }} | Age: {{ p.age }}</p>
-<p>Club actuel: {{ p.current_club_name }} ({{ p.current_club_country }} / {{ p.current_club_division }})</p>
+{% load static %}
 
-<h3>Fichiers</h3>
-<ul>
-  {% for f in p.files.all %}
-    <li>{{ f.file_type }} - <a href="{{ f.file.url }}">{{ f.title|default:"download" }}</a></li>
-  {% empty %}
-    <li>Aucun fichier</li>
-  {% endfor %}
-</ul>
+{% block title %}{{ p.first_name }} {{ p.last_name }} - Profil Joueur{% endblock %}
+
+{% block extra_css %}
+<style>
+  .profile-header-banner {
+    height: 300px;
+    background: var(--gradient-primary);
+    position: relative;
+    margin-bottom: 80px;
+  }
+  
+  .profile-avatar-wrapper {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+  
+  .profile-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid white;
+    box-shadow: var(--shadow-lg);
+    object-fit: cover;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    margin: 0 auto;
+  }
+  
+  .profile-name {
+    margin-top: var(--space-md);
+  }
+  
+  .profile-verified {
+    display: inline-block;
+    background: var(--footop-success);
+    color: white;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-xs);
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+  
+  .stat-card-mini {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+    border-left: 4px solid var(--footop-green-dark);
+  }
+  
+  .stat-card-mini:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .stat-icon {
+    font-size: 2rem;
+    margin-bottom: var(--space-sm);
+  }
+  
+  .stat-value {
+    font-size: var(--font-2xl);
+    font-weight: 700;
+    color: var(--footop-dark);
+    display: block;
+  }
+  
+  .stat-label {
+    font-size: var(--font-sm);
+    color: var(--footop-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .file-card {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+  }
+  
+  .file-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateX(5px);
+  }
+  
+  .file-icon {
+    font-size: 2.5rem;
+    color: var(--footop-green-dark);
+  }
+  
+  .contact-btn-float {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+    box-shadow: var(--shadow-xl);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Profile Header -->
+<div class="profile-header-banner">
+  <div class="profile-avatar-wrapper">
+    <div class="profile-avatar">
+      ⚽
+    </div>
+    <div class="profile-name">
+      <h1 class="mb-2">
+        {{ p.first_name }} {{ p.last_name }}
+        <span class="profile-verified">✓ Vérifié</span>
+      </h1>
+      <p class="text-muted mb-3">
+        <span class="icon-map-marker"></span> {{ p.current_club_country|default:"International" }}
+      </p>
+      <div class="d-flex gap-2 justify-content-center">
+        <span class="badge badge-primary">{{ p.position|upper }}</span>
+        <span class="badge badge-info">{{ p.status }}</span>
+        {% if p.age %}
+          <span class="badge" style="background: var(--footop-gold); color: var(--footop-dark);">{{ p.age }} ans</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Stats Grid -->
+  <div class="row g-4 mb-5">
+    <div class="col-lg-3 col-md-6">
+      <div class="stat-card-mini">
+        <div class="stat-icon">⚽</div>
+        <span class="stat-value">{{ p.position }}</span>
+        <span class="stat-label">Position</span>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6">
+      <div class="stat-card-mini" style="border-left-color: var(--footop-orange);">
+        <div class="stat-icon">🎂</div>
+        <span class="stat-value">{{ p.age|default:"N/A" }}</span>
+        <span class="stat-label">Âge</span>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6">
+      <div class="stat-card-mini" style="border-left-color: var(--footop-gold);">
+        <div class="stat-icon">📊</div>
+        <span class="stat-value">{{ p.status }}</span>
+        <span class="stat-label">Statut</span>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6">
+      <div class="stat-card-mini" style="border-left-color: var(--footop-blue);">
+        <div class="stat-icon">👁️</div>
+        <span class="stat-value">{{ p.views|default:"124" }}</span>
+        <span class="stat-label">Vues de Profil</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row g-4">
+    <!-- Club Information -->
+    <div class="col-lg-8">
+      <div class="card mb-4">
+        <div class="card-body p-4">
+          <h3 class="mb-4">
+            <span class="icon-football" style="color: var(--footop-green-dark);"></span>
+            Club Actuel
+          </h3>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="text-muted mb-2" style="font-size: 0.875rem; text-transform: uppercase;">Nom du Club</label>
+              <p class="h5 mb-0">{{ p.current_club_name|default:"Libre" }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="text-muted mb-2" style="font-size: 0.875rem; text-transform: uppercase;">Pays</label>
+              <p class="h5 mb-0">{{ p.current_club_country|default:"N/A" }}</p>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted mb-2" style="font-size: 0.875rem; text-transform: uppercase;">Division</label>
+              <p class="h5 mb-0">{{ p.current_club_division|default:"N/A" }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Files Section -->
+      <div class="card">
+        <div class="card-body p-4">
+          <h3 class="mb-4">
+            <span class="icon-folder" style="color: var(--footop-green-dark);"></span>
+            Documents & Médias
+          </h3>
+          
+          {% if p.files.all %}
+            <div class="row g-3">
+              {% for f in p.files.all %}
+                <div class="col-md-6">
+                  <div class="file-card">
+                    <div class="file-icon">
+                      {% if f.file_type == 'VIDEO' %}
+                        🎥
+                      {% elif f.file_type == 'IMAGE' %}
+                        🖼️
+                      {% elif f.file_type == 'PDF' %}
+                        📄
+                      {% else %}
+                        📎
+                      {% endif %}
+                    </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1">{{ f.title|default:"Document" }}</h6>
+                      <small class="text-muted">{{ f.file_type }}</small>
+                    </div>
+                    <a href="{{ f.file.url }}" class="btn btn-sm btn-outline" target="_blank" download>
+                      <span class="icon-download"></span>
+                    </a>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="text-center py-5" style="background: var(--footop-gray-lighter); border-radius: var(--radius-md);">
+              <div style="font-size: 3rem; opacity: 0.3;">📁</div>
+              <p class="text-muted mb-0">Aucun fichier disponible</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Contact Card -->
+      <div class="card mb-4" style="background: var(--gradient-primary); color: white;">
+        <div class="card-body p-4 text-center">
+          <h4 class="mb-3">Intéressé par ce joueur ?</h4>
+          <p class="mb-4" style="opacity: 0.9;">Contactez-le pour discuter d'opportunités professionnelles</p>
+          <button class="btn btn-gold btn-block">
+            <span class="icon-envelope me-2"></span> Envoyer un Message
+          </button>
+        </div>
+      </div>
+      
+      <!-- Quick Info Card -->
+      <div class="card">
+        <div class="card-body p-4">
+          <h5 class="mb-3">Informations Rapides</h5>
+          <ul class="list-unstyled mb-0">
+            <li class="mb-3 d-flex align-items-center">
+              <span class="icon-user me-3" style="color: var(--footop-green-dark); font-size: 1.25rem;"></span>
+              <div>
+                <small class="text-muted d-block">Type de Profil</small>
+                <strong>Joueur Professionnel</strong>
+              </div>
+            </li>
+            <li class="mb-3 d-flex align-items-center">
+              <span class="icon-calendar me-3" style="color: var(--footop-green-dark); font-size: 1.25rem;"></span>
+              <div>
+                <small class="text-muted d-block">Membre depuis</small>
+                <strong>Janvier 2024</strong>
+              </div>
+            </li>
+            <li class="d-flex align-items-center">
+              <span class="icon-check me-3" style="color: var(--footop-success); font-size: 1.25rem;"></span>
+              <div>
+                <small class="text-muted d-block">Statut</small>
+                <strong>Profil Vérifié</strong>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Contact Button (Mobile) -->
+<a href="#" class="btn btn-primary btn-lg contact-btn-float d-lg-none">
+  <span class="icon-envelope"></span>
+</a>
 {% endblock %}

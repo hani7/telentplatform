@@ -1,0 +1,619 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tableau de bord Agent - FOOTOP</title>
+  <link rel="icon" href="{% static 'img/core-img/favicon.ico' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+
+  <style>
+    html, body { margin: 0; padding: 0; min-height: 100vh; background: #0a1a0f; }
+
+    .dash-wrapper {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0a1a0f 0%, #0d2b18 60%, #0a1a0f 100%);
+      padding: 0 0 6rem;
+    }
+
+    /* ── Footer Pill ── */
+    .footer-outer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: transparent;
+      padding: 4px 14px calc(4px + env(safe-area-inset-bottom));
+      z-index: 999;
+      display: flex;
+      justify-content: center;
+    }
+    .footer-pill {
+      background: #1db95b;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      width: 100%;
+      max-width: 500px;
+    }
+    .footer-pill-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: rgba(255,255,255,0.82);
+      text-decoration: none;
+      font-size: 0.67rem;
+      font-weight: 500;
+      padding: 4px 14px;
+      border-radius: 14px;
+      border: none;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+      min-width: 60px;
+    }
+    .footer-pill-item i {
+      font-size: 1.45rem;
+      line-height: 1;
+    }
+    .footer-pill-item.is-active {
+      font-weight: 700;
+      color: #fff;
+      border: none;
+    }
+    .footer-pill-item:hover {
+      color: #fff;
+      background: rgba(0,0,0,0.12);
+    }
+
+    /* ── Top Bar ── */
+    .dash-topbar {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .dash-topbar .back-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .dash-topbar .back-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+    .dash-topbar .page-title {
+      color: #fff;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0;
+      flex: 1;
+    }
+    .btn-profile {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.82rem;
+      padding: 5px 14px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.2s;
+    }
+    .btn-profile:hover { background: rgba(255,255,255,0.2); color: #fff; }
+
+    /* ── Content ── */
+    .dash-content {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+
+    .msg-bar {
+      border-radius: 12px;
+      padding: 0.65rem 1rem;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Role Tabs ── */
+    .role-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.2rem;
+    }
+    .role-tab {
+      flex: 1;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .role-tab:hover { color: #fff; background: rgba(255,255,255,0.12); }
+    .role-tab.active {
+      background: #f1b10f;
+      border-color: #f1b10f;
+      color: #000;
+      font-weight: 700;
+    }
+
+    /* ── Filter Card ── */
+    .filter-card {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 1rem 1rem;
+      margin-bottom: 1.2rem;
+    }
+    .filter-title {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+    .filter-card label {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .filter-card input, .filter-card select {
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: #fff;
+      padding: 6px 10px;
+      width: 100%;
+      font-size: 0.85rem;
+      box-sizing: border-box;
+    }
+    .filter-card input::placeholder { color: rgba(255,255,255,0.35); }
+    .filter-card input:focus, .filter-card select:focus {
+      outline: none;
+      border-color: #f1b10f;
+      background: rgba(255,255,255,0.13);
+    }
+    .filter-card select option { background: #0d2b18; color: #fff; }
+    .btn-filter {
+      background: #f1b10f;
+      border: none;
+      border-radius: 20px;
+      color: #000;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 6px 16px;
+    }
+    .btn-filter:hover { background: #d9a00d; }
+    .btn-reset {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.82rem;
+      padding: 6px 14px;
+      text-decoration: none;
+    }
+    .btn-reset:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+    /* ── Section Headers ── */
+    .section-header {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .section-header .count-badge {
+      background: rgba(241,177,15,0.18);
+      color: #f1b10f;
+      font-size: 0.72rem;
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-weight: 700;
+    }
+
+    /* ── Profile Card ── */
+    .profile-card {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 1rem 1rem;
+      margin-bottom: 0.75rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .profile-card:hover { border-color: rgba(241,177,15,0.4); transform: translateY(-1px); }
+
+    .profile-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .profile-name {
+      color: #fff;
+      font-size: 0.98rem;
+      font-weight: 700;
+      margin: 0;
+      text-decoration: none;
+    }
+    .profile-name:hover { color: #f1b10f; }
+    .profile-meta {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.78rem;
+      margin-top: 3px;
+    }
+    .profile-meta i { color: #f1b10f; }
+
+    .profile-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .btn-view {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+    .btn-view:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    .btn-offer {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px; height: 34px;
+      border-radius: 10px;
+      background: rgba(241,177,15,0.15);
+      border: 1px solid rgba(241,177,15,0.4);
+      color: #f1b10f;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-offer:hover { background: rgba(241,177,15,0.3); }
+
+    /* ── Empty State ── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: rgba(255,255,255,0.45);
+    }
+    .empty-state i { font-size: 3rem; margin-bottom: 1rem; display: block; }
+    .empty-state p { font-size: 0.92rem; margin: 0; }
+
+    /* ── Modal override ── */
+    .modal-content {
+      background: #132a1a;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+    }
+    .modal-header {
+      background: rgba(241,177,15,0.12) !important;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px 20px 0 0;
+    }
+    .modal-header .modal-title { color: #f1b10f; font-weight: 700; }
+    .modal-body { color: rgba(255,255,255,0.85); }
+    .modal-body strong { color: #fff; }
+    .modal-body .form-label { color: rgba(255,255,255,0.7); font-weight: 600; font-size: 0.85rem; }
+    .modal-body input, .modal-body textarea {
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      color: #fff;
+      padding: 8px 12px;
+    }
+    .modal-body input::placeholder, .modal-body textarea::placeholder { color: rgba(255,255,255,0.35); }
+    .modal-body input:focus, .modal-body textarea:focus {
+      outline: none;
+      border-color: #f1b10f;
+      background: rgba(255,255,255,0.13);
+      box-shadow: none;
+    }
+    .modal-footer { border-top: 1px solid rgba(255,255,255,0.1); }
+    .modal-footer .btn-outline-secondary {
+      color: rgba(255,255,255,0.6);
+      border-color: rgba(255,255,255,0.2);
+    }
+    .modal-footer .btn-success {
+      background: #f1b10f;
+      border: none;
+      color: #000;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 6px 20px;
+    }
+    .modal-footer .btn-success:hover { background: #d9a00d; }
+  </style>
+</head>
+
+<body>
+  <div class="dash-wrapper">
+
+    <!-- Top Bar -->
+    <div class="dash-topbar">
+      <h1 class="page-title"><i class="ti ti-layout-dashboard" style="color:#f1b10f;"></i> Tableau de bord</h1>
+      <a href="{% url 'agents:profile_edit' %}" class="btn-profile">
+        <i class="ti ti-user-circle"></i> Profil
+      </a>
+    </div>
+
+    <div class="dash-content">
+
+      <!-- Django messages -->
+      {% for msg in messages %}
+        <div class="msg-bar alert alert-{% if msg.tags == 'success' %}success{% elif msg.tags == 'error' %}danger{% else %}info{% endif %}">
+          {{ msg }}
+        </div>
+      {% endfor %}
+
+      <!-- ── Role Tabs ── -->
+      <div class="role-tabs">
+        <a href="?role=ALL" class="role-tab {% if role_filter == 'ALL' %}active{% endif %}">
+          <i class="ti ti-list"></i> Tous
+        </a>
+        <a href="?role=PLAYER" class="role-tab {% if role_filter == 'PLAYER' %}active{% endif %}">
+          <i class="ti ti-ball-football"></i> Joueurs
+        </a>
+        <a href="?role=COACH" class="role-tab {% if role_filter == 'COACH' %}active{% endif %}">
+          <i class="ti ti-whistle"></i> Entraîneurs
+        </a>
+      </div>
+
+      <!-- ── Filters (when specific role selected) ── -->
+      {% if role_filter == "PLAYER" or role_filter == "COACH" %}
+      <div class="filter-card">
+        <div class="filter-title"><i class="ti ti-filter"></i> Filtres</div>
+        <form method="get">
+          <input type="hidden" name="role" value="{{ role_filter }}">
+
+          {% if role_filter == "PLAYER" %}
+            <div class="row g-2 mb-2">
+              <div class="col-6">
+                <label>Poste</label>
+                <input name="position" value="{{ request.GET.position|default:'' }}" placeholder="Ex: Attaquant">
+              </div>
+              <div class="col-6">
+                <label>Pays</label>
+                <input name="country" value="{{ request.GET.country|default:'' }}" placeholder="Ex: Algérie">
+              </div>
+              <div class="col-4">
+                <label>Statut</label>
+                <select name="status">
+                  <option value="">--</option>
+                  <option value="AMATEUR" {% if request.GET.status == "AMATEUR" %}selected{% endif %}>Amateur</option>
+                  <option value="PRO" {% if request.GET.status == "PRO" %}selected{% endif %}>Pro</option>
+                </select>
+              </div>
+              <div class="col-4">
+                <label>Pied</label>
+                <select name="foot">
+                  <option value="">--</option>
+                  <option value="L" {% if request.GET.foot == "L" %}selected{% endif %}>Gauche</option>
+                  <option value="R" {% if request.GET.foot == "R" %}selected{% endif %}>Droit</option>
+                  <option value="B" {% if request.GET.foot == "B" %}selected{% endif %}>Les 2</option>
+                </select>
+              </div>
+              <div class="col-4">
+                <label>Taille min</label>
+                <input type="number" name="height_min" value="{{ request.GET.height_min|default:'' }}" placeholder="cm">
+              </div>
+              <div class="col-4">
+                <label>Taille max</label>
+                <input type="number" name="height_max" value="{{ request.GET.height_max|default:'' }}" placeholder="cm">
+              </div>
+              <div class="col-4">
+                <label>Salaire min</label>
+                <input type="number" name="salary_min" value="{{ request.GET.salary_min|default:'' }}">
+              </div>
+              <div class="col-4">
+                <label>Salaire max</label>
+                <input type="number" name="salary_max" value="{{ request.GET.salary_max|default:'' }}">
+              </div>
+            </div>
+          {% elif role_filter == "COACH" %}
+            <div class="row g-2 mb-2">
+              <div class="col-4">
+                <label>Statut</label>
+                <select name="status">
+                  <option value="">--</option>
+                  <option value="AMATEUR" {% if request.GET.status == "AMATEUR" %}selected{% endif %}>Amateur</option>
+                  <option value="PRO" {% if request.GET.status == "PRO" %}selected{% endif %}>Pro</option>
+                </select>
+              </div>
+              <div class="col-4">
+                <label>Pays</label>
+                <input name="country" value="{{ request.GET.country|default:'' }}" placeholder="Ex: Algérie">
+              </div>
+              <div class="col-4">
+                <label>Diplôme</label>
+                <input name="diploma" value="{{ request.GET.diploma|default:'' }}" placeholder="Ex: CAF-A">
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="d-flex gap-2">
+            <button class="btn-filter" type="submit"><i class="ti ti-filter"></i> Filtrer</button>
+            <a class="btn-reset" href="?role={{ role_filter }}">Réinitialiser</a>
+          </div>
+        </form>
+      </div>
+      {% endif %}
+
+      <!-- ── Players ── -->
+      {% if players %}
+      <div class="section-header">
+        <i class="ti ti-ball-football"></i> Joueurs
+        <span class="count-badge">{{ players|length }}</span>
+      </div>
+      {% for p in players %}
+        <div class="profile-card">
+          <div class="profile-card-top">
+            <div>
+              <a href="{% url 'players:public_profile' p.pk %}" class="profile-name">
+                {{ p.first_name }} {{ p.last_name }}
+              </a>
+              <div class="profile-meta">
+                <i class="ti ti-ball-football"></i> {{ p.position|default:"–" }}
+                &middot; {{ p.current_club_country|default:"–" }}
+                &middot; {{ p.get_status_display|default:"–" }}
+                {% if p.age %} &middot; {{ p.age }} ans{% endif %}
+              </div>
+            </div>
+            <div class="profile-actions">
+              <a href="{% url 'players:public_profile' p.pk %}" class="btn-view"><i class="ti ti-eye"></i></a>
+              <button class="btn-offer" data-bs-toggle="modal" data-bs-target="#offerModal"
+                      data-recipient-id="{{ p.user.pk }}"
+                      data-recipient-name="{{ p.first_name }} {{ p.last_name }}">
+                <i class="ti ti-send"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      {% endif %}
+
+      <!-- ── Coaches ── -->
+      {% if coaches %}
+      <div class="section-header" {% if players %}style="margin-top:1.2rem;"{% endif %}>
+        <i class="ti ti-whistle"></i> Entraîneurs
+        <span class="count-badge">{{ coaches|length }}</span>
+      </div>
+      {% for c in coaches %}
+        <div class="profile-card">
+          <div class="profile-card-top">
+            <div>
+              <a href="{% url 'coaches:public_profile' c.pk %}" class="profile-name">
+                {{ c.first_name }} {{ c.last_name }}
+              </a>
+              <div class="profile-meta">
+                <i class="ti ti-whistle"></i> {{ c.current_club_country|default:"–" }}
+                &middot; {{ c.get_status_display|default:"–" }}
+                {% if c.age %} &middot; {{ c.age }} ans{% endif %}
+              </div>
+            </div>
+            <div class="profile-actions">
+              <a href="{% url 'coaches:public_profile' c.pk %}" class="btn-view"><i class="ti ti-eye"></i></a>
+              <button class="btn-offer" data-bs-toggle="modal" data-bs-target="#offerModal"
+                      data-recipient-id="{{ c.user.pk }}"
+                      data-recipient-name="{{ c.first_name }} {{ c.last_name }}">
+                <i class="ti ti-send"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      {% endif %}
+
+      <!-- ── Empty ── -->
+      {% if not players and not coaches %}
+      <div class="empty-state">
+        <i class="ti ti-mood-empty"></i>
+        <p>Aucun profil trouvé</p>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <!-- ── Send Offer Modal ── -->
+  <div class="modal fade" id="offerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form method="post" action="{% url 'agents:send_offer' %}">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h6 class="modal-title"><i class="ti ti-send me-1"></i> Envoyer une offre</h6>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" name="recipient_id" id="modalRecipientId">
+            <p class="mb-2">Destinataire : <strong id="modalRecipientName"></strong></p>
+            <div class="mb-3">
+              <label class="form-label">Titre de l'offre</label>
+              <input type="text" class="form-control" name="title" required placeholder="Ex: Offre de transfert">
+            </div>
+            <div class="mb-0">
+              <label class="form-label">Message</label>
+              <textarea class="form-control" name="message" rows="3" required placeholder="Décrivez votre offre..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-success"><i class="ti ti-send me-1"></i> Envoyer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Fixed Footer Pill ── -->
+  <div class="footer-outer">
+    <nav class="footer-pill">
+      <a href="/agents/dashboard/" class="footer-pill-item is-active">
+        <i class="ti ti-layout-dashboard"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="/agents/me/" class="footer-pill-item">
+        <i class="ti ti-user-circle"></i>
+        <span>Profil</span>
+      </a>
+      <a href="/offers/suggestions/" class="footer-pill-item">
+        <i class="ti ti-clipboard-list"></i>
+        <span>Offres</span>
+      </a>
+      <a href="/accounts/logout/" class="footer-pill-item">
+        <i class="ti ti-logout"></i>
+        <span>Déconnexion</span>
+      </a>
+    </nav>
+  </div>
+
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script>
+    document.getElementById('offerModal').addEventListener('show.bs.modal', function (event) {
+      var button = event.relatedTarget;
+      document.getElementById('modalRecipientId').value = button.getAttribute('data-recipient-id');
+      document.getElementById('modalRecipientName').textContent = button.getAttribute('data-recipient-name');
+    });
+  </script>
+</body>
+</html>

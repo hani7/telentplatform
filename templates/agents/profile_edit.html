@@ -1,0 +1,396 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profil Agent - FOOTOP</title>
+  <link rel="icon" href="{% static 'img/core-img/favicon.ico' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+
+  <style>
+    html, body { margin: 0; padding: 0; min-height: 100vh; }
+
+    .profile-wrapper {
+      min-height: 100vh;
+      background-image: url("{% static 'img/bg-img/bg-agent.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .profile-overlay {
+      position: fixed; inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,20,8,0.93) 100%);
+      z-index: 0;
+    }
+    .profile-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 540px;
+      padding: 2rem 1.25rem 6rem;
+      box-sizing: border-box;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 1.1rem; left: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 1.5px solid rgba(255,255,255,0.4);
+      color: #fff;
+      font-size: 1.2rem;
+      text-decoration: none;
+      z-index: 10;
+      transition: background 0.2s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.25); color: #fff; }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
+    .page-header .logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .page-header .logo-wrap img { height: 36px; width: auto; }
+    .page-header h1 {
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+    .page-header p {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    /* ── Form Card ── */
+    .form-card {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 22px;
+      padding: 1.6rem 1.25rem;
+    }
+
+    .form-label-custom {
+      color: rgba(255,255,255,0.75);
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .form-control-custom {
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 12px;
+      color: #fff;
+      padding: 0.65rem 1rem;
+      width: 100%;
+      font-size: 0.92rem;
+      box-sizing: border-box;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .form-control-custom::placeholder { color: rgba(255,255,255,0.4); }
+    .form-control-custom:focus {
+      outline: none;
+      border-color: #f1b10f;
+      background: rgba(255,255,255,0.13);
+    }
+    select.form-control-custom option { background: #0d2b18; color: #fff; }
+
+    /* Style Django widget selects to match */
+    .form-card select {
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 12px;
+      color: #fff;
+      padding: 0.65rem 1rem;
+      width: 100%;
+      font-size: 0.92rem;
+      box-sizing: border-box;
+      transition: border-color 0.2s, background 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .form-card select:focus {
+      outline: none;
+      border-color: #f1b10f;
+      background: rgba(255,255,255,0.13);
+    }
+    .form-card select option { background: #0d2b18; color: #fff; }
+
+    .msg-bar {
+      border-radius: 12px;
+      padding: 0.65rem 1rem;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .btn-save {
+      border-radius: 50px;
+      padding: 0.75rem;
+      font-weight: 700;
+      font-size: 1rem;
+      width: 100%;
+      border: none;
+      background: #f1b10f;
+      color: #000;
+      transition: background 0.2s;
+      margin-top: 0.5rem;
+    }
+    .btn-save:hover { background: #d9a00d; }
+
+    .btn-dashboard {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.88rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .btn-dashboard:hover { color: #f1b10f; }
+
+    /* ── Footer Pill ── */
+    .footer-outer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: transparent;
+      padding: 4px 14px calc(4px + env(safe-area-inset-bottom));
+      z-index: 999;
+      display: flex;
+      justify-content: center;
+    }
+    .footer-pill {
+      background: #1db95b;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      width: 100%;
+      max-width: 500px;
+    }
+    .footer-pill-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: rgba(255,255,255,0.82);
+      text-decoration: none;
+      font-size: 0.67rem;
+      font-weight: 500;
+      padding: 4px 14px;
+      border-radius: 14px;
+      border: none;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+      min-width: 60px;
+    }
+    .footer-pill-item i { font-size: 1.45rem; line-height: 1; }
+    .footer-pill-item.is-active { font-weight: 700; color: #fff; }
+    .footer-pill-item:hover { color: #fff; background: rgba(0,0,0,0.12); }
+  </style>
+</head>
+
+<body>
+  <div class="profile-wrapper">
+    <div class="profile-overlay"></div>
+
+    <div class="profile-content">
+
+      <!-- Header -->
+      <div class="page-header">
+        <div class="logo-wrap">
+          <img src="{% static 'img/core-img/footop-logo-white.png' %}" alt="FOOTOP">
+        </div>
+        <h1><i class="ti ti-user-check" style="color:#f1b10f;"></i> Profil Agent</h1>
+        <p>Complétez votre profil pour commencer</p>
+      </div>
+
+      <!-- Django messages -->
+      {% for msg in messages %}
+        <div class="msg-bar alert alert-{% if msg.tags == 'success' %}success{% elif msg.tags == 'error' %}danger{% else %}info{% endif %}">
+          {{ msg }}
+        </div>
+      {% endfor %}
+
+      <!-- Form -->
+      <div class="form-card">
+        <form method="post">
+          {% csrf_token %}
+
+          <div class="row g-3">
+            <div class="col-6">
+              <span class="form-label-custom">Prénom</span>
+              <input class="form-control-custom" name="first_name" value="{{ form.first_name.value|default:'' }}" placeholder="Prénom">
+            </div>
+            <div class="col-6">
+              <span class="form-label-custom">Nom</span>
+              <input class="form-control-custom" name="last_name" value="{{ form.last_name.value|default:'' }}" placeholder="Nom">
+            </div>
+            <div class="col-6">
+              <span class="form-label-custom">Date de naissance</span>
+              <input type="date" class="form-control-custom" name="birth_date" value="{{ form.birth_date.value|default:'' }}">
+            </div>
+            <div class="col-6">
+              <span class="form-label-custom">Lieu de naissance</span>
+              <input class="form-control-custom" name="birth_place" value="{{ form.birth_place.value|default:'' }}" placeholder="Ville">
+            </div>
+            <div class="col-6">
+              <span class="form-label-custom">Genre</span>
+              <select class="form-control-custom" name="gender">
+                <option value="">--</option>
+                <option value="M" {% if form.gender.value == 'M' %}selected{% endif %}>Masculin</option>
+                <option value="F" {% if form.gender.value == 'F' %}selected{% endif %}>Féminin</option>
+              </select>
+            </div>
+            <div class="col-6" style="position:relative;">
+              <span class="form-label-custom">Nationalité</span>
+              <input type="hidden" name="nationality" id="nationalityValue" value="{{ form.nationality.value|default:'' }}">
+              <input type="text" class="form-control-custom" id="nationalitySearch"
+                     placeholder="Rechercher..."
+                     autocomplete="off"
+                     value="{% for n in nationalities %}{% if n.pk|stringformat:'d' == form.nationality.value|stringformat:'d' %}{{ n.name }}{% endif %}{% endfor %}">
+              <div id="nationalityDropdown" style="
+                display:none;
+                position:absolute;
+                left:12px; right:12px;
+                top:100%;
+                max-height:200px;
+                overflow-y:auto;
+                background:rgba(13,43,24,0.97);
+                border:1px solid rgba(255,255,255,0.2);
+                border-radius:10px;
+                z-index:50;
+                margin-top:2px;
+              ">
+                {% for n in nationalities %}
+                <div class="nat-option" data-id="{{ n.pk }}" data-name="{{ n.name }}" style="
+                  padding:8px 12px;
+                  color:rgba(255,255,255,0.8);
+                  font-size:0.88rem;
+                  cursor:pointer;
+                  transition:background 0.15s;
+                " onmouseover="this.style.background='rgba(241,177,15,0.2)'" onmouseout="this.style.background='transparent'">
+                  {{ n.name }}
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="col-6">
+              <span class="form-label-custom">N° Licence</span>
+              <input class="form-control-custom" name="license_number" value="{{ form.license_number.value|default:'' }}" placeholder="FIFA / fédérale">
+            </div>
+            <div class="col-6">
+              <span class="form-label-custom">Nom d'agence</span>
+              <input class="form-control-custom" name="agency_name" value="{{ form.agency_name.value|default:'' }}" placeholder="Agence">
+            </div>
+            <div class="col-6">
+              <span class="form-label-custom">Spécialisation</span>
+              <select class="form-control-custom" name="specialization">
+                <option value="BOTH" {% if form.specialization.value == 'BOTH' %}selected{% endif %}>Joueurs & Entraîneurs</option>
+                <option value="PLAYERS" {% if form.specialization.value == 'PLAYERS' %}selected{% endif %}>Joueurs</option>
+                <option value="COACHES" {% if form.specialization.value == 'COACHES' %}selected{% endif %}>Entraîneurs</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <span class="form-label-custom">Années d'expérience</span>
+              <input type="number" class="form-control-custom" name="years_experience" value="{{ form.years_experience.value|default:'' }}" placeholder="0">
+            </div>
+            <div class="col-12">
+              <span class="form-label-custom">Biographie</span>
+              <textarea class="form-control-custom" name="bio" rows="3" placeholder="Parlez de vous...">{{ form.bio.value|default:'' }}</textarea>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-save">
+            <i class="ti ti-device-floppy"></i> Enregistrer
+          </button>
+        </form>
+
+        <a href="{% url 'agents:dashboard' %}" class="btn-dashboard">
+          <i class="ti ti-layout-dashboard"></i> Aller au Tableau de bord →
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Fixed Footer Pill ── -->
+  <div class="footer-outer">
+    <nav class="footer-pill">
+      <a href="/agents/dashboard/" class="footer-pill-item">
+        <i class="ti ti-layout-dashboard"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="/agents/me/" class="footer-pill-item is-active">
+        <i class="ti ti-user-circle"></i>
+        <span>Profil</span>
+      </a>
+      <a href="/offers/suggestions/" class="footer-pill-item">
+        <i class="ti ti-clipboard-list"></i>
+        <span>Offres</span>
+      </a>
+      <a href="/accounts/logout/" class="footer-pill-item">
+        <i class="ti ti-logout"></i>
+        <span>Déconnexion</span>
+      </a>
+    </nav>
+  </div>
+
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script>
+    (function() {
+      const search = document.getElementById('nationalitySearch');
+      const dropdown = document.getElementById('nationalityDropdown');
+      const hidden = document.getElementById('nationalityValue');
+      const options = dropdown.querySelectorAll('.nat-option');
+
+      search.addEventListener('focus', () => { dropdown.style.display = 'block'; filterOptions(); });
+      search.addEventListener('input', filterOptions);
+
+      function filterOptions() {
+        const q = search.value.toLowerCase();
+        options.forEach(opt => {
+          opt.style.display = opt.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+        });
+      }
+
+      options.forEach(opt => {
+        opt.addEventListener('click', () => {
+          hidden.value = opt.dataset.id;
+          search.value = opt.dataset.name;
+          dropdown.style.display = 'none';
+        });
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!search.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.style.display = 'none';
+        }
+      });
+    })();
+  </script>
+<script src="{% static 'js/searchable-dropdown.js' %}"></script>
+<script>initSearchableDropdowns();</script>
+</body>
+</html>

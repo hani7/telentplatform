@@ -1,13 +1,29 @@
 from django import forms
 from django.forms import inlineformset_factory
 from .models import PlayerProfile, PlayerPreviousClub, PlayerStat, PlayerFile
+from .countries import COUNTRIES
 
 
 class PlayerProfileForm(forms.ModelForm):
+    # Override nationality to use choices directly instead of ForeignKey
+    nationality = forms.ChoiceField(
+        choices=[('', '-- Sélectionner une nationalité --')] + COUNTRIES,
+        required=False,
+        label="Nationalité",
+        widget=forms.Select(attrs={"class": "form-control"})
+    )
+    
+    # Override current_club_country to use choices
+    current_club_country = forms.ChoiceField(
+        choices=[('', '-- Sélectionner un pays --')] + COUNTRIES,
+        required=False,
+        label="Pays (club actuel)"
+    )
+    
     class Meta:
         model = PlayerProfile
         fields = [
-            "first_name", "last_name", "birth_date", "birth_place", "gender", "nationality",
+            "first_name", "last_name", "birth_date", "birth_place", "gender",
             "is_minor", "parents_declaration", "parents_notes",
 
             "status", "position", "salary_min", "salary_max", "foot",
@@ -21,7 +37,7 @@ class PlayerProfileForm(forms.ModelForm):
 
             "has_agent_contract", "agent_full_name", "agent_id", "represent_self",
 
-            "target_club_notes", "visibility_mode", "visibility_filters", "visibility_exceptions",
+            "target_club_notes", "visibility_mode",
         ]
 
         labels = {
@@ -55,22 +71,18 @@ class PlayerProfileForm(forms.ModelForm):
             "search_objective": "Que cherchez-vous sur la plateforme ? (Stage, Test, Contrat…)",
 
             "has_agent_contract": "Contrat avec Agent ?",
-            "agent_full_name": "Nom complet de l’agent",
-            "agent_id": "ID de l’agent",
+            "agent_full_name": "Nom complet de l'agent",
+            "agent_id": "ID de l'agent",
             "represent_self": "Voulez-vous vous représenter vous-même ?",
 
             "target_club_notes": "Vous visez quel club ? (notes)",
             "visibility_mode": "Préférence de visibilité",
-            "visibility_filters": "Filtres de visibilité (JSON)",
-            "visibility_exceptions": "Exceptions de visibilité (JSON)",
         }
 
         help_texts = {
             "salary_min": "Exemple : 1000.00",
             "salary_max": "Exemple : 2000.00",
             "player_value": "Exemple : 150000.00",
-            "visibility_filters": 'Exemple : {"countries":["DZ"],"divisions":[],"clubs":[]}',
-            "visibility_exceptions": 'Exemple : {"countries":[],"divisions":[],"clubs":["Club X"]}',
         }
 
         widgets = {
@@ -92,8 +104,6 @@ class PlayerProfileForm(forms.ModelForm):
             # Textareas
             "parents_notes": forms.Textarea(attrs={"rows": 2, "placeholder": "Infos utiles (optionnel)"}),
             "target_club_notes": forms.Textarea(attrs={"rows": 2, "placeholder": "Ex: clubs souhaités, pays, division…"}),
-            "visibility_filters": forms.Textarea(attrs={"rows": 2}),
-            "visibility_exceptions": forms.Textarea(attrs={"rows": 2}),
         }
 
     def clean(self):
@@ -115,18 +125,45 @@ class PlayerProfileForm(forms.ModelForm):
 
         return cleaned
 
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        
+        # Convert nationality string to Nationality instance
+        nationality_name = self.cleaned_data.get('nationality')
+        if nationality_name:
+            from .models import Nationality
+            nationality_obj, created = Nationality.objects.get_or_create(name=nationality_name)
+            instance.nationality = nationality_obj
+        else:
+            instance.nationality = None
+        
+        if commit:
+            instance.save()
+        return instance
+
 
 # --------- Formset : Clubs précédents ---------
+class PreviousClubForm(forms.ModelForm):
+    country = forms.ChoiceField(
+        choices=[('', '-- Sélectionner un pays --')] + COUNTRIES,
+        required=False,
+        label="Pays"
+    )
+    
+    class Meta:
+        model = PlayerPreviousClub
+        fields = ["club_name", "country", "division", "start_date", "end_date"]
+        widgets = {
+            "start_date": forms.DateInput(attrs={"type": "date"}),
+            "end_date": forms.DateInput(attrs={"type": "date"}),
+        }
+
 PreviousClubFormSet = inlineformset_factory(
     PlayerProfile,
     PlayerPreviousClub,
-    fields=["club_name", "country", "division", "start_date", "end_date"],
+    form=PreviousClubForm,
     extra=1,
     can_delete=True,
-    widgets={
-        "start_date": forms.DateInput(attrs={"type": "date"}),
-        "end_date": forms.DateInput(attrs={"type": "date"}),
-    }
 )
 
 

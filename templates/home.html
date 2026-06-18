@@ -1,5 +1,235 @@
-{% extends "base.html" %}
-{% block content %}
-<h1>Talent Platform</h1>
-<p>Joueurs & Entraîneurs + Recherche Clubs/Agents</p>
-{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="FOOTOP - Plateforme de Découverte de Talents">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <meta name="theme-color" content="#1e9751">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <!-- Title -->
+  <title>FOOTOP - Plateforme de Découverte de Talents</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'img/core-img/favicon.ico' %}">
+  <link rel="apple-touch-icon" href="{% static 'img/icons/icon-96x96.png' %}">
+  <link rel="apple-touch-icon" sizes="152x152" href="{% static 'img/icons/icon-152x152.png' %}">
+  <link rel="apple-touch-icon" sizes="167x167" href="{% static 'img/icons/icon-167x167.png' %}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/icons/icon-180x180.png' %}">
+
+  <!-- Style CSS -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  <!-- Web App Manifest -->
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+</head>
+
+<body>
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="spinner-grow text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+
+  <!-- Hero Block Wrapper -->
+  <div class="home-hero-wrapper">
+    <!-- Dark overlay -->
+    <div class="home-hero-overlay"></div>
+
+    <div class="home-hero-container">
+      <!-- Top Bar: Logo + Skip -->
+      <div class="home-topbar">
+        <!-- Logo -->
+        <img src="{% static 'img/core-img/footop-logo-white.png' %}" alt="FOOTOP Logo" class="home-logo">
+        <!-- Skip Page -->
+        <div class="skip-page">
+          {% if user.is_authenticated %}
+            {% if user.role == 'PLAYER' %}
+              <a href="{% url 'players:profile_edit' %}" class="home-skip-link">Passer</a>
+            {% else %}
+              <a href="{% url 'home' %}" class="home-skip-link">Passer</a>
+            {% endif %}
+          {% else %}
+            <a href="{% url 'accounts:login' %}" class="home-skip-link">Passer</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Hero Block Content -->
+      <div class="home-hero-content">
+        <h1 class="home-hero-title">Élevez Votre <b>Carrière</b></h1>
+        <p class="home-hero-subtitle">
+          Combler le fossé entre talent et opportunité. La plateforme ultime pour que les joueurs se fassent repérer, que les agents trouvent des talents et que les entraîneurs construisent des équipes gagnantes.
+        </p>
+        {% if user.is_authenticated %}
+          {% if user.role == 'PLAYER' %}
+            <a class="btn btn-warning btn-lg w-100" href="{% url 'players:profile_edit' %}">
+              Mon Profil <i class="ti ti-arrow-right"></i>
+            </a>
+          {% else %}
+            <a class="btn btn-warning btn-lg w-100" href="{% url 'home' %}">
+              Continuer <i class="ti ti-arrow-right"></i>
+            </a>
+          {% endif %}
+        {% else %}
+          <!-- Two buttons side by side -->
+          <div class="home-hero-actions">
+            <a class="btn btn-warning btn-lg home-btn-primary" href="{% url 'accounts:register_role' %}">
+              Commencer <i class="ti ti-arrow-right"></i>
+            </a>
+            <a class="btn btn-lg home-btn-secondary" href="{% url 'accounts:login' %}">
+              Se Connecter
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if user.is_authenticated %}
+  <!-- ── Figma Footer Nav ── -->
+  <div class="footer-outer">
+    <nav class="footer-pill">
+
+      {% if user.role == 'PLAYER' or user.role == 'COACH' %}
+        <a href="{% url 'offers:my_offers' %}" class="footer-pill-item {% if request.path == '/offers/my/' %}active{% endif %}">
+          <i class="ti ti-clipboard-list"></i>
+          <span>Offres</span>
+        </a>
+        {% if user.role == 'PLAYER' %}
+          <a href="{% url 'players:profile_edit' %}" class="footer-pill-item">
+            <i class="ti ti-user"></i>
+            <span>Profil</span>
+          </a>
+          <a href="{% url 'players:profile_edit' %}" class="footer-pill-item {% if 'edit' in request.path %}active{% endif %}">
+            <i class="ti ti-edit"></i>
+            <span>Modifier</span>
+          </a>
+        {% else %}
+          <a href="{% url 'coaches:profile_edit' %}" class="footer-pill-item">
+            <i class="ti ti-user"></i>
+            <span>Profil</span>
+          </a>
+          <a href="{% url 'coaches:profile_edit' %}" class="footer-pill-item">
+            <i class="ti ti-edit"></i>
+            <span>Modifier</span>
+          </a>
+        {% endif %}
+
+      {% elif user.role == 'AGENT' or user.role == 'CLUB' %}
+        <a href="{% url 'offers:my_suggestions' %}" class="footer-pill-item {% if 'suggestions' in request.path %}active{% endif %}">
+          <i class="ti ti-clipboard-list"></i>
+          <span>Offres</span>
+        </a>
+        <a href="{% url 'offers:send_offer' %}" class="footer-pill-item {% if 'send' in request.path %}active{% endif %}">
+          <i class="ti ti-send"></i>
+          <span>Envoyer</span>
+        </a>
+        <a href="{% url 'home' %}" class="footer-pill-item">
+          <i class="ti ti-home"></i>
+          <span>Accueil</span>
+        </a>
+      {% endif %}
+
+      <a href="{% url 'accounts:logout' %}" class="footer-pill-item">
+        <i class="ti ti-logout"></i>
+        <span>Déconnexion</span>
+      </a>
+
+    </nav>
+  </div>
+
+  <style>
+    /* ── Outer dark bar ── */
+    .footer-outer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #111;
+      padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+      z-index: 200;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ── Green pill ── */
+    .footer-pill {
+      background: #1db95b;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 10px 20px;
+      width: 100%;
+      max-width: 480px;
+      gap: 4px;
+    }
+
+    /* ── Each item ── */
+    .footer-pill-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: 0.65rem;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .footer-pill-item i {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+    .footer-pill-item span {
+      letter-spacing: 0.01em;
+    }
+
+    /* Active state */
+    .footer-pill-item.active {
+      font-weight: 700;
+      color: #fff;
+      border-color: rgba(255,255,255,0.9);
+    }
+
+    /* Hover */
+    .footer-pill-item:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.12);
+    }
+
+    /* Push page content above footer */
+    body { padding-bottom: 90px; }
+  </style>
+  {% endif %}
+
+
+
+  <!-- All JavaScript Files -->
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/slideToggle.min.js' %}"></script>
+  <script src="{% static 'js/internet-status.js' %}"></script>
+  <script src="{% static 'js/tiny-slider.js' %}"></script>
+  <script src="{% static 'js/venobox.min.js' %}"></script>
+  <script src="{% static 'js/countdown.js' %}"></script>
+  <script src="{% static 'js/rangeslider.min.js' %}"></script>
+  <script src="{% static 'js/vanilla-dataTables.min.js' %}"></script>
+  <script src="{% static 'js/index.js' %}"></script>
+  <script src="{% static 'js/imagesloaded.pkgd.min.js' %}"></script>
+  <script src="{% static 'js/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'js/nice-select2.js' %}"></script>
+  <script src="{% static 'js/dark-rtl.js' %}"></script>
+  <script src="{% static 'js/active.js' %}"></script>
+  <script src="{% static 'js/pwa.js' %}"></script>
+</body>
+
+</html>

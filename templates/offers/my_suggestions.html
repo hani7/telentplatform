@@ -1,0 +1,247 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mes Suggestions - FOOTOP</title>
+  <link rel="icon" href="{% static 'img/core-img/favicon.ico' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+
+  <style>
+    html, body { margin: 0; padding: 0; min-height: 100vh; background: #0a1a0f; }
+
+    .sugg-wrapper {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0a1a0f 0%, #0d2b18 60%, #0a1a0f 100%);
+      padding: 0 0 3rem;
+    }
+
+    .sugg-topbar {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .sugg-topbar .back-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.1rem;
+    }
+    .sugg-topbar .back-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+    .sugg-topbar .page-title {
+      color: #fff;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0;
+      flex: 1;
+    }
+    .btn-new-offer {
+      background: #f1b10f;
+      border: none;
+      border-radius: 20px;
+      color: #000;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 6px 14px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.2s;
+    }
+    .btn-new-offer:hover { background: #d9a00d; color: #000; }
+
+    .sugg-content {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+
+    .msg-bar {
+      border-radius: 12px;
+      padding: 0.65rem 1rem;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.2rem;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .filter-tab {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.82rem;
+      padding: 5px 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .filter-tab.active, .filter-tab:hover {
+      background: #f1b10f;
+      border-color: #f1b10f;
+      color: #000;
+      font-weight: 600;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: rgba(255,255,255,0.45);
+    }
+    .empty-state i { font-size: 3rem; margin-bottom: 1rem; display: block; }
+    .empty-state p { font-size: 0.92rem; margin: 0; }
+
+    .offer-card {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 1.2rem 1.1rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .offer-card:hover { border-color: rgba(241,177,15,0.4); transform: translateY(-1px); }
+
+    .offer-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.6rem;
+    }
+    .offer-card-title { color: #fff; font-size: 1rem; font-weight: 700; margin: 0; flex: 1; }
+
+    .offer-badge { font-size: 0.72rem; font-weight: 700; border-radius: 20px; padding: 3px 10px; white-space: nowrap; }
+    .badge-pending  { background: rgba(241,177,15,0.18); color: #f1b10f; border: 1px solid rgba(241,177,15,0.4); }
+    .badge-accepted { background: rgba(30,200,100,0.18); color: #4ddb8a; border: 1px solid rgba(30,200,100,0.4); }
+    .badge-declined { background: rgba(255,80,80,0.15);  color: #ff8080; border: 1px solid rgba(255,80,80,0.3); }
+
+    .offer-recipient { color: rgba(255,255,255,0.55); font-size: 0.8rem; margin-bottom: 0.7rem; }
+    .offer-recipient i { color: #f1b10f; }
+    .offer-recipient strong { color: rgba(255,255,255,0.8); }
+
+    .offer-message {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.88rem;
+      line-height: 1.55;
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .offer-date { color: rgba(255,255,255,0.35); font-size: 0.75rem; }
+  </style>
+</head>
+
+<body>
+  <div class="sugg-wrapper">
+
+    <!-- Top Bar -->
+    <div class="sugg-topbar">
+      <a href="{% url 'home' %}" class="back-btn"><i class="ti ti-arrow-left"></i></a>
+      <h1 class="page-title"><i class="ti ti-send" style="color:#f1b10f;"></i> Mes Suggestions</h1>
+      <a href="{% url 'offers:send_offer' %}" class="btn-new-offer">
+        <i class="ti ti-plus"></i> Nouvelle
+      </a>
+    </div>
+
+    <div class="sugg-content">
+
+      {% for msg in messages %}
+        <div class="msg-bar alert alert-{% if msg.tags == 'success' %}success{% elif msg.tags == 'error' %}danger{% else %}info{% endif %}">
+          {{ msg }}
+        </div>
+      {% endfor %}
+
+      <!-- Stats -->
+      {% if sent_offers %}
+        <div style="display:flex; gap:10px; margin-bottom:1.2rem; overflow-x:auto; padding-bottom:4px;">
+          <div style="background:rgba(241,177,15,0.12);border:1px solid rgba(241,177,15,0.3);border-radius:14px;padding:10px 18px;min-width:90px;text-align:center;">
+            <div style="color:#f1b10f;font-size:1.4rem;font-weight:700;">{{ sent_offers|length }}</div>
+            <div style="color:rgba(255,255,255,0.55);font-size:0.72rem;">Envoyées</div>
+          </div>
+          <div style="background:rgba(30,200,100,0.1);border:1px solid rgba(30,200,100,0.3);border-radius:14px;padding:10px 18px;min-width:90px;text-align:center;">
+            <div style="color:#4ddb8a;font-size:1.4rem;font-weight:700;">
+              {% with sent_offers|dictsort:"status" as sorted %}
+                {{ sent_offers|length }}
+              {% endwith %}
+            </div>
+            <div style="color:rgba(255,255,255,0.55);font-size:0.72rem;">Total</div>
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Filter Tabs -->
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="filterOffers('all', this)">Toutes</button>
+        <button class="filter-tab" onclick="filterOffers('PENDING', this)">⏳ En attente</button>
+        <button class="filter-tab" onclick="filterOffers('ACCEPTED', this)">✅ Acceptées</button>
+        <button class="filter-tab" onclick="filterOffers('DECLINED', this)">❌ Refusées</button>
+      </div>
+
+      <!-- List -->
+      {% if sent_offers %}
+        {% for offer in sent_offers %}
+          <div class="offer-card" data-status="{{ offer.status }}">
+            <div class="offer-card-header">
+              <h2 class="offer-card-title">{{ offer.title }}</h2>
+              <span class="offer-badge badge-{{ offer.status|lower }}">{{ offer.get_status_display }}</span>
+            </div>
+            <div class="offer-recipient">
+              <i class="ti ti-user"></i>
+              À : <strong>{{ offer.recipient.get_full_name|default:offer.recipient.username }}</strong>
+              &nbsp;·&nbsp;
+              <i class="ti ti-shirt-sport"></i> {{ offer.recipient.get_role_display }}
+            </div>
+            <div class="offer-message">{{ offer.message }}</div>
+            <div class="offer-date"><i class="ti ti-calendar"></i> {{ offer.created_at|date:"d M Y à H:i" }}</div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <i class="ti ti-send"></i>
+          <p>Aucune suggestion envoyée.<br>
+            <a href="{% url 'offers:send_offer' %}" style="color:#f1b10f;font-weight:600;">Envoyer ma première suggestion</a>
+          </p>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script>
+    function filterOffers(status, btn) {
+      document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.offer-card').forEach(card => {
+        card.style.display = (status === 'all' || card.dataset.status === status) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

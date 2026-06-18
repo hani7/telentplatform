@@ -1,25 +1,305 @@
-{% extends "base.html" %}
-{% block title %}Register{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
 
-{% block content %}
-<div class="row justify-content-center">
-  <div class="col-lg-6">
-    <div class="bg-white p-4 p-md-5 rounded">
-      <h2 class="mb-4">Choisir rôle</h2>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="FOOTOP - Choose Your Role">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme-color" content="#1e9751">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title>Choisir votre Rôle - FOOTOP</title>
 
-      <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-          <select name="role" class="form-control">
-            <option value="PLAYER">Joueur</option>
-            <option value="COACH">Entraîneur</option>
-            <option value="AGENT">Agent</option>
-            <option value="CLUB">Club</option>
-          </select>
-        </div>
-        <button class="btn btn-primary btn-block" type="submit">Continuer</button>
-      </form>
+  <link rel="icon" href="{% static 'img/core-img/favicon.ico' %}">
+  <link rel="apple-touch-icon" href="{% static 'img/icons/icon-96x96.png' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .role-page-wrapper {
+      min-height: 100vh;
+      background-image: url("{% static 'img/bg-img/bg-home.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .role-page-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.55) 0%,
+        rgba(0, 20, 8, 0.90) 100%
+      );
+      z-index: 0;
+    }
+
+    .role-page-content {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 6rem 1.25rem 2rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .role-back-btn {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 9999;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      color: #fff;
+      font-size: 1.2rem;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.15s ease;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    }
+    .role-back-btn:hover { background: rgba(255,255,255,0.28); color: #fff; transform: scale(1.07); }
+
+    .role-page-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .role-page-header h1 {
+      color: #ffffff;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    .role-page-header p {
+      color: rgba(255,255,255,0.72);
+      font-size: 0.88rem;
+    }
+
+    .role-card {
+      cursor: pointer;
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 22px 12px 18px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      height: 100%;
+    }
+    .role-card:hover {
+      border-color: rgba(255, 255, 255, 0.65);
+      background: rgba(255, 255, 255, 0.14);
+      transform: translateY(-4px);
+    }
+    .role-card.selected {
+      border-color: #f1b10f;
+      background: rgba(241, 177, 15, 0.14);
+      box-shadow: 0 0 0 2px rgba(241, 177, 15, 0.35);
+    }
+
+    .role-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #1e9751;
+      color: white;
+      padding: 3px 10px;
+      border-radius: 50px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .role-badge.premium {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #1a1a1a;
+    }
+
+    .role-icon-wrap {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.45);
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      transition: transform 0.3s ease;
+    }
+    .role-card:hover .role-icon-wrap { transform: scale(1.1); }
+    .role-icon-wrap i {
+      font-size: 1.75rem;
+      color: #ffffff !important;
+    }
+
+    .role-title {
+      color: #ffffff !important;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .role-description {
+      color: rgba(255,255,255,0.68) !important;
+      font-size: 0.76rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .role-continue-btn {
+      border-radius: 50px;
+      padding: 0.75rem 2.5rem;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .role-login-meta {
+      text-align: center;
+      margin-top: 1.2rem;
+      color: rgba(255,255,255,0.68);
+      font-size: 0.88rem;
+    }
+    .role-login-meta a {
+      color: #f1b10f;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .role-login-meta a:hover { text-decoration: underline; }
+  </style>
+</head>
+
+<body>
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="spinner-grow text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
     </div>
   </div>
-</div>
-{% endblock %}
+
+  <div class="role-page-wrapper">
+    <div class="role-page-overlay"></div>
+
+    <div class="role-page-content">
+
+      <!-- Back Button (fixed top-left) -->
+      <a href="{% url 'home' %}" class="role-back-btn">
+        <i class="ti ti-arrow-left"></i>
+      </a>
+
+      <!-- Header -->
+      <div class="role-page-header">
+        <h1>Choisissez votre Rôle</h1>
+        <p>Sélectionnez le type de compte qui correspond à votre profil</p>
+      </div>
+
+      <!-- Form -->
+      <form method="post" id="roleForm">
+        {% csrf_token %}
+        <input type="hidden" name="role" id="selectedRole" value="">
+
+        <div class="row g-3 mb-4">
+
+          <!-- Joueur -->
+          <div class="col-6">
+            <div class="role-card" onclick="selectRole('PLAYER', this)">
+              <span class="role-badge">Populaire</span>
+              <div class="role-icon-wrap">
+                <i class="ti ti-ball-football"></i>
+              </div>
+              <h3 class="role-title">Joueur</h3>
+              <p class="role-description">Créez votre profil et soyez découvert par des clubs</p>
+            </div>
+          </div>
+
+          <!-- Entraîneur -->
+          <div class="col-6">
+            <div class="role-card" onclick="selectRole('COACH', this)">
+              <div class="role-icon-wrap">
+                <i class="ti ti-chalkboard-teacher"></i>
+              </div>
+              <h3 class="role-title">Entraîneur</h3>
+              <p class="role-description">Présentez votre expérience et découvrez des talents</p>
+            </div>
+          </div>
+
+          <!-- Club -->
+          <div class="col-6">
+            <div class="role-card" onclick="selectRole('CLUB', this)">
+              <span class="role-badge premium">Premium</span>
+              <div class="role-icon-wrap">
+                <i class="ti ti-shield-star"></i>
+              </div>
+              <h3 class="role-title">Club</h3>
+              <p class="role-description">Recherchez les meilleurs talents pour votre équipe</p>
+            </div>
+          </div>
+
+          <!-- Agent -->
+          <div class="col-6">
+            <div class="role-card" onclick="selectRole('AGENT', this)">
+              <div class="role-icon-wrap">
+                <i class="ti ti-briefcase"></i>
+              </div>
+              <h3 class="role-title">Agent</h3>
+              <p class="role-description">Gérez votre portefeuille de talents professionnels</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="text-center">
+          <button type="submit" class="btn btn-warning btn-lg role-continue-btn" id="continueBtn" disabled>
+            Continuer <i class="ti ti-arrow-right"></i>
+          </button>
+        </div>
+      </form>
+
+      <!-- Login Meta -->
+      <div class="role-login-meta">
+        <p class="mb-0">Déjà inscrit ? <a href="{% url 'accounts:login' %}">Se connecter</a></p>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/internet-status.js' %}"></script>
+  <script src="{% static 'js/active.js' %}"></script>
+  <script src="{% static 'js/pwa.js' %}"></script>
+
+  <script>
+    let selectedCard = null;
+    function selectRole(role, cardElement) {
+      if (selectedCard) selectedCard.classList.remove('selected');
+      cardElement.classList.add('selected');
+      selectedCard = cardElement;
+      document.getElementById('selectedRole').value = role;
+      document.getElementById('continueBtn').disabled = false;
+    }
+  </script>
+</body>
+</html>

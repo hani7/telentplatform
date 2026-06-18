@@ -57,3 +57,36 @@ def coach_deactivate_ad(request):
 def coach_public_profile(request, pk):
     profile = get_object_or_404(CoachProfile, pk=pk, is_active=True)
     return render(request, "coaches/public_profile.html", {"c": profile})
+
+@login_required
+def profile_complete(request):
+    """Show profile completion progress for coaches"""
+    profile, _ = CoachProfile.objects.get_or_create(
+        user=request.user,
+        defaults={"first_name": request.user.first_name or "", "last_name": request.user.last_name or ""}
+    )
+
+    personal_fields = ['first_name', 'last_name', 'birth_date', 'nationality', 'gender']
+    personal_filled = sum(1 for f in personal_fields if getattr(profile, f, None))
+    personal_progress = int((personal_filled / len(personal_fields)) * 100)
+
+    coaching_fields = ['diplomas_certificates', 'current_club_name', 'status']
+    coaching_filled = sum(1 for f in coaching_fields if getattr(profile, f, None))
+    coaching_progress = int((coaching_filled / len(coaching_fields)) * 100)
+
+    clubs_progress = min(profile.previous_clubs.count() * 50, 100)
+    files_progress = min(profile.files.count() * 25, 100)
+
+    completion_percentage = int((personal_progress + coaching_progress + clubs_progress + files_progress) / 4)
+
+    context = {
+        'profile': profile,
+        'previous_clubs': profile.previous_clubs.all(),
+        'files': profile.files.all(),
+        'completion_percentage': completion_percentage,
+        'personal_progress': personal_progress,
+        'coaching_progress': coaching_progress,
+        'clubs_progress': clubs_progress,
+        'files_progress': files_progress,
+    }
+    return render(request, 'coaches/profile_complete.html', context)

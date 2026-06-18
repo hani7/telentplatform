@@ -1,0 +1,280 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="FOOTOP - La plateforme de découverte de talents footballistiques">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <meta name="theme-color" content="#1e9751">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <title>Bienvenue - FOOTOP</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'img/core-img/favicon.ico' %}">
+  <link rel="apple-touch-icon" href="{% static 'img/icons/icon-96x96.png' %}">
+  <link rel="apple-touch-icon" sizes="152x152" href="{% static 'img/icons/icon-152x152.png' %}">
+  <link rel="apple-touch-icon" sizes="167x167" href="{% static 'img/icons/icon-167x167.png' %}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/icons/icon-180x180.png' %}">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  
+  <!-- Tabler Icons -->
+  <link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}">
+  
+  <!-- Main Style CSS -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  <!-- Web App Manifest -->
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+
+  <style>
+    .hero-block-wrapper {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1e9751 0%, #15803f 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-block-styles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .hb-styles1 {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("{% static 'img/core-img/dot.png' %}");
+      opacity: 0.05;
+    }
+
+    .hb-styles2 {
+      position: absolute;
+      bottom: -50px;
+      right: -50px;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
+
+    .hb-styles3 {
+      position: absolute;
+      top: 100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+    }
+
+    .hero-block-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 80px 0;
+    }
+
+    .hero-logo {
+      max-width: 120px;
+      margin-bottom: 30px;
+      animation: slideDown 0.8s ease;
+    }
+
+    .hero-block-content h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      animation: slideUp 0.8s ease 0.2s both;
+    }
+
+    .hero-block-content p {
+      font-size: 1.125rem;
+      line-height: 1.6;
+      margin-bottom: 40px;
+      opacity: 0.95;
+      animation: slideUp 0.8s ease 0.4s both;
+    }
+
+    .hero-features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 40px;
+      animation: fadeIn 0.8s ease 0.6s both;
+    }
+
+    .hero-feature-item {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-feature-item i {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .hero-feature-item span {
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .skip-page {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      z-index: 20;
+    }
+
+    .skip-page a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      opacity: 0.8;
+      transition: opacity 0.3s;
+    }
+
+    .skip-page a:hover {
+      opacity: 1;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @media only screen and (max-width: 576px) {
+      .hero-block-content h1 {
+        font-size: 2rem;
+      }
+
+      .hero-block-content p {
+        font-size: 1rem;
+      }
+
+      .hero-features {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="spinner-grow text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Hero Block Wrapper -->
+  <div class="hero-block-wrapper">
+    <!-- Background Styles -->
+    <div class="hero-block-styles">
+      <div class="hb-styles1"></div>
+      <div class="hb-styles2"></div>
+      <div class="hb-styles3"></div>
+    </div>
+
+    <div class="custom-container">
+      <!-- Skip Page -->
+      <div class="skip-page">
+        <a href="{% url 'home' %}">Skip <i class="ti ti-arrow-right"></i></a>
+      </div>
+
+      <!-- Hero Block Content -->
+      <div class="hero-block-content">
+        <!-- Logo -->
+        <img src="{% static 'img/bg-img/player_logiun.png' %}" alt="FOOTOP" class="hero-logo">
+
+        <h1 class="text-white">Découvrez les Talents du Football</h1>
+        
+        <p class="text-white px-3">
+          La plateforme qui connecte joueurs, entraîneurs, clubs et agents pour révéler les talents de demain
+        </p>
+
+        <!-- Features Grid -->
+        <div class="hero-features">
+          <div class="hero-feature-item text-white">
+            <i class="ti ti-ball-football"></i>
+            <span>Profils de Joueurs</span>
+          </div>
+          <div class="hero-feature-item text-white">
+            <i class="ti ti-user-search"></i>
+            <span>Recherche Avancée</span>
+          </div>
+          <div class="hero-feature-item text-white">
+            <i class="ti ti-video"></i>
+            <span>Vidéos & Stats</span>
+          </div>
+          <div class="hero-feature-item text-white">
+            <i class="ti ti-link"></i>
+            <span>Connexions Pros</span>
+          </div>
+        </div>
+
+        <!-- CTA Buttons -->
+        <a class="btn btn-warning btn-lg w-100 mb-3" href="{% url 'accounts:login' %}">
+          Se Connecter <i class="ti ti-arrow-right"></i>
+        </a>
+        
+        <p class="text-white mb-0">
+          <small>Pas encore inscrit?</small><br>
+          <a href="{% url 'accounts:register_role' %}" class="text-white" style="text-decoration: underline; font-weight: 600;">
+            Créer un compte gratuitement
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- All JavaScript Files -->
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/internet-status.js' %}"></script>
+  <script src="{% static 'js/active.js' %}"></script>
+  <script src="{% static 'js/pwa.js' %}"></script>
+</body>
+
+</html>

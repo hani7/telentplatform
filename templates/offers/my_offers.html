@@ -1,0 +1,313 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mes Offres - FOOTOP</title>
+  <link rel="icon" href="{% static 'img/core-img/favicon.ico' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+
+  <style>
+    html, body { margin: 0; padding: 0; min-height: 100vh; background: #0a1a0f; }
+
+    .offers-wrapper {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0a1a0f 0%, #0d2b18 60%, #0a1a0f 100%);
+      padding: 0 0 6rem;
+    }
+
+    .footer-outer{position:fixed;bottom:0;left:0;right:0;background:transparent;padding:4px 14px calc(4px + env(safe-area-inset-bottom));z-index:999;display:flex;justify-content:center}
+    .footer-pill{background:#1db95b;border-radius:999px;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;width:100%;max-width:500px}
+    .footer-pill-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.67rem;font-weight:500;padding:4px 14px;border-radius:14px;border:none;transition:all .18s ease;white-space:nowrap;min-width:60px}
+    .footer-pill-item i{font-size:1.45rem;line-height:1}
+    .footer-pill-item.is-active{font-weight:700;color:#fff}
+    .footer-pill-item:hover{color:#fff;background:rgba(0,0,0,.12)}
+
+    /* ── Top Bar ── */
+    .offers-topbar {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .offers-topbar .back-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .offers-topbar .back-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+    .offers-topbar .page-title {
+      color: #fff;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0;
+      flex: 1;
+    }
+    .offers-topbar .badge-count {
+      background: #f1b10f;
+      color: #000;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    /* ── Content ── */
+    .offers-content {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+
+    /* ── Messages ── */
+    {% comment %}django messages{% endcomment %}
+    .msg-bar {
+      border-radius: 12px;
+      padding: 0.65rem 1rem;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Filter Tabs ── */
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.2rem;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .filter-tab {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.82rem;
+      padding: 5px 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .filter-tab.active, .filter-tab:hover {
+      background: #f1b10f;
+      border-color: #f1b10f;
+      color: #000;
+      font-weight: 600;
+    }
+
+    /* ── Empty State ── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: rgba(255,255,255,0.45);
+    }
+    .empty-state i { font-size: 3rem; margin-bottom: 1rem; display: block; }
+    .empty-state p { font-size: 0.92rem; margin: 0; }
+
+    /* ── Offer Card ── */
+    .offer-card {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      padding: 1.2rem 1.1rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .offer-card:hover { border-color: rgba(241,177,15,0.4); transform: translateY(-1px); }
+
+    .offer-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.6rem;
+    }
+    .offer-card-title {
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0;
+      flex: 1;
+    }
+    .offer-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+    .badge-pending  { background: rgba(241,177,15,0.18); color: #f1b10f; border: 1px solid rgba(241,177,15,0.4); }
+    .badge-accepted { background: rgba(30,200,100,0.18); color: #4ddb8a; border: 1px solid rgba(30,200,100,0.4); }
+    .badge-declined { background: rgba(255,80,80,0.15);  color: #ff8080; border: 1px solid rgba(255,80,80,0.3); }
+
+    .offer-sender {
+      color: rgba(255,255,255,0.55);
+      font-size: 0.8rem;
+      margin-bottom: 0.7rem;
+    }
+    .offer-sender i { color: #f1b10f; }
+    .offer-sender strong { color: rgba(255,255,255,0.8); }
+
+    .offer-message {
+      color: rgba(255,255,255,0.75);
+      font-size: 0.88rem;
+      line-height: 1.55;
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .offer-date {
+      color: rgba(255,255,255,0.35);
+      font-size: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .offer-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-accept {
+      flex: 1;
+      border-radius: 50px;
+      background: #1eb864;
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 0.5rem;
+      transition: background 0.2s;
+    }
+    .btn-accept:hover { background: #19a457; }
+    .btn-decline {
+      flex: 1;
+      border-radius: 50px;
+      background: rgba(255,80,80,0.12);
+      border: 1px solid rgba(255,80,80,0.35);
+      color: #ff8080;
+      font-weight: 600;
+      font-size: 0.88rem;
+      padding: 0.5rem;
+      transition: all 0.2s;
+    }
+    .btn-decline:hover { background: rgba(255,80,80,0.22); }
+  </style>
+</head>
+
+<body>
+  <div class="offers-wrapper">
+
+    <!-- Top Bar -->
+    <div class="offers-topbar">
+      <h1 class="page-title"><i class="ti ti-mail-opened" style="color:#f1b10f;"></i> Mes Offres</h1>
+      <span class="badge-count">{{ offers|length }}</span>
+    </div>
+
+    <div class="offers-content">
+
+      <!-- Django messages -->
+      {% for msg in messages %}
+        <div class="msg-bar alert alert-{% if msg.tags == 'success' %}success{% elif msg.tags == 'error' %}danger{% else %}info{% endif %}">
+          {{ msg }}
+        </div>
+      {% endfor %}
+
+      <!-- Filter Tabs (client-side) -->
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="filterOffers('all', this)">Toutes</button>
+        <button class="filter-tab" onclick="filterOffers('PENDING', this)">⏳ En attente</button>
+        <button class="filter-tab" onclick="filterOffers('ACCEPTED', this)">✅ Acceptées</button>
+        <button class="filter-tab" onclick="filterOffers('DECLINED', this)">❌ Refusées</button>
+      </div>
+
+      <!-- Offer List -->
+      {% if offers %}
+        {% for offer in offers %}
+          <div class="offer-card" data-status="{{ offer.status }}">
+            <div class="offer-card-header">
+              <h2 class="offer-card-title">{{ offer.title }}</h2>
+              <span class="offer-badge badge-{{ offer.status|lower }}">
+                {{ offer.get_status_display }}
+              </span>
+            </div>
+            <div class="offer-sender">
+              <i class="ti ti-user"></i>
+              De : <strong>{{ offer.sender.get_full_name|default:offer.sender.username }}</strong>
+              &nbsp;·&nbsp;
+              <i class="ti ti-briefcase"></i> {{ offer.sender.get_role_display }}
+            </div>
+            <div class="offer-message">{{ offer.message }}</div>
+            <div class="offer-date"><i class="ti ti-calendar"></i> {{ offer.created_at|date:"d M Y à H:i" }}</div>
+
+            {% if offer.status == "PENDING" %}
+              <div class="offer-actions">
+                <form method="post" action="{% url 'offers:respond_offer' offer.pk %}" style="flex:1;">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="accept">
+                  <button class="btn-accept w-100" type="submit">
+                    <i class="ti ti-check"></i> Accepter
+                  </button>
+                </form>
+                <form method="post" action="{% url 'offers:respond_offer' offer.pk %}" style="flex:1;">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="decline">
+                  <button class="btn-decline w-100" type="submit">
+                    <i class="ti ti-x"></i> Décliner
+                  </button>
+                </form>
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <i class="ti ti-inbox"></i>
+          <p>Aucune offre reçue pour le moment.<br>Les agents et clubs peuvent vous envoyer des offres.</p>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-outer">
+    <nav class="footer-pill">
+      <a href="/players/me/" class="footer-pill-item"><i class="ti ti-user-circle"></i><span>Profil</span></a>
+      <a href="/players/me/complete/" class="footer-pill-item"><i class="ti ti-eye"></i><span>Aperçu</span></a>
+      <a href="/offers/my/" class="footer-pill-item is-active"><i class="ti ti-clipboard-list"></i><span>Offres</span></a>
+      <a href="/accounts/logout/" class="footer-pill-item"><i class="ti ti-logout"></i><span>Déconnexion</span></a>
+    </nav>
+  </div>
+
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script>
+    function filterOffers(status, btn) {
+      document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.offer-card').forEach(card => {
+        card.style.display = (status === 'all' || card.dataset.status === status) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

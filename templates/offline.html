@@ -1,0 +1,155 @@
+{% load static %}
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Hors ligne - MyFootop</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+    <style>
+      body {
+        font-family: "Montserrat", Arial, sans-serif;
+        background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .offline-container {
+        background: white;
+        border-radius: 20px;
+        padding: 60px 40px;
+        text-align: center;
+        max-width: 500px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .offline-icon {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 30px;
+        background: #f0f0f0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 60px;
+      }
+
+      h1 {
+        color: #1a472a;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 15px;
+      }
+
+      p {
+        color: #666;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 30px;
+      }
+
+      .retry-btn {
+        background: #1a472a;
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .retry-btn:hover {
+        background: #2d5a3d;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(26, 71, 42, 0.3);
+      }
+
+      .connection-status {
+        margin-top: 20px;
+        font-size: 14px;
+        color: #999;
+      }
+
+      .dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #dc3545;
+        margin-right: 8px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .online .dot {
+        background: #28a745;
+        animation: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="offline-container">
+      <div class="offline-icon">⚽</div>
+      <h1>Vous êtes hors ligne</h1>
+      <p>
+        Oups ! Il semble que vous n'ayez pas de connexion Internet pour le
+        moment. Veuillez vérifier votre connexion et réessayer.
+      </p>
+      <button class="retry-btn" onclick="window.location.reload()">
+        Réessayer
+      </button>
+      <div class="connection-status" id="status">
+        <span class="dot"></span>
+        <span id="status-text">Hors ligne</span>
+      </div>
+    </div>
+
+    <script>
+      // Monitor online/offline status
+      function updateStatus() {
+        const statusDiv = document.querySelector(".connection-status");
+        const statusText = document.getElementById("status-text");
+
+        if (navigator.onLine) {
+          statusDiv.classList.add("online");
+          statusText.textContent = "En ligne - Cliquez sur Réessayer";
+        } else {
+          statusDiv.classList.remove("online");
+          statusText.textContent = "Hors ligne";
+        }
+      }
+
+      window.addEventListener("online", updateStatus);
+      window.addEventListener("offline", updateStatus);
+      updateStatus();
+
+      // Auto-reload when back online
+      window.addEventListener("online", () => {
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>

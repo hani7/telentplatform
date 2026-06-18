@@ -1,0 +1,301 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Envoyer une offre - FOOTOP</title>
+  <link rel="icon" href="{% static 'img/core-img/favicon.ico' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+
+  <style>
+    html, body { margin: 0; padding: 0; min-height: 100vh; }
+
+    .send-wrapper {
+      min-height: 100vh;
+      background-image: url("{% static 'img/bg-img/bg-home.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .send-overlay {
+      position: fixed; inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,20,8,0.93) 100%);
+      z-index: 0;
+    }
+    .send-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 500px;
+      padding: 3rem 1.25rem 2.5rem;
+      box-sizing: border-box;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 1.1rem; left: 1.1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 1.5px solid rgba(255,255,255,0.4);
+      color: #fff;
+      font-size: 1.2rem;
+      text-decoration: none;
+      z-index: 10;
+      transition: background 0.2s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.25); color: #fff; }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
+    .page-header .logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .page-header .logo-wrap img { height: 36px; width: auto; }
+    .page-header h1 {
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+    .page-header p {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    .form-card {
+      background: rgba(255,255,255,0.07);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1.5px solid rgba(255,255,255,0.18);
+      border-radius: 22px;
+      padding: 1.6rem 1.25rem;
+    }
+
+    .form-label-custom {
+      color: rgba(255,255,255,0.75);
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .form-control-custom {
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 12px;
+      color: #fff;
+      padding: 0.65rem 1rem;
+      width: 100%;
+      font-size: 0.92rem;
+      box-sizing: border-box;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .form-control-custom::placeholder { color: rgba(255,255,255,0.4); }
+    .form-control-custom:focus {
+      outline: none;
+      border-color: #f1b10f;
+      background: rgba(255,255,255,0.13);
+    }
+    select.form-control-custom option { background: #0d2b18; color: #fff; }
+
+    .error-box {
+      background: rgba(255,80,80,0.12);
+      border: 1px solid rgba(255,80,80,0.3);
+      border-radius: 10px;
+      color: #ff9999;
+      font-size: 0.83rem;
+      padding: 0.6rem 1rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    /* Recipient tabs */
+    .recipient-tabs {
+      display: flex;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.2);
+      margin-bottom: 1rem;
+    }
+    .recipient-tab-btn {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.55rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .recipient-tab-btn.active {
+      background: rgba(241,177,15,0.2);
+      color: #f1b10f;
+    }
+    .recipient-tab-btn:first-child { border-right: 1px solid rgba(255,255,255,0.15); }
+
+    .btn-send {
+      border-radius: 50px;
+      padding: 0.75rem;
+      font-weight: 700;
+      font-size: 1rem;
+      width: 100%;
+      border: none;
+      background: #f1b10f;
+      color: #000;
+      transition: background 0.2s;
+    }
+    .btn-send:hover { background: #d9a00d; }
+  </style>
+</head>
+
+<body>
+  <div class="send-wrapper">
+    <div class="send-overlay"></div>
+
+    <a href="{% url 'offers:my_suggestions' %}" class="back-btn">
+      <i class="ti ti-arrow-left"></i>
+    </a>
+
+    <div class="send-content">
+
+      <!-- Header -->
+      <div class="page-header">
+        <div class="logo-wrap">
+          <img src="{% static 'img/core-img/footop-logo-white.png' %}" alt="FOOTOP">
+        </div>
+        <h1><i class="ti ti-send" style="color:#f1b10f;"></i> Nouvelle Offre</h1>
+        <p>Envoyez une offre à un joueur ou entraîneur</p>
+      </div>
+
+      <!-- Form -->
+      <div class="form-card">
+
+        {% if error %}
+          <div class="error-box"><i class="ti ti-alert-circle"></i> {{ error }}</div>
+        {% endif %}
+
+        <form method="post" action="{% url 'offers:send_offer' %}">
+          {% csrf_token %}
+
+          <!-- Recipient Type Tabs -->
+          <div style="margin-bottom:0.8rem;">
+            <span class="form-label-custom">Type de destinataire</span>
+            <div class="recipient-tabs">
+              <button type="button" class="recipient-tab-btn active" onclick="switchTab('players', this)">
+                <i class="ti ti-ball-football"></i> Joueurs
+              </button>
+              <button type="button" class="recipient-tab-btn" onclick="switchTab('coaches', this)">
+                <i class="ti ti-whistle"></i> Entraîneurs
+              </button>
+            </div>
+          </div>
+
+          <!-- Players selector -->
+          <div id="players-group" class="mb-3">
+            <label class="form-label-custom" for="recipient_players">Joueur</label>
+            <select class="form-control-custom" id="recipient_players" name="recipient_id_players">
+              <option value="">-- Sélectionner un joueur --</option>
+              {% for player in players %}
+                <option value="{{ player.pk }}">
+                  {{ player.get_full_name|default:player.username }} ({{ player.username }})
+                </option>
+              {% empty %}
+                <option disabled>Aucun joueur disponible</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Coaches selector (hidden by default) -->
+          <div id="coaches-group" class="mb-3" style="display:none;">
+            <label class="form-label-custom" for="recipient_coaches">Entraîneur</label>
+            <select class="form-control-custom" id="recipient_coaches" name="recipient_id_coaches">
+              <option value="">-- Sélectionner un entraîneur --</option>
+              {% for coach in coaches %}
+                <option value="{{ coach.pk }}">
+                  {{ coach.get_full_name|default:coach.username }} ({{ coach.username }})
+                </option>
+              {% empty %}
+                <option disabled>Aucun entraîneur disponible</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Hidden real recipient input -->
+          <input type="hidden" name="recipient_id" id="recipient_id">
+
+          <!-- Title -->
+          <div class="mb-3">
+            <label class="form-label-custom" for="offer-title">Titre de l'offre</label>
+            <input class="form-control-custom"
+                   type="text"
+                   id="offer-title"
+                   name="title"
+                   placeholder="Ex: Offre de transfert, Proposition de contrat..."
+                   required>
+          </div>
+
+          <!-- Message -->
+          <div class="mb-4">
+            <label class="form-label-custom" for="offer-message">Message</label>
+            <textarea class="form-control-custom"
+                      id="offer-message"
+                      name="message"
+                      rows="5"
+                      placeholder="Décrivez votre offre en détail..."
+                      required></textarea>
+          </div>
+
+          <button class="btn-send" type="submit">
+            Envoyer l'offre <i class="ti ti-send"></i>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script>
+    let activeTab = 'players';
+
+    function switchTab(tab, btn) {
+      activeTab = tab;
+      document.querySelectorAll('.recipient-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('players-group').style.display = tab === 'players' ? '' : 'none';
+      document.getElementById('coaches-group').style.display = tab === 'coaches' ? '' : 'none';
+      syncRecipient();
+    }
+
+    function syncRecipient() {
+      const sel = document.getElementById(activeTab === 'players' ? 'recipient_players' : 'recipient_coaches');
+      document.getElementById('recipient_id').value = sel.value;
+    }
+
+    // Sync on dropdown change
+    document.getElementById('recipient_players').addEventListener('change', syncRecipient);
+    document.getElementById('recipient_coaches').addEventListener('change', syncRecipient);
+
+    // Init
+    syncRecipient();
+  </script>
+</body>
+</html>
