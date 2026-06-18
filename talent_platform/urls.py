@@ -7,14 +7,11 @@ from django.shortcuts import redirect as _redirect
 from django.http import FileResponse, HttpResponse
 from rest_framework_simplejwt.views import TokenRefreshView
 import os
-
 # API Views
 from accounts.api_views import APILoginView, APIRegisterView, APIMeView, APIOTPVerifyView, APIOTPResendView
 from players.api_views import APIPlayerProfileView, APIPlayerPublicView, APIPlayersListView
 from coaches.api_views import APICoachProfileView
 from offers.api_views import APIMyOffersView, APIMySuggestionsView, APISendOfferView, APIOfferRespondView
-
-
 
 def download_apk_page(request):
     """Styled download page for the FOOTOP APK."""
