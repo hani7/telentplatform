@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Django
+*.log
+*.pot
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Media files
+media/
+
+# Static collected
+staticfiles/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# APK & Android build
+FOOTOP.apk
+footop_apk/
+*.apk
+*.aab
+
+# Scripts
+scratch.py
+gen_icons.py
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+package-lock.json
