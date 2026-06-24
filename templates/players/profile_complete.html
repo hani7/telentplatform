@@ -264,9 +264,19 @@
 <!-- Footer -->
 <div class="footer-outer">
   <nav class="footer-pill">
-    <a href="/players/me/" class="footer-pill-item"><i class="ti ti-user-circle"></i><span>Profil</span></a>
-    <a href="/players/me/complete/" class="footer-pill-item is-active"><i class="ti ti-eye"></i><span>Aperçu</span></a>
-    <a href="/offers/my/" class="footer-pill-item"><i class="ti ti-clipboard-list"></i><span>Offres</span></a>
+    {% if profile.pk %}
+      <a href="{% url 'players:public_profile' profile.pk %}" class="footer-pill-item"><i class="ti ti-user-circle"></i><span>Profil</span></a>
+    {% else %}
+      <a href="#" class="footer-pill-item"><i class="ti ti-user-circle"></i><span>Profil</span></a>
+    {% endif %}
+    <a href="{% url 'players:profile_complete' %}" class="footer-pill-item is-active"><i class="ti ti-eye"></i><span>Aperçu</span></a>
+    <a href="{% url 'players:profile_edit' %}" class="footer-pill-item"><i class="ti ti-pencil"></i><span>Editer</span></a>
+    <a href="/offers/my/" class="footer-pill-item"><i class="ti ti-clipboard-list"></i><span>Mes offres</span></a>
+    {% if profile.profile_status == 'ACTIVE' %}
+      <div class="footer-pill-item" style="color:#10b981; cursor:default;"><i class="ti ti-circle-check"></i><span>Actif</span></div>
+    {% else %}
+      <div class="footer-pill-item" style="color:#f59e0b; cursor:pointer;" onclick="alert('En cours de validation (En attente de : Consentement parental). Le tuteur doit valider l\'email reçu.')"><i class="ti ti-clock"></i><span>En attente</span></div>
+    {% endif %}
     <a href="/accounts/logout/" class="footer-pill-item"><i class="ti ti-logout"></i><span>Déconnexion</span></a>
   </nav>
 </div>

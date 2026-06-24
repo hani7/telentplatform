@@ -139,7 +139,7 @@ class PlayerFile(models.Model):
         OTHER = "OTHER", "Autre"
 
     player = models.ForeignKey(PlayerProfile, on_delete=models.CASCADE, related_name="files")
-    file_type = models.CharField(max_length=10, choices=FileType.choices)
+    file_type = models.CharField(max_length=20, choices=FileType.choices)
     file = models.FileField(upload_to="players/files/")
     title = models.CharField(max_length=120, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
