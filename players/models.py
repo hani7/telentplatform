@@ -37,6 +37,12 @@ class PlayerProfile(models.Model):
         PRO = "PRO", "Pro"
     status = models.CharField(max_length=10, choices=Status.choices, blank=True)
 
+    class ProfileStatus(models.TextChoices):
+        ACTIVE = "ACTIVE", "Actif"
+        PENDING_CONSENT = "PENDING_CONSENT", "En cours de validation"
+    profile_status = models.CharField(max_length=20, choices=ProfileStatus.choices, default=ProfileStatus.ACTIVE)
+    consent_token = models.UUIDField(null=True, blank=True)
+
     position = models.CharField(max_length=50, blank=True)
 
     desired_salary = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)])
@@ -128,6 +134,7 @@ class PlayerFile(models.Model):
     class FileType(models.TextChoices):
         CV = "CV", "CV (PDF)"
         PHOTO = "PHOTO", "Photo"
+        PROFILE_PHOTO = "PROFILE_PHOTO", "Photo de profil"
         VIDEO = "VIDEO", "Vidéo"
         OTHER = "OTHER", "Autre"
 

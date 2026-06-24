@@ -455,16 +455,21 @@
         <h5><i class="ti ti-file-upload"></i> Fichiers (CV / Photos / Vidéos)</h5>
         <p style="color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:1rem">Ajoute au moins un fichier pour compléter ton profil</p>
         {{ files_fs.management_form }}
-        {% for f in files_fs %}
-          <div class="fsi">
-            <div class="fsi-head">
-              <span class="fsi-title">Fichier {{ forloop.counter }}</span>
-              <button type="button" class="btn-clear" onclick="clearBlock(this)"><i class="ti ti-eraser"></i> Vider</button>
+        <div id="files-container">
+          {% for f in files_fs %}
+            <div class="fsi file-entry">
+              <div class="fsi-head">
+                <span class="fsi-title">Fichier {{ forloop.counter }}</span>
+                <button type="button" class="btn-clear" onclick="removeFile(this)"><i class="ti ti-eraser"></i> Supprimer</button>
+              </div>
+              {{ f.as_p }}
+              {{ f.DELETE }}
             </div>
-            {{ f.as_p }}
-            {{ f.DELETE }}
-          </div>
-        {% endfor %}
+          {% endfor %}
+        </div>
+        <button type="button" id="add-file-btn" onclick="addFile()" style="margin-top:1rem;width:100%;padding:12px;border-radius:50px;border:2px dashed rgba(241,177,15,.5);background:rgba(241,177,15,.08);color:#f1b10f;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(241,177,15,.18)'" onmouseout="this.style.background='rgba(241,177,15,.08)'">
+          <i class="ti ti-plus"></i> Ajouter un fichier
+        </button>
         
         <hr>
         <div class="ck" style="margin-top: 1.5rem; align-items: flex-start;">
@@ -492,9 +497,19 @@
 <!-- Footer -->
 <div class="footer-outer">
   <nav class="footer-pill">
-    <a href="/players/me/" class="footer-pill-item is-active"><i class="ti ti-user-circle"></i><span>Profil</span></a>
-    <a href="/players/me/complete/" class="footer-pill-item"><i class="ti ti-eye"></i><span>Aperçu</span></a>
-    <a href="/offers/my/" class="footer-pill-item"><i class="ti ti-clipboard-list"></i><span>Offres</span></a>
+    {% if profile.pk %}
+      <a href="{% url 'players:public_profile' profile.pk %}" class="footer-pill-item"><i class="ti ti-user-circle"></i><span>Profil</span></a>
+    {% else %}
+      <a href="#" class="footer-pill-item"><i class="ti ti-user-circle"></i><span>Profil</span></a>
+    {% endif %}
+    <a href="{% url 'players:profile_complete' %}" class="footer-pill-item"><i class="ti ti-eye"></i><span>Aperçu</span></a>
+    <a href="{% url 'players:profile_edit' %}" class="footer-pill-item is-active"><i class="ti ti-pencil"></i><span>Editer</span></a>
+    <a href="/offers/my/" class="footer-pill-item"><i class="ti ti-clipboard-list"></i><span>Mes offres</span></a>
+    {% if profile.profile_status == 'ACTIVE' %}
+      <div class="footer-pill-item" style="color:#10b981; cursor:default;"><i class="ti ti-circle-check"></i><span>Actif</span></div>
+    {% else %}
+      <div class="footer-pill-item" style="color:#f59e0b; cursor:pointer;" onclick="alert('En cours de validation (En attente de : Consentement parental). Le tuteur doit valider l\'email reçu.')"><i class="ti ti-clock"></i><span>En attente</span></div>
+    {% endif %}
     <a href="/accounts/logout/" class="footer-pill-item"><i class="ti ti-logout"></i><span>Déconnexion</span></a>
   </nav>
 </div>

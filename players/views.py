@@ -1,6 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
+from django.urls import reverse
+import uuid
 
 from .models import PlayerProfile
 from .forms import PlayerProfileForm, PreviousClubFormSet, SeasonStatFormSet, FileFormSet
@@ -18,7 +22,37 @@ def player_profile_edit(request):
         files_fs = FileFormSet(request.POST, request.FILES, instance=profile)
 
         if form.is_valid() and clubs_fs.is_valid() and files_fs.is_valid():
-            form.save()
+            # Before saving form, handle consent if minor
+            profile = form.save(commit=False)
+            if profile.is_minor and profile.parent_email:
+                if profile.profile_status != PlayerProfile.ProfileStatus.ACTIVE:
+                    profile.profile_status = PlayerProfile.ProfileStatus.PENDING_CONSENT
+                    if not profile.consent_token:
+                        profile.consent_token = uuid.uuid4()
+                        consent_url = request.build_absolute_uri(reverse('players:verify_consent', args=[profile.consent_token]))
+                        msg = (f"En tant que parent / tuteur légal, j'autorise la création et/ou la mise à jour du profil de mon enfant "
+                               f"sur cette plateforme. Je confirme avoir pris connaissance des informations saisies et j'accepte qu'elles puissent "
+                               f"être consultées par des clubs, leurs représentants et des agents de football autorisés.\n\n"
+                               f"Veuillez valider le profil de votre enfant en cliquant sur ce lien :\n{consent_url}")
+                        
+                        html_msg = f"""
+                        <p>En tant que parent / tuteur légal, j'autorise la création et/ou la mise à jour du profil de mon enfant sur cette plateforme. Je confirme avoir pris connaissance des informations saisies et j'accepte qu'elles puissent être consultées par des clubs, leurs représentants et des agents de football autorisés.</p>
+                        <p>Veuillez cliquer sur le bouton ci-dessous pour valider et activer le profil :</p>
+                        <a href="{consent_url}" style="display:inline-block; padding:10px 20px; background-color:#10b981; color:#ffffff; text-decoration:none; border-radius:5px; font-weight:bold;">Confirmer le profil de mon enfant</a>
+                        """
+                        
+                        send_mail(
+                            "Consentement parental requis - Talent Platform",
+                            msg,
+                            settings.DEFAULT_FROM_EMAIL if hasattr(settings, 'DEFAULT_FROM_EMAIL') else 'noreply@talentplatform.com',
+                            [profile.parent_email],
+                            fail_silently=True,
+                            html_message=html_msg
+                        )
+            else:
+                profile.profile_status = PlayerProfile.ProfileStatus.ACTIVE
+            profile.save()
+            form.save_m2m()
             clubs_fs.save()  # saves all clubs, giving new ones their PKs
             # After save, clubs_fs.forms[i].instance.pk is available for all
             for i, club_form in enumerate(clubs_fs.forms):
@@ -67,6 +101,14 @@ def player_profile_edit(request):
         "files_fs": files_fs,
         "profile": profile
     })
+
+def verify_consent(request, token):
+    profile = get_object_or_404(PlayerProfile, consent_token=token)
+    profile.profile_status = PlayerProfile.ProfileStatus.ACTIVE
+    profile.consent_token = None
+    profile.save()
+    messages.success(request, "Consentement parental validé avec succès. Le profil est maintenant actif.")
+    return redirect("players:profile_edit")
 
 @login_required
 def player_activate_ad(request):
