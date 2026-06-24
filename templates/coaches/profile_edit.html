@@ -101,9 +101,9 @@
     {% endfor %}
 
     <div class="steps">
-      <div class="si active" onclick="goStep(1)"><i class="ti ti-user"></i> Infos</div>
-      <div class="si" onclick="goStep(2)"><i class="ti ti-building"></i> Clubs</div>
-      <div class="si" onclick="goStep(3)"><i class="ti ti-file-upload"></i> Fichiers</div>
+      <div class="si active"><i class="ti ti-user"></i> Infos</div>
+      <div class="si"><i class="ti ti-building"></i> Clubs</div>
+      <div class="si"><i class="ti ti-file-upload"></i> Fichiers</div>
     </div>
 
     <form method="post" enctype="multipart/form-data" id="pForm">
@@ -223,8 +223,12 @@
 
         <hr>
 
-        <div class="ck">{{ form.has_agent_contract }} <label>{{ form.has_agent_contract.label }}</label></div>
-        <div id="agent-wrap" style="display:none">
+        <div class="col-12">
+          {{ form.has_agent_contract.errors }}
+          <span class="fl">{{ form.has_agent_contract.label }}</span>
+          {{ form.has_agent_contract }}
+        </div>
+        <div id="agent-wrap" style="display:none; margin-top: 5px;">
           <div class="row g-2">
             <div class="col-6">
               {{ form.agent_full_name.errors }}
@@ -239,7 +243,30 @@
           </div>
         </div>
 
-        <div class="ck">{{ form.represent_self }} <label>{{ form.represent_self.label }}</label></div>
+        <div id="looking-for-agent-wrap" class="col-12" style="display:none; margin-top: 5px;">
+          {{ form.looking_for_agent.errors }}
+          <span class="fl">{{ form.looking_for_agent.label }}</span>
+          {{ form.looking_for_agent }}
+        </div>
+
+        <div id="represent-self-wrap" class="col-12" style="display:none; margin-top: 5px;">
+          {{ form.represent_self.errors }}
+          <span class="fl">{{ form.represent_self.label }}</span>
+          {{ form.represent_self }}
+        </div>
+
+        <hr>
+
+        <div class="col-12">
+          {{ form.has_transfermarkt.errors }}
+          <span class="fl">{{ form.has_transfermarkt.label }}</span>
+          {{ form.has_transfermarkt }}
+        </div>
+        <div id="transfermarkt-wrap" style="display:none; margin-top: 5px; margin-bottom: 10px;">
+          {{ form.transfermarkt_username.errors }}
+          <span class="fl">{{ form.transfermarkt_username.label }}</span>
+          {{ form.transfermarkt_username }}
+        </div>
 
         <hr>
 
@@ -248,11 +275,6 @@
             {{ form.target_club_notes.errors }}
             <span class="fl">{{ form.target_club_notes.label }}</span>
             {{ form.target_club_notes }}
-          </div>
-          <div class="col-12">
-            {{ form.visibility_mode.errors }}
-            <span class="fl">{{ form.visibility_mode.label }}</span>
-            {{ form.visibility_mode }}
           </div>
         </div>
       </div>
@@ -331,7 +353,18 @@
     window.scrollTo({top:0,behavior:'smooth'});
   }
 
-  next.addEventListener('click',()=>{if(cur<tot){cur++;goStep(cur)}});
+  next.addEventListener('click',()=>{
+    const currentCard = document.querySelector(`.fc[data-step="${cur}"]`);
+    if(currentCard) {
+      const inputs = Array.from(currentCard.querySelectorAll('input, select, textarea'));
+      const firstInvalid = inputs.find(i => !i.checkValidity());
+      if(firstInvalid) {
+        firstInvalid.reportValidity();
+        return;
+      }
+    }
+    if(cur<tot){cur++;goStep(cur)}
+  });
   prev.addEventListener('click',()=>{if(cur>1){cur--;goStep(cur)}});
 
   function clearBlock(btn){
@@ -343,9 +376,55 @@
   }
 
   (function(){
-    const ac=document.querySelector('input[name=has_agent_contract]');
+    const ac=document.querySelector('select[name=has_agent_contract]');
+    const lfaInput=document.querySelector('select[name=looking_for_agent]');
     const aw=document.getElementById('agent-wrap');
-    if(ac&&aw){const t=()=>aw.style.display=ac.checked?'block':'none';ac.addEventListener('change',t);t()}
+    const lfa=document.getElementById('looking-for-agent-wrap');
+    const rsWrap=document.getElementById('represent-self-wrap');
+    if(ac&&aw&&lfa){
+      const t=()=>{
+        if(ac.value === 'True'){
+          aw.style.display='block';
+          lfa.style.display='none';
+          if(rsWrap) rsWrap.style.display='none';
+        }else{
+          lfa.style.display='block';
+          aw.style.display='none';
+          if(lfaInput && lfaInput.value === 'True') {
+            if(rsWrap) rsWrap.style.display='block';
+          } else {
+            if(rsWrap) rsWrap.style.display='none';
+          }
+        }
+      };
+      ac.addEventListener('change',t);
+      if(lfaInput) lfaInput.addEventListener('change',t);
+      t();
+    }
+    
+    const tmk=document.querySelector('select[name=has_transfermarkt]');
+    const tmw=document.getElementById('transfermarkt-wrap');
+    if(tmk&&tmw){const f=()=>tmw.style.display=tmk.value==='True'?'block':'none';tmk.addEventListener('change',f);f()}
+    const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent'];
+    function updateValidationUI() {
+      document.querySelectorAll('.fc input:not([type=hidden]):not([type=checkbox]):not([type=file]), .fc select, .fc textarea').forEach(el => {
+        if (skipRequired.includes(el.name)) {
+          el.required = false;
+        } else {
+          el.required = (el.offsetParent !== null);
+        }
+        
+        const label = el.previousElementSibling;
+        if (label && label.classList.contains('fl')) {
+          label.innerHTML = label.innerHTML.replace(/ <span style="color:#f87171">\*<\/span>/g, '');
+          if (el.required) {
+            label.innerHTML += ' <span style="color:#f87171">*</span>';
+          }
+        }
+      });
+    }
+    document.addEventListener('change', updateValidationUI);
+    updateValidationUI();
   })();
 </script>
 <script src="{% static 'js/searchable-dropdown.js' %}"></script>

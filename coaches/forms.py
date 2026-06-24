@@ -12,9 +12,10 @@ class CoachProfileForm(forms.ModelForm):
             "current_club_name", "current_club_country", "current_club_division",
             "current_club_start", "current_club_end",
             "contract_end_date", "achievements",
-            "has_agent_contract", "agent_full_name", "agent_id", "represent_self",
+            "has_agent_contract", "agent_full_name", "agent_id", "looking_for_agent", "represent_self",
+            "has_transfermarkt", "transfermarkt_username",
             "search_objective", "target_club_notes",
-            "visibility_mode", "visibility_filters", "visibility_exceptions",
+            "visibility_filters", "visibility_exceptions",
         ]
         labels = {
             "first_name": "Prénom",
@@ -34,13 +35,15 @@ class CoachProfileForm(forms.ModelForm):
             "current_club_end": "Date fin (club actuel)",
             "contract_end_date": "Date de fin de contrat",
             "achievements": "Réalisations & Palmarès",
-            "has_agent_contract": "Contrat avec Agent ?",
+            "has_agent_contract": "Avez-vous un contrat avec un Agent de Football ?",
             "agent_full_name": "Nom complet de l'agent",
             "agent_id": "ID de l'agent",
-            "represent_self": "Voulez-vous vous représenter vous-même ?",
+            "looking_for_agent": "Cherchez-vous un agent ?",
+            "represent_self": "Voulez-vous vous représenter … ?",
             "search_objective": "Objectif sur la plateforme (Stage, Contrat, Test…)",
             "target_club_notes": "Clubs visés (notes)",
-            "visibility_mode": "Préférence de visibilité",
+            "has_transfermarkt": "Avez-vous un profil sur Transfermarkt ?",
+            "transfermarkt_username": "Username",
             "visibility_filters": "Filtres de visibilité (JSON)",
             "visibility_exceptions": "Exceptions de visibilité (JSON)",
         }
@@ -65,6 +68,13 @@ class CoachProfileForm(forms.ModelForm):
             "visibility_exceptions": forms.Textarea(attrs={"rows": 2}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        bool_choices = [(True, 'Oui'), (False, 'Non')]
+        for field in ['has_agent_contract', 'looking_for_agent', 'has_transfermarkt', 'represent_self']:
+            self.fields[field].widget = forms.Select(choices=[('', '---------')] + bool_choices, attrs={"class": "form-control"})
+            self.fields[field].required = False
+
     def clean(self):
         cleaned = super().clean()
         smin, smax = cleaned.get("salary_min"), cleaned.get("salary_max")
@@ -73,6 +83,17 @@ class CoachProfileForm(forms.ModelForm):
         if cleaned.get("has_agent_contract"):
             if not cleaned.get("agent_full_name") or not cleaned.get("agent_id"):
                 self.add_error("agent_full_name", "Nom + ID agent requis si contrat = OUI.")
+            cleaned["looking_for_agent"] = False
+        else:
+            cleaned["agent_full_name"] = ""
+            cleaned["agent_id"] = ""
+                
+        if cleaned.get("has_transfermarkt"):
+            if not cleaned.get("transfermarkt_username"):
+                self.add_error("transfermarkt_username", "Veuillez renseigner votre username Transfermarkt.")
+        else:
+            cleaned["transfermarkt_username"] = ""
+            
         return cleaned
 
 

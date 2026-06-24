@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
 from .models import PlayerProfile
-from .forms import PlayerProfileForm, PreviousClubFormSet, StatFormSet, FileFormSet
+from .forms import PlayerProfileForm, PreviousClubFormSet, SeasonStatFormSet, FileFormSet
 
 @login_required
 def player_profile_edit(request):
@@ -15,24 +15,51 @@ def player_profile_edit(request):
     if request.method == "POST":
         form = PlayerProfileForm(request.POST, request.FILES, instance=profile)
         clubs_fs = PreviousClubFormSet(request.POST, instance=profile)
-        stats_fs = StatFormSet(request.POST, instance=profile)
         files_fs = FileFormSet(request.POST, request.FILES, instance=profile)
 
-        if form.is_valid() and clubs_fs.is_valid() and stats_fs.is_valid() and files_fs.is_valid():
+        if form.is_valid() and clubs_fs.is_valid() and files_fs.is_valid():
             form.save()
-            clubs_fs.save()
-            stats_fs.save()
+            saved_clubs = clubs_fs.save()
+            # Save season stats for each saved club
+            for club in saved_clubs:
+                prefix = f"seasons_{club.pk}"
+                season_fs = SeasonStatFormSet(request.POST, instance=club, prefix=prefix)
+                if season_fs.is_valid():
+                    seasons = season_fs.save(commit=False)
+                    for s in seasons:
+                        s.player = profile
+                        s.club = club
+                        s.save()
+                    season_fs.save_m2m()
             files_fs.save()
+            # Get the step from POST to redirect back to same step
+            step = request.POST.get('_current_step', '1')
             messages.success(request, "Profil joueur mis à jour ✅")
-            return redirect("players:profile_complete")
+            from django.http import HttpResponseRedirect
+            from django.urls import reverse
+            return HttpResponseRedirect(reverse("players:profile_edit") + f"?step={step}")
     else:
         form = PlayerProfileForm(instance=profile)
         clubs_fs = PreviousClubFormSet(instance=profile)
-        stats_fs = StatFormSet(instance=profile)
         files_fs = FileFormSet(instance=profile)
 
+    # Build season formsets for existing clubs
+    clubs_with_seasons = []
+    for club_form in clubs_fs.forms:
+        club_instance = club_form.instance
+        if club_instance.pk:
+            prefix = f"seasons_{club_instance.pk}"
+            season_fs = SeasonStatFormSet(instance=club_instance, prefix=prefix)
+        else:
+            season_fs = None
+        clubs_with_seasons.append((club_form, season_fs))
+
     return render(request, "players/profile_edit.html", {
-        "form": form, "clubs_fs": clubs_fs, "stats_fs": stats_fs, "files_fs": files_fs, "profile": profile
+        "form": form,
+        "clubs_fs": clubs_fs,
+        "clubs_with_seasons": clubs_with_seasons,
+        "files_fs": files_fs,
+        "profile": profile
     })
 
 @login_required

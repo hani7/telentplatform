@@ -139,8 +139,17 @@
         {% if profile.has_agent_contract %}
         <div class="ir"><span class="il">Nom de l'agent</span><span class="iv {% if not profile.agent_full_name %}empty{% endif %}">{{ profile.agent_full_name|default:"—" }}</span></div>
         <div class="ir"><span class="il">ID de l'agent</span><span class="iv {% if not profile.agent_id %}empty{% endif %}">{{ profile.agent_id|default:"—" }}</span></div>
+        {% else %}
+        <div class="ir"><span class="il">Cherche un agent</span><span class="iv">{% if profile.looking_for_agent %}Oui{% else %}Non{% endif %}</span></div>
         {% endif %}
-        <div class="ir"><span class="il">Se représente soi-même</span><span class="iv">{% if profile.represent_self %}Oui{% else %}Non{% endif %}</span></div>
+      </div>
+
+      <div class="ic">
+        <h5><i class="ti ti-link"></i> Transfermarkt</h5>
+        <div class="ir"><span class="il">Profil existant</span><span class="iv">{% if profile.has_transfermarkt %}Oui{% else %}Non{% endif %}</span></div>
+        {% if profile.has_transfermarkt %}
+        <div class="ir"><span class="il">Username</span><span class="iv {% if not profile.transfermarkt_username %}empty{% endif %}">{{ profile.transfermarkt_username|default:"—" }}</span></div>
+        {% endif %}
       </div>
 
       <div class="snav"><button class="sb sb-next" onclick="showTab(1)">Clubs <i class="ti ti-arrow-right"></i></button></div>

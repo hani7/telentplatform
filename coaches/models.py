@@ -43,7 +43,11 @@ class CoachProfile(models.Model):
     agent_full_name = models.CharField(max_length=140, blank=True)
     agent_id = models.CharField(max_length=50, blank=True)
 
-    represent_self = models.BooleanField(default=True)
+    looking_for_agent = models.BooleanField(default=False)
+    represent_self = models.BooleanField(default=False)
+
+    has_transfermarkt = models.BooleanField(default=False)
+    transfermarkt_username = models.CharField(max_length=150, blank=True)
 
     search_objective = models.CharField(max_length=120, blank=True)
     target_club_notes = models.TextField(blank=True)

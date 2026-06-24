@@ -135,21 +135,23 @@
         <div class="ir"><span class="il">Pied fort</span><span class="iv {% if not profile.foot %}empty{% endif %}">{{ profile.get_foot_display|default:"—" }}</span></div>
         <div class="ir"><span class="il">Taille</span><span class="iv {% if not profile.height_cm %}empty{% endif %}">{% if profile.height_cm %}{{ profile.height_cm }} cm{% else %}—{% endif %}</span></div>
         <div class="ir"><span class="il">Poids</span><span class="iv {% if not profile.weight_kg %}empty{% endif %}">{% if profile.weight_kg %}{{ profile.weight_kg }} kg{% else %}—{% endif %}</span></div>
+        <div class="ir"><span class="il">Disponibilité</span><span class="iv {% if not profile.availability %}empty{% endif %}">{{ profile.get_availability_display|default:"—" }}</span></div>
       </div>
 
+      {% if profile.availability == 'IN_CLUB' %}
       <div class="ic">
-        <h5><i class="ti ti-home"></i> Club actuel</h5>
+        <h5><i class="ti ti-home"></i> Avec club actuel</h5>
         <div class="ir"><span class="il">Nom du club</span><span class="iv {% if not profile.current_club_name %}empty{% endif %}">{{ profile.current_club_name|default:"—" }}</span></div>
         <div class="ir"><span class="il">Pays</span><span class="iv {% if not profile.current_club_country %}empty{% endif %}">{{ profile.current_club_country|default:"—" }}</span></div>
         <div class="ir"><span class="il">Division</span><span class="iv {% if not profile.current_club_division %}empty{% endif %}">{{ profile.current_club_division|default:"—" }}</span></div>
         <div class="ir"><span class="il">Début contrat</span><span class="iv {% if not profile.current_club_start %}empty{% endif %}">{{ profile.current_club_start|default:"—" }}</span></div>
         <div class="ir"><span class="il">Fin contrat</span><span class="iv {% if not profile.contract_end_date %}empty{% endif %}">{{ profile.contract_end_date|default:"—" }}</span></div>
       </div>
+      {% endif %}
 
       <div class="ic">
         <h5><i class="ti ti-currency-euro"></i> Finances & Objectifs</h5>
-        <div class="ir"><span class="il">Salaire min</span><span class="iv {% if not profile.salary_min %}empty{% endif %}">{% if profile.salary_min %}{{ profile.salary_min }} €{% else %}—{% endif %}</span></div>
-        <div class="ir"><span class="il">Salaire max</span><span class="iv {% if not profile.salary_max %}empty{% endif %}">{% if profile.salary_max %}{{ profile.salary_max }} €{% else %}—{% endif %}</span></div>
+        <div class="ir"><span class="il">Salaire souhaité</span><span class="iv {% if not profile.desired_salary %}empty{% endif %}">{% if profile.desired_salary %}{{ profile.desired_salary }} €{% else %}—{% endif %}</span></div>
         <div class="ir"><span class="il">Valeur joueur</span><span class="iv {% if not profile.player_value %}empty{% endif %}">{% if profile.player_value %}{{ profile.player_value }} €{% else %}—{% endif %}</span></div>
         <div class="ir"><span class="il">Objectif</span><span class="iv {% if not profile.search_objective %}empty{% endif %}">{{ profile.search_objective|default:"—" }}</span></div>
         <div class="ir"><span class="il">Clubs visés</span><span class="iv {% if not profile.target_club_notes %}empty{% endif %}">{{ profile.target_club_notes|default:"—" }}</span></div>
@@ -161,8 +163,17 @@
         {% if profile.has_agent_contract %}
         <div class="ir"><span class="il">Nom de l'agent</span><span class="iv {% if not profile.agent_full_name %}empty{% endif %}">{{ profile.agent_full_name|default:"—" }}</span></div>
         <div class="ir"><span class="il">ID de l'agent</span><span class="iv {% if not profile.agent_id %}empty{% endif %}">{{ profile.agent_id|default:"—" }}</span></div>
+        {% else %}
+        <div class="ir"><span class="il">Cherche un agent</span><span class="iv">{% if profile.looking_for_agent %}Oui{% else %}Non{% endif %}</span></div>
         {% endif %}
-        <div class="ir"><span class="il">Se représente soi-même</span><span class="iv">{% if profile.represent_self %}Oui{% else %}Non{% endif %}</span></div>
+      </div>
+
+      <div class="ic">
+        <h5><i class="ti ti-link"></i> Transfermarkt</h5>
+        <div class="ir"><span class="il">Profil existant</span><span class="iv">{% if profile.has_transfermarkt %}Oui{% else %}Non{% endif %}</span></div>
+        {% if profile.has_transfermarkt %}
+        <div class="ir"><span class="il">Username</span><span class="iv {% if not profile.transfermarkt_username %}empty{% endif %}">{{ profile.transfermarkt_username|default:"—" }}</span></div>
+        {% endif %}
       </div>
 
       <div class="snav"><button class="sb sb-next" onclick="showTab(1)">Clubs <i class="ti ti-arrow-right"></i></button></div>

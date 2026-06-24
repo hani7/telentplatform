@@ -40,7 +40,7 @@ class PlayerProfileSerializer(serializers.ModelSerializer):
             'gender', 'nationality', 'nationality_name', 'age',
             'is_minor', 'status', 'position', 'foot',
             'height_cm', 'weight_kg',
-            'salary_min', 'salary_max', 'player_value',
+            'desired_salary', 'player_value',
             'current_club_name', 'current_club_country', 'current_club_division',
             'current_club_start', 'current_club_end', 'contract_end_date',
             'search_objective', 'has_agent_contract', 'agent_full_name',

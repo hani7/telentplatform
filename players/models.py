@@ -27,6 +27,10 @@ class PlayerProfile(models.Model):
     is_minor = models.BooleanField(default=False)
     parents_declaration = models.FileField(upload_to="players/parents/", null=True, blank=True)
     parents_notes = models.TextField(blank=True)
+    
+    parent_name = models.CharField(max_length=140, blank=True)
+    parent_email = models.EmailField(blank=True)
+    parent_phone = models.CharField(max_length=50, blank=True)
 
     class Status(models.TextChoices):
         AMATEUR = "AMATEUR", "Amateur"
@@ -35,8 +39,7 @@ class PlayerProfile(models.Model):
 
     position = models.CharField(max_length=50, blank=True)
 
-    salary_min = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)])
-    salary_max = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)])
+    desired_salary = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)])
 
     class Foot(models.TextChoices):
         RIGHT = "R", "Droit"
@@ -46,6 +49,11 @@ class PlayerProfile(models.Model):
 
     height_cm = models.PositiveIntegerField(null=True, blank=True)
     weight_kg = models.PositiveIntegerField(null=True, blank=True)
+
+    class Availability(models.TextChoices):
+        IN_CLUB = "IN_CLUB", "En poste"
+        FREE = "FREE", "Libre"
+    availability = models.CharField(max_length=15, choices=Availability.choices, blank=True)
 
     current_club_name = models.CharField(max_length=140, blank=True)
     current_club_country = models.CharField(max_length=80, blank=True)
@@ -62,7 +70,11 @@ class PlayerProfile(models.Model):
     agent_full_name = models.CharField(max_length=140, blank=True)
     agent_id = models.CharField(max_length=50, blank=True)
 
-    represent_self = models.BooleanField(default=True)
+    looking_for_agent = models.BooleanField(default=False)
+    represent_self = models.BooleanField(default=False)
+
+    has_transfermarkt = models.BooleanField(default=False)
+    transfermarkt_username = models.CharField(max_length=150, blank=True)
 
     target_club_notes = models.TextField(blank=True)
 
@@ -99,16 +111,18 @@ class PlayerPreviousClub(models.Model):
     club_name = models.CharField(max_length=140)
     country = models.CharField(max_length=80, blank=True)
     division = models.CharField(max_length=80, blank=True)
-    start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True)
+    season = models.CharField(max_length=20, blank=True, help_text="Ex: 2023-2024")
 
 class PlayerStat(models.Model):
     player = models.ForeignKey(PlayerProfile, on_delete=models.CASCADE, related_name="stats")
+    club = models.ForeignKey('PlayerPreviousClub', on_delete=models.CASCADE, null=True, blank=True, related_name="seasons")
     season = models.CharField(max_length=20, blank=True)
     matches = models.PositiveIntegerField(default=0)
     goals = models.PositiveIntegerField(default=0)
     assists = models.PositiveIntegerField(default=0)
     minutes = models.PositiveIntegerField(default=0)
+    competitions = models.JSONField(default=list, blank=True)
+    collective_results = models.JSONField(default=list, blank=True)
 
 class PlayerFile(models.Model):
     class FileType(models.TextChoices):

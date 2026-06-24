@@ -40,7 +40,7 @@
     .fc hr{border:none;border-top:1px solid rgba(255,255,255,.12);margin:1rem 0}
 
     /* All Django widgets inside form card */
-    .fc input[type=text],.fc input[type=number],.fc input[type=date],.fc input[type=email],.fc input[type=file],.fc select,.fc textarea{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.22);border-radius:11px;color:#fff;padding:.6rem .9rem;width:100%;font-size:.88rem;box-sizing:border-box;transition:border-color .2s,background .2s;margin-bottom:.6rem}
+    .fc input[type=text],.fc input[type=number],.fc input[type=date],.fc input[type=email],.fc input[type=file],.fc input[type=tel],.fc select,.fc textarea{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.22);border-radius:11px;color:#fff;padding:.6rem .9rem;width:100%;font-size:.88rem;box-sizing:border-box;transition:border-color .2s,background .2s;margin-bottom:.6rem}
     .fc input::placeholder,.fc textarea::placeholder{color:rgba(255,255,255,.38)}
     .fc input:focus,.fc select:focus,.fc textarea:focus{outline:none;border-color:#f1b10f;background:rgba(255,255,255,.13)}
     .fc select option{background:#0d2b18;color:#fff}
@@ -63,7 +63,7 @@
     /* Formset Django auto-rendered */
     .fsi p{margin-bottom:.4rem}
     .fsi label{color:rgba(255,255,255,.62);font-size:.78rem;font-weight:600;display:block;margin-bottom:2px}
-    .fsi input[type=text],.fsi input[type=number],.fsi input[type=date],.fsi input[type=email],.fsi input[type=file],.fsi select,.fsi textarea{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box;margin-bottom:.4rem}
+    .fsi input[type=text],.fsi input[type=number],.fsi input[type=date],.fsi input[type=email],.fsi input[type=file],.fsi input[type=tel],.fsi select,.fsi textarea{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box;margin-bottom:.4rem}
     .fsi input:focus,.fsi select:focus,.fsi textarea:focus{outline:none;border-color:#f1b10f;background:rgba(255,255,255,.13)}
     .fsi select option{background:#0d2b18;color:#fff}
 
@@ -114,15 +114,15 @@
 
     <!-- Step Tabs -->
     <div class="steps">
-      <div class="si active" onclick="goStep(1)"><i class="ti ti-user"></i> Infos</div>
-      <div class="si" onclick="goStep(2)"><i class="ti ti-building"></i> Clubs</div>
-      <div class="si" onclick="goStep(3)"><i class="ti ti-chart-bar"></i> Stats</div>
-      <div class="si" onclick="goStep(4)"><i class="ti ti-file-upload"></i> Fichiers</div>
+      <div class="si active"><i class="ti ti-user"></i> Infos</div>
+      <div class="si"><i class="ti ti-building"></i> Clubs</div>
+      <div class="si"><i class="ti ti-file-upload"></i> Fichiers</div>
     </div>
 
     <!-- Form -->
     <form method="post" enctype="multipart/form-data" id="pForm">
       {% csrf_token %}
+      <input type="hidden" name="_current_step" id="_current_step" value="1">
 
       <!-- ═══ STEP 1 ═══ -->
       <div class="fc active" data-step="1">
@@ -161,11 +161,31 @@
           </div>
         </div>
 
-        <div class="ck">{{ form.is_minor }} <label>{{ form.is_minor.label }}</label></div>
-        <div id="minor-wrap" style="display:none">
+        <div class="ck" style="display:none;">{{ form.is_minor }} <label>{{ form.is_minor.label }}</label></div>
+        <div id="minor-wrap" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed rgba(241,177,15,0.6); border-radius: 8px; background: rgba(241,177,15,0.05);">
+          <h6 style="color:#f1b10f; font-size:0.9rem; margin-bottom:10px;">Informations Parentales Obligatoires</h6>
+          
+          {{ form.parent_name.errors }}
+          <span class="fl">{{ form.parent_name.label }}</span>
+          {{ form.parent_name }}
+          
+          <div class="row g-2">
+            <div class="col-6">
+              {{ form.parent_email.errors }}
+              <span class="fl">{{ form.parent_email.label }}</span>
+              {{ form.parent_email }}
+            </div>
+            <div class="col-6">
+              {{ form.parent_phone.errors }}
+              <span class="fl">{{ form.parent_phone.label }}</span>
+              {{ form.parent_phone }}
+            </div>
+          </div>
+
           {{ form.parents_declaration.errors }}
           <span class="fl">{{ form.parents_declaration.label }}</span>
           {{ form.parents_declaration }}
+
           {{ form.parents_notes.errors }}
           <span class="fl">{{ form.parents_notes.label }}</span>
           {{ form.parents_notes }}
@@ -203,7 +223,16 @@
 
         <hr>
 
-        <div class="row g-2">
+        <div class="row g-2 mb-3">
+          <div class="col-12">
+            {{ form.availability.errors }}
+            <span class="fl">{{ form.availability.label }}</span>
+            {{ form.availability }}
+          </div>
+        </div>
+
+        <div id="current-club-wrap" class="row g-2" style="display: none; padding: 15px; border: 1px dashed rgba(241,177,15,0.6); border-radius: 8px; background: rgba(241,177,15,0.05); margin-top: 10px;">
+          <h6 style="color:#f1b10f; font-size:0.9rem; margin-bottom:10px; width: 100%;">Informations du club actuel</h6>
           <div class="col-6">
             {{ form.current_club_name.errors }}
             <span class="fl">{{ form.current_club_name.label }}</span>
@@ -239,19 +268,13 @@
         <hr>
 
         <div class="row g-2">
-          <div class="col-4">
-            {{ form.salary_min.errors }}
-            <span class="fl">{{ form.salary_min.label }}</span>
-            {{ form.salary_min }}
-            <span class="helptext">{{ form.salary_min.help_text }}</span>
+          <div class="col-6">
+            {{ form.desired_salary.errors }}
+            <span class="fl">{{ form.desired_salary.label }}</span>
+            {{ form.desired_salary }}
+            <span class="helptext">{{ form.desired_salary.help_text }}</span>
           </div>
-          <div class="col-4">
-            {{ form.salary_max.errors }}
-            <span class="fl">{{ form.salary_max.label }}</span>
-            {{ form.salary_max }}
-            <span class="helptext">{{ form.salary_max.help_text }}</span>
-          </div>
-          <div class="col-4">
+          <div class="col-6">
             {{ form.player_value.errors }}
             <span class="fl">{{ form.player_value.label }}</span>
             {{ form.player_value }}
@@ -266,8 +289,12 @@
 
         <hr>
 
-        <div class="ck">{{ form.has_agent_contract }} <label>{{ form.has_agent_contract.label }}</label></div>
-        <div id="agent-wrap" style="display:none">
+        <div class="col-12">
+          {{ form.has_agent_contract.errors }}
+          <span class="fl">{{ form.has_agent_contract.label }}</span>
+          {{ form.has_agent_contract }}
+        </div>
+        <div id="agent-wrap" style="display:none; margin-top: 5px;">
           <div class="row g-2">
             <div class="col-6">
               {{ form.agent_full_name.errors }}
@@ -282,7 +309,30 @@
           </div>
         </div>
 
-        <div class="ck">{{ form.represent_self }} <label>{{ form.represent_self.label }}</label></div>
+        <div id="looking-for-agent-wrap" class="col-12" style="display:none; margin-top: 5px;">
+          {{ form.looking_for_agent.errors }}
+          <span class="fl">{{ form.looking_for_agent.label }}</span>
+          {{ form.looking_for_agent }}
+        </div>
+
+        <div id="represent-self-wrap" class="col-12" style="display:none; margin-top: 5px;">
+          {{ form.represent_self.errors }}
+          <span class="fl">{{ form.represent_self.label }}</span>
+          {{ form.represent_self }}
+        </div>
+
+        <hr>
+
+        <div class="col-12">
+          {{ form.has_transfermarkt.errors }}
+          <span class="fl">{{ form.has_transfermarkt.label }}</span>
+          {{ form.has_transfermarkt }}
+        </div>
+        <div id="transfermarkt-wrap" style="display:none; margin-top: 5px; margin-bottom: 10px;">
+          {{ form.transfermarkt_username.errors }}
+          <span class="fl">{{ form.transfermarkt_username.label }}</span>
+          {{ form.transfermarkt_username }}
+        </div>
 
         <hr>
 
@@ -292,50 +342,118 @@
             <span class="fl">{{ form.target_club_notes.label }}</span>
             {{ form.target_club_notes }}
           </div>
-          <div class="col-12">
-            {{ form.visibility_mode.errors }}
-            <span class="fl">{{ form.visibility_mode.label }}</span>
-            {{ form.visibility_mode }}
-          </div>
         </div>
       </div>
 
-      <!-- ═══ STEP 2 ═══ -->
+      <!-- ═══ STEP 2 : Clubs ═══ -->
       <div class="fc" data-step="2">
         <h5><i class="ti ti-building"></i> Clubs précédents</h5>
         <p style="color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:1rem">Ajoute tes expériences dans des clubs</p>
         {{ clubs_fs.management_form }}
-        {% for f in clubs_fs %}
-          <div class="fsi">
+        <div id="clubs-container">
+        {% for club_form, season_fs in clubs_with_seasons %}
+          <div class="fsi club-entry">
             <div class="fsi-head">
               <span class="fsi-title">Club {{ forloop.counter }}</span>
-              <button type="button" class="btn-clear" onclick="clearBlock(this)"><i class="ti ti-eraser"></i> Vider</button>
+              <button type="button" class="btn-clear" onclick="removeClub(this)"><i class="ti ti-trash"></i> Supprimer</button>
             </div>
-            {{ f.as_p }}
-            {{ f.DELETE }}
+            <div class="row g-2">
+              <div class="col-12">
+                {{ club_form.club_name.errors }}
+                <span class="fl">{{ club_form.club_name.label }}</span>
+                {{ club_form.club_name }}
+              </div>
+              <div class="col-6">
+                {{ club_form.country.errors }}
+                <span class="fl">{{ club_form.country.label }}</span>
+                {{ club_form.country }}
+              </div>
+              <div class="col-6">
+                {{ club_form.division.errors }}
+                <span class="fl">{{ club_form.division.label }}</span>
+                {{ club_form.division }}
+              </div>
+            </div>
+            {% for hidden in club_form.hidden_fields %}{{ hidden }}{% endfor %}
+            {{ club_form.DELETE }}
+
+            {% if season_fs %}
+            <!-- Seasons / Stats -->
+            <div class="seasons-block" style="margin-top:1rem;border-top:1px solid rgba(255,255,255,.1);padding-top:.8rem">
+              <div style="font-size:.8rem;font-weight:700;color:rgba(241,177,15,.8);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em">📊 Saisons &amp; Stats</div>
+              {{ season_fs.management_form }}
+              <div class="seasons-container">
+              {% for sf in season_fs %}
+                <div class="season-row" style="background:rgba(255,255,255,.05);border-radius:10px;padding:.7rem;margin-bottom:.5rem;position:relative">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+                    <span style="font-size:.78rem;font-weight:600;color:rgba(255,255,255,.7)">Saison {{ forloop.counter }}</span>
+                    <button type="button" onclick="removeSeason(this)" style="background:rgba(248,113,113,.15);border:none;border-radius:6px;padding:2px 8px;color:#f87171;font-size:.75rem;cursor:pointer">✕</button>
+                  </div>
+                  <div class="row g-1">
+                    <div class="col-12">
+                      <span class="fl" style="font-size:.75rem">{{ sf.season.label }}</span>
+                      {{ sf.season }}
+                    </div>
+                    <div class="col-3">
+                      <span class="fl" style="font-size:.72rem">{{ sf.matches.label }}</span>
+                      {{ sf.matches }}
+                    </div>
+                    <div class="col-3">
+                      <span class="fl" style="font-size:.72rem">{{ sf.goals.label }}</span>
+                      {{ sf.goals }}
+                    </div>
+                    <div class="col-3">
+                      <span class="fl" style="font-size:.72rem">{{ sf.assists.label }}</span>
+                      {{ sf.assists }}
+                    </div>
+                    <div class="col-3">
+                      <span class="fl" style="font-size:.72rem">{{ sf.minutes.label }}</span>
+                      {{ sf.minutes }}
+                    </div>
+                    <!-- Compétitions -->
+                    <div class="col-12" style="margin-top:.5rem">
+                      <span class="fl" style="font-size:.75rem;margin-bottom:.3rem;display:block">{{ sf.competitions.label }}</span>
+                      <div style="display:flex;flex-wrap:wrap;gap:5px">
+                        {% for cb in sf.competitions %}
+                          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 9px;cursor:pointer;transition:all .15s">
+                            {{ cb.tag }} {{ cb.choice_label }}
+                          </label>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    <!-- Résultats collectifs -->
+                    <div class="col-12" style="margin-top:.4rem">
+                      <span class="fl" style="font-size:.75rem;margin-bottom:.3rem;display:block">{{ sf.collective_results.label }}</span>
+                      <div style="display:flex;flex-wrap:wrap;gap:5px">
+                        {% for cb in sf.collective_results %}
+                          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 9px;cursor:pointer;transition:all .15s">
+                            {{ cb.tag }} {{ cb.choice_label }}
+                          </label>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                  {% for hidden in sf.hidden_fields %}{{ hidden }}{% endfor %}
+                  {{ sf.DELETE }}
+                </div>
+              {% endfor %}
+              </div>
+              <button type="button" onclick="addSeason(this)" style="width:100%;padding:8px;border-radius:20px;border:1px dashed rgba(255,255,255,.2);background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);font-size:.8rem;cursor:pointer;margin-top:.3rem;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(255,255,255,.04)'">
+                <i class="ti ti-plus"></i> Ajouter une saison
+              </button>
+            </div>
+            {% endif %}
           </div>
         {% endfor %}
+        </div>
+        <button type="button" id="add-club-btn" onclick="addClub()" style="margin-top:1rem;width:100%;padding:12px;border-radius:50px;border:2px dashed rgba(241,177,15,.5);background:rgba(241,177,15,.08);color:#f1b10f;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(241,177,15,.18)'" onmouseout="this.style.background='rgba(241,177,15,.08)'">
+          <i class="ti ti-plus"></i> Ajouter un club
+        </button>
       </div>
 
-      <!-- ═══ STEP 3 ═══ -->
+
+      <!-- ═══ STEP 3 : Fichiers ═══ -->
       <div class="fc" data-step="3">
-        <h5><i class="ti ti-chart-bar"></i> Statistiques</h5>
-        <p style="color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:1rem">Indique tes statistiques par saison</p>
-        {{ stats_fs.management_form }}
-        {% for f in stats_fs %}
-          <div class="fsi">
-            <div class="fsi-head">
-              <span class="fsi-title">Saison {{ forloop.counter }}</span>
-              <button type="button" class="btn-clear" onclick="clearBlock(this)"><i class="ti ti-eraser"></i> Vider</button>
-            </div>
-            {{ f.as_p }}
-            {{ f.DELETE }}
-          </div>
-        {% endfor %}
-      </div>
-
-      <!-- ═══ STEP 4 ═══ -->
-      <div class="fc" data-step="4">
         <h5><i class="ti ti-file-upload"></i> Fichiers (CV / Photos / Vidéos)</h5>
         <p style="color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:1rem">Ajoute au moins un fichier pour compléter ton profil</p>
         {{ files_fs.management_form }}
@@ -349,6 +467,17 @@
             {{ f.DELETE }}
           </div>
         {% endfor %}
+        
+        <hr>
+        <div class="ck" style="margin-top: 1.5rem; align-items: flex-start;">
+          <input type="checkbox" id="consent_checkbox" required style="margin-top: 3px;">
+          <label id="consent_label_adult" for="consent_checkbox" style="line-height: 1.4;">
+            J’accepte que les données de mon profil soient consultées par les clubs, leurs représentants et les agents de football autorisés, dans le cadre du recrutement, conformément aux règlements applicables de la FIFA et des fédérations concernées. En validant, je confirme l’exactitude des informations fournies.
+          </label>
+          <label id="consent_label_minor" for="consent_checkbox" style="display:none; line-height: 1.4;">
+            En tant que parent / tuteur légal, j’autorise la création et/ou la mise à jour du profil de mon enfant sur cette plateforme, par moi-même ou par mon enfant sous ma responsabilité. Je confirme avoir pris connaissance des informations saisies et j’accepte qu’elles puissent être consultées par des clubs, leurs représentants et des agents de football autorisés, conformément aux règles applicables. Ce consentement a été envoyé à votre adresse e-mail pour validation.
+          </label>
+        </div>
       </div>
 
       <!-- Nav -->
@@ -374,15 +503,19 @@
 
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 <script>
-  let cur=1;const tot=4;
+  let cur=1;const tot=3;
   const tabs=document.querySelectorAll('.si');
   const cards=document.querySelectorAll('.fc');
   const prev=document.getElementById('prevBtn');
   const next=document.getElementById('nextBtn');
   const sub=document.getElementById('subBtn');
+  const stepInput=document.getElementById('_current_step');
+  const STEP_KEY='player_profile_step';
 
   function goStep(s){
     cur=s;
+    if(stepInput) stepInput.value=s;
+    sessionStorage.setItem(STEP_KEY, s);
     cards.forEach(c=>{c.classList.toggle('active',+c.dataset.step===s)});
     tabs.forEach((t,i)=>{t.classList.remove('active','done');if(i+1===s)t.classList.add('active');else if(i+1<s)t.classList.add('done')});
     prev.style.display=s===1?'none':'flex';
@@ -391,8 +524,38 @@
     window.scrollTo({top:0,behavior:'smooth'});
   }
 
-  next.addEventListener('click',()=>{if(cur<tot){cur++;goStep(cur)}});
-  prev.addEventListener('click',()=>{if(cur>1){cur--;goStep(cur)}});
+  // Restore step from URL param (after save redirect) or sessionStorage
+  (function(){
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlStep = parseInt(urlParams.get('step'));
+    const savedStep = parseInt(sessionStorage.getItem(STEP_KEY));
+    const startStep = urlStep || savedStep || 1;
+    if(startStep > 1 && startStep <= tot) goStep(startStep);
+  })();
+
+  next.addEventListener('click',()=>{
+    const currentCard = document.querySelector(`.fc[data-step="${cur}"]`);
+    if(currentCard) {
+      const inputs = Array.from(currentCard.querySelectorAll('input:not([type=checkbox]), select, textarea'));
+      const firstInvalid = inputs.find(i => !i.checkValidity());
+      if(firstInvalid) {
+        firstInvalid.reportValidity();
+        return;
+      }
+    }
+    if(cur<tot){cur++;goStep(cur)}
+  });
+
+  // Précédent: save form first, then go back
+  prev.addEventListener('click',()=>{
+    if(cur>1){
+      const targetStep = cur - 1;
+      if(stepInput) stepInput.value = cur; // remember current step to come back
+      // Submit the form to save, will redirect back to targetStep
+      if(stepInput) stepInput.value = targetStep;
+      document.getElementById('pForm').submit();
+    }
+  });
 
   function clearBlock(btn){
     const b=btn.closest('.fsi');
@@ -404,14 +567,181 @@
     setTimeout(()=>b.style.borderColor='',400);
   }
 
-  // Conditional fields
+  // Dynamic club adding
+  function addClub() {
+    const container = document.getElementById('clubs-container');
+    const totalForms = document.getElementById('id_previous_clubs-TOTAL_FORMS');
+    const formNum = parseInt(totalForms.value);
+    const firstEntry = container.querySelector('.club-entry');
+    if (!firstEntry) return;
+    const newEntry = firstEntry.cloneNode(true);
+    newEntry.querySelectorAll('input, select, textarea').forEach(el => {
+      if (el.name) el.name = el.name.replace(/-\d+-/, `-${formNum}-`);
+      if (el.id) el.id = el.id.replace(/_\d+_/, `_${formNum}_`);
+      if (el.type !== 'checkbox' && el.type !== 'hidden') el.value = '';
+      if (el.type === 'select-one') el.selectedIndex = 0;
+    });
+    newEntry.querySelectorAll('label').forEach(el => {
+      if (el.htmlFor) el.htmlFor = el.htmlFor.replace(/_\d+_/, `_${formNum}_`);
+    });
+    const title = newEntry.querySelector('.fsi-title');
+    if (title) title.textContent = `Club ${formNum + 1}`;
+    const deleteInput = newEntry.querySelector('input[type=checkbox]');
+    if (deleteInput) deleteInput.checked = false;
+    newEntry.style.opacity = '1';
+    newEntry.style.pointerEvents = 'auto';
+    container.appendChild(newEntry);
+    totalForms.value = formNum + 1;
+    if (typeof initSearchableDropdowns === 'function') initSearchableDropdowns();
+  }
+
+  function removeClub(btn) {
+    const entry = btn.closest('.club-entry');
+    if (!entry) return;
+    const deleteInput = entry.querySelector('input[name*="-DELETE"]');
+    if (deleteInput) {
+      deleteInput.checked = true;
+      entry.style.opacity = '0.3';
+      entry.style.pointerEvents = 'none';
+    } else {
+      entry.remove();
+    }
+  }
+
+  function addSeason(btn) {
+    const seasonsBlock = btn.closest('.seasons-block');
+    const container = seasonsBlock.querySelector('.seasons-container');
+    const mgmtTotal = seasonsBlock.querySelector('input[name$="-TOTAL_FORMS"]');
+    if (!mgmtTotal) return;
+    const formNum = parseInt(mgmtTotal.value);
+    const firstRow = container.querySelector('.season-row');
+    if (!firstRow) return;
+    const newRow = firstRow.cloneNode(true);
+    // Get prefix from the management form input name (e.g. "seasons_5-TOTAL_FORMS" -> prefix="seasons_5")
+    const prefix = mgmtTotal.name.replace('-TOTAL_FORMS', '');
+    newRow.querySelectorAll('input, select, textarea').forEach(el => {
+      if (el.name) el.name = el.name.replace(new RegExp(`${prefix}-\\d+-`), `${prefix}-${formNum}-`);
+      if (el.id) el.id = el.id.replace(new RegExp(`${prefix}_\\d+_`), `${prefix}_${formNum}_`);
+      if (el.type !== 'checkbox' && el.type !== 'hidden') el.value = '';
+      if (el.type === 'select-one') el.selectedIndex = 0;
+    });
+    // Reset season counter label
+    const label = newRow.querySelector('span[style*="font-weight:600"]');
+    if (label) label.textContent = `Saison ${formNum + 1}`;
+    container.appendChild(newRow);
+    mgmtTotal.value = formNum + 1;
+  }
+
+  function removeSeason(btn) {
+    const row = btn.closest('.season-row');
+    if (!row) return;
+    const deleteInput = row.querySelector('input[name*="-DELETE"]');
+    if (deleteInput) {
+      deleteInput.checked = true;
+      row.style.opacity = '0.2';
+      row.style.pointerEvents = 'none';
+    } else {
+      row.remove();
+    }
+  }
+
   (function(){
-    const ac=document.querySelector('input[name=has_agent_contract]');
+    const ac=document.querySelector('select[name=has_agent_contract]');
+    const lfaInput=document.querySelector('select[name=looking_for_agent]');
     const aw=document.getElementById('agent-wrap');
-    if(ac&&aw){const t=()=>aw.style.display=ac.checked?'block':'none';ac.addEventListener('change',t);t()}
-    const mc=document.querySelector('input[name=is_minor]');
-    const mw=document.getElementById('minor-wrap');
-    if(mc&&mw){const t=()=>mw.style.display=mc.checked?'block':'none';mc.addEventListener('change',t);t()}
+    const lfa=document.getElementById('looking-for-agent-wrap');
+    const rsWrap=document.getElementById('represent-self-wrap');
+    if(ac&&aw&&lfa){
+      const t=()=>{
+        if(ac.value === 'True'){
+          aw.style.display='block';
+          lfa.style.display='none';
+          if(rsWrap) rsWrap.style.display='none';
+        }else{
+          lfa.style.display='block';
+          aw.style.display='none';
+          if(lfaInput && lfaInput.value === 'True') {
+            if(rsWrap) rsWrap.style.display='block';
+          } else {
+            if(rsWrap) rsWrap.style.display='none';
+          }
+        }
+      };
+      ac.addEventListener('change',t);
+      if(lfaInput) lfaInput.addEventListener('change',t);
+      t();
+    }
+    
+    const tmk=document.querySelector('select[name=has_transfermarkt]');
+    const tmw=document.getElementById('transfermarkt-wrap');
+    if(tmk&&tmw){const f=()=>tmw.style.display=tmk.value==='True'?'block':'none';tmk.addEventListener('change',f);f()}
+    
+    const availSelect = document.getElementById('id_availability');
+    const clubWrap = document.getElementById('current-club-wrap');
+    if(availSelect && clubWrap){
+      const t = () => clubWrap.style.display = availSelect.value === 'IN_CLUB' ? 'flex' : 'none';
+      availSelect.addEventListener('change', t);
+      t();
+    }
+    
+    const birthDateInput = document.getElementById('id_birth_date');
+    const minorCheckbox = document.querySelector('input[name=is_minor]');
+    const minorWrap = document.getElementById('minor-wrap');
+    const lblAdult = document.getElementById('consent_label_adult');
+    const lblMinor = document.getElementById('consent_label_minor');
+
+    function calculateAge(birthday) {
+        const ageDifMs = Date.now() - birthday.getTime();
+        const ageDate = new Date(ageDifMs);
+        return Math.abs(ageDate.getUTCFullYear() - 1970);
+    }
+
+    function updateMinorStatus() {
+        if(!birthDateInput || !minorCheckbox) return;
+        
+        let isMinor = false;
+        if(birthDateInput.value) {
+            const dob = new Date(birthDateInput.value);
+            if(!isNaN(dob)) {
+                isMinor = calculateAge(dob) < 18;
+            }
+        }
+        
+        minorCheckbox.checked = isMinor;
+        if(minorWrap) minorWrap.style.display = isMinor ? 'block' : 'none';
+        
+        if(lblAdult && lblMinor) {
+            lblAdult.style.display = isMinor ? 'none' : 'block';
+            lblMinor.style.display = isMinor ? 'block' : 'none';
+        }
+    }
+
+    if(birthDateInput) {
+        birthDateInput.addEventListener('change', updateMinorStatus);
+        updateMinorStatus();
+    }
+    const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent', 'is_minor'];
+    function updateValidationUI() {
+      document.querySelectorAll('.fc input:not([type=hidden]):not([type=file]), .fc select, .fc textarea').forEach(el => {
+        if (el.type === 'checkbox') {
+          el.required = false;
+        } else if (skipRequired.includes(el.name)) {
+          el.required = false;
+        } else {
+          el.required = (el.offsetParent !== null);
+        }
+        
+        const label = el.previousElementSibling;
+        if (label && label.classList.contains('fl')) {
+          label.innerHTML = label.innerHTML.replace(/ <span style="color:#f87171">\*<\/span>/g, '');
+          if (el.required) {
+            label.innerHTML += ' <span style="color:#f87171">*</span>';
+          }
+        }
+      });
+    }
+    document.addEventListener('change', updateValidationUI);
+    updateValidationUI();
   })();
 </script>
 <script src="{% static 'js/searchable-dropdown.js' %}"></script>
