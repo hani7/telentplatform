@@ -238,6 +238,22 @@
         <form method="post">
           {% csrf_token %}
 
+          {% if form.errors %}
+          <div class="msg-bar alert alert-danger">
+            <strong>Veuillez corriger les erreurs suivantes :</strong>
+            <ul>
+            {% for field in form %}
+              {% if field.errors %}
+                <li>{{ field.label }}: {{ field.errors|striptags }}</li>
+              {% endif %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+
           <div class="row g-3">
             <div class="col-6">
               <span class="form-label-custom">Prénom</span>
