@@ -19,20 +19,25 @@ def player_profile_edit(request):
 
         if form.is_valid() and clubs_fs.is_valid() and files_fs.is_valid():
             form.save()
-            saved_clubs = clubs_fs.save()
-            # Save season stats for each saved club
-            for club in saved_clubs:
-                prefix = f"seasons_{club.pk}"
-                season_fs = SeasonStatFormSet(request.POST, instance=club, prefix=prefix)
+            clubs_fs.save()  # saves all clubs, giving new ones their PKs
+            # After save, clubs_fs.forms[i].instance.pk is available for all
+            for i, club_form in enumerate(clubs_fs.forms):
+                if club_form.cleaned_data.get('DELETE'):
+                    continue
+                club_instance = club_form.instance
+                if not club_instance.pk:
+                    continue
+                prefix = f"seasons_form_{i}"
+                season_fs = SeasonStatFormSet(request.POST, instance=club_instance, prefix=prefix)
                 if season_fs.is_valid():
                     seasons = season_fs.save(commit=False)
                     for s in seasons:
                         s.player = profile
-                        s.club = club
+                        s.club = club_instance
                         s.save()
-                    season_fs.save_m2m()
+                    for obj in season_fs.deleted_objects:
+                        obj.delete()
             files_fs.save()
-            # Get the step from POST to redirect back to same step
             step = request.POST.get('_current_step', '1')
             messages.success(request, "Profil joueur mis à jour ✅")
             from django.http import HttpResponseRedirect
@@ -43,15 +48,16 @@ def player_profile_edit(request):
         clubs_fs = PreviousClubFormSet(instance=profile)
         files_fs = FileFormSet(instance=profile)
 
-    # Build season formsets for existing clubs
+    # Build season formsets for ALL clubs (saved AND new), using index as prefix
     clubs_with_seasons = []
-    for club_form in clubs_fs.forms:
+    for i, club_form in enumerate(clubs_fs.forms):
         club_instance = club_form.instance
+        prefix = f"seasons_form_{i}"
         if club_instance.pk:
-            prefix = f"seasons_{club_instance.pk}"
             season_fs = SeasonStatFormSet(instance=club_instance, prefix=prefix)
         else:
-            season_fs = None
+            # New club: show an empty season formset so user can fill it now
+            season_fs = SeasonStatFormSet(prefix=prefix)
         clubs_with_seasons.append((club_form, season_fs))
 
     return render(request, "players/profile_edit.html", {

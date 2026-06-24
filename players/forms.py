@@ -283,20 +283,18 @@ class SeasonStatForm(forms.ModelForm):
 
     class Meta:
         model = PlayerStat
-        fields = ["season", "matches", "goals", "assists", "minutes", "competitions", "collective_results"]
+        fields = ["season", "matches", "goals", "assists", "competitions", "collective_results"]
         labels = {
             "season": "Saison",
             "matches": "Matchs",
             "goals": "Buts",
             "assists": "Passes D",
-            "minutes": "Minutes",
         }
         widgets = {
             "season": forms.TextInput(attrs={"placeholder": "Ex: 2023-2024"}),
             "matches": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
             "goals": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
             "assists": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
-            "minutes": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
         }
 
     def __init__(self, *args, **kwargs):

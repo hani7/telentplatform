@@ -377,7 +377,6 @@
             {% for hidden in club_form.hidden_fields %}{{ hidden }}{% endfor %}
             {{ club_form.DELETE }}
 
-            {% if season_fs %}
             <!-- Seasons / Stats -->
             <div class="seasons-block" style="margin-top:1rem;border-top:1px solid rgba(255,255,255,.1);padding-top:.8rem">
               <div style="font-size:.8rem;font-weight:700;color:rgba(241,177,15,.8);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em">📊 Saisons &amp; Stats</div>
@@ -442,7 +441,6 @@
                 <i class="ti ti-plus"></i> Ajouter une saison
               </button>
             </div>
-            {% endif %}
           </div>
         {% endfor %}
         </div>
@@ -576,13 +574,23 @@
     if (!firstEntry) return;
     const newEntry = firstEntry.cloneNode(true);
     newEntry.querySelectorAll('input, select, textarea').forEach(el => {
-      if (el.name) el.name = el.name.replace(/-\d+-/, `-${formNum}-`);
-      if (el.id) el.id = el.id.replace(/_\d+_/, `_${formNum}_`);
+      if (el.name) {
+        el.name = el.name.replace(/previous_clubs-\d+-/, `previous_clubs-${formNum}-`);
+        el.name = el.name.replace(/seasons_form_\d+/, `seasons_form_${formNum}`);
+      }
+      if (el.id) {
+        el.id = el.id.replace(/previous_clubs_\d+_/, `previous_clubs_${formNum}_`);
+        el.id = el.id.replace(/seasons_form_\d+/, `seasons_form_${formNum}`);
+      }
       if (el.type !== 'checkbox' && el.type !== 'hidden') el.value = '';
+      if (el.type === 'checkbox') el.checked = false;
       if (el.type === 'select-one') el.selectedIndex = 0;
     });
     newEntry.querySelectorAll('label').forEach(el => {
-      if (el.htmlFor) el.htmlFor = el.htmlFor.replace(/_\d+_/, `_${formNum}_`);
+      if (el.htmlFor) {
+        el.htmlFor = el.htmlFor.replace(/previous_clubs_\d+_/, `previous_clubs_${formNum}_`);
+        el.htmlFor = el.htmlFor.replace(/seasons_form_\d+/, `seasons_form_${formNum}`);
+      }
     });
     const title = newEntry.querySelector('.fsi-title');
     if (title) title.textContent = `Club ${formNum + 1}`;
@@ -623,6 +631,7 @@
       if (el.name) el.name = el.name.replace(new RegExp(`${prefix}-\\d+-`), `${prefix}-${formNum}-`);
       if (el.id) el.id = el.id.replace(new RegExp(`${prefix}_\\d+_`), `${prefix}_${formNum}_`);
       if (el.type !== 'checkbox' && el.type !== 'hidden') el.value = '';
+      if (el.type === 'checkbox') el.checked = false;
       if (el.type === 'select-one') el.selectedIndex = 0;
     });
     // Reset season counter label
