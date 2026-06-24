@@ -503,9 +503,9 @@
       <a href="#" class="footer-pill-item">
         <i class="ti ti-messages"></i><span>Messages</span>
       </a>
-      <form method="post" action="{% url 'logout' %}" style="margin:0; padding:0; display:inline;">
+      <form method="post" action="/accounts/logout/" style="margin:0; padding:0; display:inline;">
         {% csrf_token %}
-        <button type="submit" class="footer-pill-item" style="background:transparent;">
+        <button type="submit" class="footer-pill-item" style="background:transparent; border:none;">
           <i class="ti ti-logout"></i><span>Déconnexion</span>
         </button>
       </form>
