@@ -60,6 +60,13 @@ class AgentProfile(models.Model):
     license_expiry_date = models.DateField(null=True, blank=True)
 
     agency_name = models.CharField(max_length=140, blank=True)
+    agency_role = models.CharField(max_length=140, blank=True)
+    intervention_countries = models.CharField(max_length=255, blank=True)
+    
+    # JSON Fields for multi-select
+    covered_markets = models.JSONField(default=list, blank=True)
+    represents_mainly = models.JSONField(default=list, blank=True)
+    specialties = models.JSONField(default=list, blank=True)
 
     class Specialization(models.TextChoices):
         PLAYERS = "PLAYERS", "Joueurs"
@@ -74,6 +81,13 @@ class AgentProfile(models.Model):
 
     years_experience = models.PositiveIntegerField(null=True, blank=True)
     bio = models.TextField(blank=True)
+    
+    class Availability(models.TextChoices):
+        AVAILABLE = "AVAILABLE", "Disponible pour de nouveaux mandats"
+        LIMITED = "LIMITED", "Disponibilité limitée"
+        UNAVAILABLE = "UNAVAILABLE", "Non disponible actuellement"
+        
+    availability = models.CharField(max_length=20, choices=Availability.choices, blank=True)
 
     is_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -95,3 +109,10 @@ class AgentProfile(models.Model):
     def is_complete_for_activation(self) -> bool:
         required = [self.first_name, self.last_name, self.license_number]
         return not any(not x for x in required)
+
+
+class AgentFile(models.Model):
+    agent = models.ForeignKey(AgentProfile, on_delete=models.CASCADE, related_name="files")
+    file = models.FileField(upload_to="agents/files/")
+    title = models.CharField(max_length=120, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)

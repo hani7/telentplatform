@@ -79,95 +79,103 @@
       margin: 0;
     }
 
-    /* ── Form Card ── */
-    .form-card {
+    /* Steps */
+    .steps { display:flex; gap:6px; margin-bottom:1rem; }
+    .si { flex:1; text-align:center; padding:8px 4px; border-radius:14px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.5); font-size:0.72rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
+    .si.active { background:#f1b10f; border-color:#f1b10f; color:#000; font-weight:700; }
+    .si.done { background:rgba(241,177,15,0.2); border-color:rgba(241,177,15,0.5); color:#f1b10f; }
+
+    /* Form card */
+    .fc {
       background: rgba(255,255,255,0.07);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border: 1.5px solid rgba(255,255,255,0.18);
-      border-radius: 22px;
-      padding: 1.6rem 1.25rem;
-    }
-
-    .form-label-custom {
-      color: rgba(255,255,255,0.75);
-      font-size: 0.82rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    .form-control-custom {
-      background: rgba(255,255,255,0.09);
-      border: 1px solid rgba(255,255,255,0.22);
-      border-radius: 12px;
-      color: #fff;
-      padding: 0.65rem 1rem;
-      width: 100%;
-      font-size: 0.92rem;
-      box-sizing: border-box;
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .form-control-custom::placeholder { color: rgba(255,255,255,0.4); }
-    .form-control-custom:focus {
-      outline: none;
-      border-color: #f1b10f;
-      background: rgba(255,255,255,0.13);
-    }
-    select.form-control-custom option { background: #0d2b18; color: #fff; }
-
-    /* Style Django widget selects to match */
-    .form-card select {
-      background: rgba(255,255,255,0.09);
-      border: 1px solid rgba(255,255,255,0.22);
-      border-radius: 12px;
-      color: #fff;
-      padding: 0.65rem 1rem;
-      width: 100%;
-      font-size: 0.92rem;
-      box-sizing: border-box;
-      transition: border-color 0.2s, background 0.2s;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-    .form-card select:focus {
-      outline: none;
-      border-color: #f1b10f;
-      background: rgba(255,255,255,0.13);
-    }
-    .form-card select option { background: #0d2b18; color: #fff; }
-
-    .msg-bar {
-      border-radius: 12px;
-      padding: 0.65rem 1rem;
-      font-size: 0.85rem;
+      border-radius: 20px;
+      padding: 1.4rem 1.1rem;
       margin-bottom: 1rem;
+      display: none;
     }
+    .fc.active { display: block; animation: fadeUp 0.25s ease; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
-    .btn-save {
+    .fc h5 { color: #f1b10f; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 6px; }
+    .fc hr { border: none; border-top: 1px solid rgba(255,255,255,0.12); margin: 1rem 0; }
+
+    /* Labels */
+    .fl { color: rgba(255,255,255,0.72); font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; display: block; }
+
+    /* All Django widgets inside form card */
+    .fc input[type=text], .fc input[type=number], .fc input[type=date], .fc input[type=email], .fc input[type=file], .fc input[type=tel], .fc select, .fc input[type=url] {
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.22);
       border-radius: 50px;
-      padding: 0.75rem;
-      font-weight: 700;
-      font-size: 1rem;
+      color: #fff;
+      padding: 0.6rem 0.9rem;
       width: 100%;
-      border: none;
-      background: #f1b10f;
-      color: #000;
-      transition: background 0.2s;
-      margin-top: 0.5rem;
-    }
-    .btn-save:hover { background: #d9a00d; }
-
-    .btn-dashboard {
-      display: block;
-      text-align: center;
-      margin-top: 1rem;
-      color: rgba(255,255,255,0.6);
       font-size: 0.88rem;
-      text-decoration: none;
-      transition: color 0.2s;
+      box-sizing: border-box;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 0.6rem;
     }
-    .btn-dashboard:hover { color: #f1b10f; }
+    .fc textarea {
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 15px;
+      color: #fff;
+      padding: 0.6rem 0.9rem;
+      width: 100%;
+      font-size: 0.88rem;
+      box-sizing: border-box;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 0.6rem;
+      min-height: 80px;
+      resize: vertical;
+    }
+    .fc input::placeholder, .fc textarea::placeholder { color: rgba(255,255,255,0.38); }
+    .fc input:focus, .fc select:focus, .fc textarea:focus {
+      outline: none;
+      border-color: #f1b10f;
+      background: rgba(255,255,255,0.13);
+    }
+    .fc select option { background: #0d2b18; color: #fff; }
+
+    /* Checkbox Multi Select styling */
+    .checkbox-list { list-style: none; padding: 0; margin-bottom: 15px; }
+    .checkbox-list li { display: flex; align-items: center; margin-bottom: 5px; color: #fff; font-size: 0.85rem; }
+    .checkbox-list li input[type=checkbox] { margin-right: 8px; width: 16px; height: 16px; }
+
+    /* Formset item */
+    .fsi { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 0.9rem; margin-bottom: 0.7rem; }
+    .fsi-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+    .fsi-title { color: rgba(255,255,255,0.7); font-weight: 600; font-size: 0.85rem; }
+    .btn-clear { background: transparent; border: 1px solid rgba(220,53,69,0.6); color: #dc3545; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px; }
+    .btn-clear:hover { background: #dc3545; color: #fff; }
+    
+    .fsi p { margin-bottom: 0.4rem; }
+    .fsi label { color: rgba(255,255,255,0.62); font-size: 0.78rem; font-weight: 600; display: block; margin-bottom: 2px; }
+    .fsi input[type=text], .fsi input[type=file] {
+      background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.2); border-radius: 50px;
+      color: #fff; padding: 6px 10px; width: 100%; font-size: 0.85rem; box-sizing: border-box; margin-bottom: 0.4rem;
+    }
+    input[name*="DELETE"], label[for*="DELETE"] { display: none !important; }
+    
+    .helptext { font-size: 0.72rem; color: rgba(255,255,255,0.45); margin-top: -4px; margin-bottom: 0.5rem; display: block; }
+    .errorlist { list-style: none; padding: 0; margin: 0 0 0.5rem; }
+    .errorlist li { color: #f87171; font-size: 0.82rem; }
+    
+    .msg-bar { border-radius: 12px; padding: 0.65rem 1rem; font-size: 0.85rem; margin-bottom: 1rem; }
+
+    /* Nav Buttons */
+    .nav-btns { display: flex; gap: 10px; margin-top: 1.5rem; }
+    .btn-nav {
+      flex: 1; padding: 0.75rem; border-radius: 50px; border: none; font-weight: 700; font-size: 0.95rem;
+      cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: all 0.2s;
+    }
+    .btn-prev { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+    .btn-prev:hover { background: rgba(255,255,255,0.15); }
+    .btn-next, .btn-save { background: #f1b10f; color: #000; }
+    .btn-next:hover, .btn-save:hover { background: #d9a00d; }
 
     /* ── Footer Pill ── */
     .footer-outer {
@@ -216,236 +224,394 @@
     <div class="profile-overlay"></div>
 
     <div class="profile-content">
-
-      <!-- Bouton Actualiser -->
       <a href="javascript:window.location.reload(true)" style="position:fixed; top:1.1rem; right:1.1rem; width:38px; height:38px; background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.4); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.2rem; text-decoration:none; z-index:10; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'" title="Actualiser la page">
         <i class="ti ti-reload"></i>
       </a>
 
-      <!-- Header -->
       <div class="page-header">
         <div class="logo-wrap">
           <img src="{% static 'img/core-img/footop-logo-white.png' %}" alt="FOOTOP">
         </div>
         <h1><i class="ti ti-user-check" style="color:#f1b10f;"></i> Profil Agent</h1>
-        <p>Complétez votre profil pour commencer</p>
+        <p>Complétez votre profil en 3 étapes</p>
       </div>
 
-      <!-- Django messages -->
       {% for msg in messages %}
         <div class="msg-bar alert alert-{% if msg.tags == 'success' %}success{% elif msg.tags == 'error' %}danger{% else %}info{% endif %}">
           {{ msg }}
         </div>
       {% endfor %}
 
-      <!-- Form -->
-      <div class="form-card">
-        <form method="post" enctype="multipart/form-data">
-          {% csrf_token %}
+      <div class="steps">
+        <div class="si active"><i class="ti ti-id-badge"></i> Infos & Contact</div>
+        <div class="si"><i class="ti ti-building"></i> Statut & Agence</div>
+        <div class="si"><i class="ti ti-file-text"></i> Bio & Fichiers</div>
+      </div>
 
-          {% if form.errors %}
-          <div class="msg-bar alert alert-danger">
-            <strong>Veuillez corriger les erreurs suivantes :</strong>
-            <ul>
-            {% for field in form %}
-              {% if field.errors %}
-                <li>{{ field.label }}: {{ field.errors|striptags }}</li>
-              {% endif %}
-            {% endfor %}
-            {% for error in form.non_field_errors %}
-              <li>{{ error }}</li>
-            {% endfor %}
-            </ul>
-          </div>
-          {% endif %}
+      <form method="post" enctype="multipart/form-data" id="aForm">
+        {% csrf_token %}
+        <input type="hidden" name="_current_step" id="_current_step" value="1">
 
-          <div class="row g-3">
-            
-            <!-- SECTION 1: IDENTIFICATION -->
-            <div class="col-12 mt-4 mb-2">
-              <h5 style="color:#f1b10f; font-weight:700; border-bottom:1px solid rgba(241,177,15,0.3); padding-bottom:5px;"><i class="ti ti-id-badge"></i> 1. Identification</h5>
-            </div>
-            
-            <div class="col-12">
-              <span class="form-label-custom">Photo de profil</span>
-              <input type="file" class="form-control-custom" name="profile_photo" accept="image/*">
+        {% if form.errors or files_fs.errors %}
+        <div class="msg-bar alert alert-danger">
+          <strong>Veuillez corriger les erreurs suivantes :</strong>
+          <ul>
+          {% for field in form %}
+            {% if field.errors %}
+              <li>{{ field.label }}: {{ field.errors|striptags }}</li>
+            {% endif %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        <!-- STEP 1: Infos & Contact -->
+        <div class="fc active" id="step1">
+          <h5><i class="ti ti-id-badge"></i> 1. Identification</h5>
+          
+          <label class="fl">Photo de profil</label>
+          {{ form.profile_photo }}
+
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="fl">Prénom *</label>
+              {{ form.first_name }}
             </div>
             <div class="col-6">
-              <span class="form-label-custom">Prénom</span>
-              <input class="form-control-custom" name="first_name" value="{{ form.first_name.value|default:'' }}" placeholder="Prénom">
+              <label class="fl">Nom *</label>
+              {{ form.last_name }}
             </div>
             <div class="col-6">
-              <span class="form-label-custom">Nom</span>
-              <input class="form-control-custom" name="last_name" value="{{ form.last_name.value|default:'' }}" placeholder="Nom">
+              <label class="fl">Date de naissance</label>
+              {{ form.birth_date }}
             </div>
             <div class="col-6">
-              <span class="form-label-custom">Date de naissance</span>
-              <input type="date" class="form-control-custom" name="birth_date" value="{{ form.birth_date.value|default:'' }}">
+              <label class="fl">Lieu de naissance</label>
+              {{ form.birth_place }}
             </div>
             <div class="col-6">
-              <span class="form-label-custom">Lieu de naissance</span>
-              <input class="form-control-custom" name="birth_place" value="{{ form.birth_place.value|default:'' }}" placeholder="Ville">
-            </div>
-            <div class="col-6">
-              <span class="form-label-custom">Genre</span>
-              <select class="form-control-custom" name="gender">
-                <option value="">--</option>
-                <option value="M" {% if form.gender.value == 'M' %}selected{% endif %}>Masculin</option>
-                <option value="F" {% if form.gender.value == 'F' %}selected{% endif %}>Féminin</option>
-              </select>
+              <label class="fl">Genre</label>
+              {{ form.gender }}
             </div>
             <div class="col-6" style="position:relative;">
-              <span class="form-label-custom">Nationalité</span>
+              <label class="fl">Nationalité</label>
               <input type="hidden" name="nationality" id="nationalityValue" value="{{ form.nationality.value|default:'' }}">
-              <input type="text" class="form-control-custom" id="nationalitySearch"
-                     placeholder="Rechercher..."
-                     autocomplete="off"
+              <input type="text" id="nationalitySearch" placeholder="Rechercher..." autocomplete="off"
                      value="{% for n in nationalities %}{% if n.pk|stringformat:'d' == form.nationality.value|stringformat:'d' %}{{ n.name }}{% endif %}{% endfor %}">
-              <div id="nationalityDropdown" style="display:none; position:absolute; left:12px; right:12px; top:100%; max-height:200px; overflow-y:auto; background:rgba(13,43,24,0.97); border:1px solid rgba(255,255,255,0.2); border-radius:10px; z-index:50; margin-top:2px;">
+              <div id="nationalityDropdown" style="display:none; position:absolute; left:0; right:0; top:100%; max-height:200px; overflow-y:auto; background:rgba(13,43,24,0.97); border:1px solid rgba(255,255,255,0.2); border-radius:10px; z-index:50;">
                 {% for n in nationalities %}
-                <div class="nat-option" data-id="{{ n.pk }}" data-name="{{ n.name }}" style="padding:8px 12px; color:rgba(255,255,255,0.8); font-size:0.88rem; cursor:pointer; transition:background 0.15s;" onmouseover="this.style.background='rgba(241,177,15,0.2)'" onmouseout="this.style.background='transparent'">
+                <div class="nat-option" data-id="{{ n.pk }}" data-name="{{ n.name }}" style="padding:8px 12px; color:rgba(255,255,255,0.8); font-size:0.88rem; cursor:pointer;" onmouseover="this.style.background='rgba(241,177,15,0.2)'" onmouseout="this.style.background='transparent'">
                   {{ n.name }}
                 </div>
                 {% endfor %}
               </div>
             </div>
             <div class="col-12">
-              <span class="form-label-custom">Pays / Ville</span>
-              <input class="form-control-custom" name="country_city" value="{{ form.country_city.value|default:'' }}" placeholder="Ex: France / Paris">
+              <label class="fl">Pays / Ville</label>
+              {{ form.country_city }}
             </div>
             <div class="col-12">
-              <span class="form-label-custom">Adresse professionnelle</span>
-              <textarea class="form-control-custom" name="professional_address" rows="2" placeholder="Votre adresse professionnelle complète">{{ form.professional_address.value|default:'' }}</textarea>
-            </div>
-
-            <!-- SECTION 2: CONTACT -->
-            <div class="col-12 mt-4 mb-2">
-              <h5 style="color:#f1b10f; font-weight:700; border-bottom:1px solid rgba(241,177,15,0.3); padding-bottom:5px;"><i class="ti ti-address-book"></i> 2. Contact</h5>
-            </div>
-
-            <div class="col-12">
-              <span class="form-label-custom">E-mail</span>
-              <input type="email" class="form-control-custom" name="contact_email" value="{{ form.contact_email.value|default:'' }}" placeholder="contact@votre-agence.com">
-            </div>
-            <div class="col-6">
-              <span class="form-label-custom">Téléphone mobile</span>
-              <input class="form-control-custom" name="mobile_phone" value="{{ form.mobile_phone.value|default:'' }}" placeholder="+33 6 00 00 00 00">
-            </div>
-            <div class="col-6">
-              <span class="form-label-custom">Téléphone pro</span>
-              <input class="form-control-custom" name="professional_phone" value="{{ form.professional_phone.value|default:'' }}" placeholder="+33 1 00 00 00 00">
-            </div>
-            <div class="col-12">
-              <span class="form-label-custom">Site web</span>
-              <input type="url" class="form-control-custom" name="website" value="{{ form.website.value|default:'' }}" placeholder="https://www.votre-agence.com">
-            </div>
-            <div class="col-12">
-              <span class="form-label-custom">Réseaux sociaux pro</span>
-              <input type="text" class="form-control-custom" name="social_media" value="{{ form.social_media.value|default:'' }}" placeholder="Lien LinkedIn, Twitter...">
-            </div>
-
-            <!-- SECTION 3: STATUT D'AGENT -->
-            <div class="col-12 mt-4 mb-2">
-              <h5 style="color:#f1b10f; font-weight:700; border-bottom:1px solid rgba(241,177,15,0.3); padding-bottom:5px;"><i class="ti ti-certificate"></i> 3. Statut d'agent</h5>
-            </div>
-
-            <div class="col-6">
-              <span class="form-label-custom">N° Licence</span>
-              <input class="form-control-custom" name="license_number" value="{{ form.license_number.value|default:'' }}" placeholder="FIFA / fédérale">
-            </div>
-            <div class="col-6">
-              <span class="form-label-custom">Fédération</span>
-              <input class="form-control-custom" name="federation" value="{{ form.federation.value|default:'' }}" placeholder="Fédération de rattachement">
-            </div>
-            <div class="col-12">
-              <span class="form-label-custom">Statut de la licence</span>
-              <select class="form-control-custom" name="license_status">
-                <option value="">-- Sélectionnez --</option>
-                <option value="ACTIVE" {% if form.license_status.value == 'ACTIVE' %}selected{% endif %}>Actif</option>
-                <option value="SUSPENDED" {% if form.license_status.value == 'SUSPENDED' %}selected{% endif %}>Suspendu</option>
-                <option value="RENEWING" {% if form.license_status.value == 'RENEWING' %}selected{% endif %}>En renouvellement</option>
-              </select>
-            </div>
-            <div class="col-6">
-              <span class="form-label-custom">Date d'obtention</span>
-              <input type="date" class="form-control-custom" name="license_obtain_date" value="{{ form.license_obtain_date.value|default:'' }}">
-            </div>
-            <div class="col-6">
-              <span class="form-label-custom">Date d'échéance</span>
-              <input type="date" class="form-control-custom" name="license_expiry_date" value="{{ form.license_expiry_date.value|default:'' }}">
-            </div>
-            
-            <div class="col-6 mt-3">
-              <span class="form-label-custom">Nom d'agence</span>
-              <input class="form-control-custom" name="agency_name" value="{{ form.agency_name.value|default:'' }}" placeholder="Agence">
-            </div>
-            <div class="col-6 mt-3">
-              <span class="form-label-custom">Spécialisation</span>
-              <select class="form-control-custom" name="specialization">
-                <option value="BOTH" {% if form.specialization.value == 'BOTH' %}selected{% endif %}>Joueurs & Entraîneurs</option>
-                <option value="PLAYERS" {% if form.specialization.value == 'PLAYERS' %}selected{% endif %}>Joueurs</option>
-                <option value="COACHES" {% if form.specialization.value == 'COACHES' %}selected{% endif %}>Entraîneurs</option>
-              </select>
-            </div>
-            <div class="col-12">
-              <span class="form-label-custom">Biographie / Expérience</span>
-              <textarea class="form-control-custom" name="bio" rows="3" placeholder="Parlez de vous...">{{ form.bio.value|default:'' }}</textarea>
+              <label class="fl">Adresse professionnelle</label>
+              {{ form.professional_address }}
             </div>
           </div>
 
-          <button type="submit" class="btn-save">
-            <i class="ti ti-device-floppy"></i> Enregistrer
-          </button>
-        </form>
+          <hr>
+          <h5><i class="ti ti-address-book"></i> 2. Contact</h5>
+          <div class="row g-2">
+            <div class="col-12">
+              <label class="fl">E-mail</label>
+              {{ form.contact_email }}
+            </div>
+            <div class="col-6">
+              <label class="fl">Tél mobile</label>
+              {{ form.mobile_phone }}
+            </div>
+            <div class="col-6">
+              <label class="fl">Tél pro</label>
+              {{ form.professional_phone }}
+            </div>
+            <div class="col-12">
+              <label class="fl">Site web</label>
+              {{ form.website }}
+            </div>
+            <div class="col-12">
+              <label class="fl">Réseaux sociaux pro</label>
+              {{ form.social_media }}
+            </div>
+          </div>
+          <div class="nav-btns">
+            <button type="button" class="btn-nav btn-next" onclick="nextStep(2)">Suivant <i class="ti ti-arrow-right"></i></button>
+          </div>
+        </div>
 
-        <a href="{% url 'agents:dashboard' %}" class="btn-dashboard">
-          <i class="ti ti-layout-dashboard"></i> Aller au Tableau de bord →
-        </a>
-      </div>
+        <!-- STEP 2: Statut & Agence -->
+        <div class="fc" id="step2">
+          <h5><i class="ti ti-certificate"></i> 3. Statut d'agent</h5>
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="fl">N° Licence *</label>
+              {{ form.license_number }}
+            </div>
+            <div class="col-6">
+              <label class="fl">Fédération</label>
+              {{ form.federation }}
+            </div>
+            <div class="col-12">
+              <label class="fl">Statut de la licence</label>
+              {{ form.license_status }}
+            </div>
+            <div class="col-6">
+              <label class="fl">Date d'obtention</label>
+              {{ form.license_obtain_date }}
+            </div>
+            <div class="col-6">
+              <label class="fl">Date d'échéance</label>
+              {{ form.license_expiry_date }}
+            </div>
+          </div>
+
+          <hr>
+          <h5><i class="ti ti-building"></i> 4. Agence et Activités</h5>
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="fl">Nom de l'agence</label>
+              {{ form.agency_name }}
+            </div>
+            <div class="col-6">
+              <label class="fl">Fonction dans l'agence</label>
+              {{ form.agency_role }}
+            </div>
+            <div class="col-6">
+              <label class="fl">Pays d'intervention</label>
+              {{ form.intervention_countries }}
+            </div>
+            <div class="col-6">
+              <label class="fl">Années d'expérience</label>
+              {{ form.years_experience }}
+            </div>
+            <div class="col-12 mt-2">
+              <label class="fl">Marchés couverts</label>
+              <ul class="checkbox-list">
+                {{ form.covered_markets }}
+              </ul>
+            </div>
+          </div>
+
+          <hr>
+          <h5><i class="ti ti-star"></i> 5. Spécialisation</h5>
+          <div class="row g-2">
+            <div class="col-12">
+              <label class="fl">Spécialisation Générale</label>
+              {{ form.specialization }}
+            </div>
+            <div class="col-12 mt-2">
+              <label class="fl">Je représente principalement</label>
+              <ul class="checkbox-list">
+                {{ form.represents_mainly }}
+              </ul>
+            </div>
+            <div class="col-12 mt-2">
+              <label class="fl">Spécialités</label>
+              <ul class="checkbox-list">
+                {{ form.specialties }}
+              </ul>
+            </div>
+          </div>
+          <div class="nav-btns">
+            <button type="button" class="btn-nav btn-prev" onclick="prevStep(1)"><i class="ti ti-arrow-left"></i> Précédent</button>
+            <button type="button" class="btn-nav btn-next" onclick="nextStep(3)">Suivant <i class="ti ti-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Présentation & Fichiers -->
+        <div class="fc" id="step3">
+          <h5><i class="ti ti-file-text"></i> 6. Présentation</h5>
+          <div class="row g-2">
+            <div class="col-12">
+              <label class="fl">Biographie professionnelle</label>
+              {{ form.bio }}
+              <small class="helptext" style="text-align:right;">Max 1 000 caractères</small>
+            </div>
+            <div class="col-12 mt-2">
+              <label class="fl">Disponibilité actuelle</label>
+              {{ form.availability }}
+            </div>
+          </div>
+
+          <hr>
+          <h5><i class="ti ti-file-upload"></i> Documents complémentaires</h5>
+          <p style="font-size:0.8rem; color:rgba(255,255,255,0.6);">Téléversez vos fichiers (CV, attestations, carte professionnelle...)</p>
+          
+          <div id="files-container">
+            {{ files_fs.management_form }}
+            {% for f in files_fs %}
+            <div class="fsi file-entry">
+              <div class="fsi-head">
+                <span class="fsi-title">Document {{ forloop.counter }}</span>
+                <button type="button" class="btn-clear" onclick="clearBlock(this)"><i class="ti ti-trash"></i> Vider</button>
+              </div>
+              {{ f.id }}
+              {% if f.instance.pk %}
+                <p style="font-size:0.8rem; color:#1db95b;">Fichier actuel : <a href="{{ f.instance.file.url }}" target="_blank" style="color:#f1b10f;">Voir</a></p>
+              {% endif %}
+              <div style="display:none;">{{ f.DELETE }}</div>
+              <label class="fl">Titre du document</label>
+              {{ f.title }}
+              <label class="fl mt-2">Fichier</label>
+              {{ f.file }}
+            </div>
+            {% endfor %}
+          </div>
+          <button type="button" class="btn-nav btn-prev mt-2" onclick="addFile()" style="background:rgba(255,255,255,0.1); width:100%; border:1px dashed rgba(255,255,255,0.4);"><i class="ti ti-plus"></i> Ajouter un autre document</button>
+
+          <div class="col-12 mt-4" style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:12px; border:1px solid rgba(255,255,255,0.15);">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="consentCheck" required style="width:20px; height:20px; margin-right:10px;">
+              <label class="form-check-label" for="consentCheck" style="font-size:0.8rem; color:rgba(255,255,255,0.8); line-height:1.4;">
+                Je certifie que les informations fournies sont exactes et j'accepte qu'elles soient visibles par les utilisateurs autorisés de la plateforme conformément aux règlements applicables et aux conditions d'utilisation.
+              </label>
+            </div>
+          </div>
+
+          <div class="nav-btns">
+            <button type="button" class="btn-nav btn-prev" onclick="prevStep(2)"><i class="ti ti-arrow-left"></i> Précédent</button>
+            <button type="button" class="btn-nav btn-save" onclick="if(document.getElementById('aForm').reportValidity()) { document.getElementById('aForm').submit(); }"><i class="ti ti-check"></i> Enregistrer le profil</button>
+          </div>
+        </div>
+      </form>
+      
+      <a href="{% url 'agents:dashboard' %}" class="btn-dashboard">
+        <i class="ti ti-arrow-left"></i> Retour au tableau de bord
+      </a>
 
     </div>
   </div>
 
-  <!-- ── Fixed Footer Pill ── -->
+  <!-- Footer Navbar -->
   <div class="footer-outer">
-    <nav class="footer-pill">
-      <a href="/agents/dashboard/" class="footer-pill-item">
-        <i class="ti ti-layout-dashboard"></i>
-        <span>Dashboard</span>
+    <div class="footer-pill">
+      <a href="{% url 'agents:dashboard' %}" class="footer-pill-item">
+        <i class="ti ti-home"></i><span>Dashboard</span>
       </a>
-      <a href="/agents/me/" class="footer-pill-item is-active">
-        <i class="ti ti-user-circle"></i>
-        <span>Profil</span>
+      <a href="{% url 'agents:profile_edit' %}" class="footer-pill-item is-active">
+        <i class="ti ti-user"></i><span>Profil</span>
       </a>
-      <a href="/offers/suggestions/" class="footer-pill-item">
-        <i class="ti ti-clipboard-list"></i>
-        <span>Offres</span>
+      <a href="#" class="footer-pill-item">
+        <i class="ti ti-messages"></i><span>Messages</span>
       </a>
-      <a href="/accounts/logout/" class="footer-pill-item">
-        <i class="ti ti-logout"></i>
-        <span>Déconnexion</span>
-      </a>
-    </nav>
+      <form method="post" action="{% url 'logout' %}" style="margin:0; padding:0; display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="footer-pill-item" style="background:transparent;">
+          <i class="ti ti-logout"></i><span>Déconnexion</span>
+        </button>
+      </form>
+    </div>
   </div>
 
-  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
   <script>
-    (function() {
+    // Required UI fields update
+    const skipRequired = ['agency_name', 'agency_role', 'intervention_countries', 'years_experience', 'bio', 'profile_photo'];
+    function updateValidationUI() {
+      document.querySelectorAll('.fc input:not([type=hidden]):not([type=file]):not([type=checkbox]), .fc select, .fc textarea').forEach(el => {
+        if (skipRequired.includes(el.name)) {
+          el.required = false;
+        } else {
+          el.required = (el.offsetParent !== null && !el.name.includes('-file') && !el.name.includes('-title'));
+        }
+        const label = el.previousElementSibling;
+        if (label && label.classList.contains('fl')) {
+          label.innerHTML = label.innerHTML.replace(/ <span style="color:#f87171">\*<\/span>/g, '');
+          if (el.required) {
+            label.innerHTML += ' <span style="color:#f87171">*</span>';
+          }
+        }
+      });
+      // Exceptions hardcoded
+      if(document.querySelector('input[name="first_name"]')) document.querySelector('input[name="first_name"]').required = true;
+      if(document.querySelector('input[name="last_name"]')) document.querySelector('input[name="last_name"]').required = true;
+      if(document.querySelector('input[name="license_number"]')) document.querySelector('input[name="license_number"]').required = true;
+    }
+
+    // Navigation
+    function nextStep(step) {
+      if(!document.getElementById('aForm').reportValidity()) return;
+      document.querySelectorAll('.fc').forEach(el => el.classList.remove('active'));
+      document.getElementById('step' + step).classList.add('active');
+      document.querySelectorAll('.si').forEach((el, idx) => {
+        el.classList.remove('active', 'done');
+        if (idx < step - 1) el.classList.add('done');
+        else if (idx === step - 1) el.classList.add('active');
+      });
+      document.getElementById('_current_step').value = step;
+      updateValidationUI();
+    }
+
+    function prevStep(step) {
+      document.querySelectorAll('.fc').forEach(el => el.classList.remove('active'));
+      document.getElementById('step' + step).classList.add('active');
+      document.querySelectorAll('.si').forEach((el, idx) => {
+        el.classList.remove('active', 'done');
+        if (idx < step - 1) el.classList.add('done');
+        else if (idx === step - 1) el.classList.add('active');
+      });
+      document.getElementById('_current_step').value = step;
+      updateValidationUI();
+    }
+
+    function clearBlock(btn){
+      const b=btn.closest('.fsi');
+      if(!b)return;
+      b.querySelectorAll('input[type=text],input[type=file]').forEach(i=>i.value='');
+      b.style.borderColor='rgba(241,177,15,.4)';
+      setTimeout(()=>b.style.borderColor='',400);
+    }
+
+    function addFile() {
+      const container = document.getElementById('files-container');
+      const totalForms = document.getElementById('id_files-TOTAL_FORMS');
+      const formNum = parseInt(totalForms.value);
+      const firstEntry = container.querySelector('.file-entry');
+      if (!firstEntry) return;
+
+      const newEntry = firstEntry.cloneNode(true);
+      newEntry.innerHTML = newEntry.innerHTML.replace(/files-(\d+)-/g, `files-${formNum}-`);
+      newEntry.innerHTML = newEntry.innerHTML.replace(/id_files-\d+-/g, `id_files-${formNum}-`);
+      newEntry.querySelector('.fsi-title').textContent = `Document ${formNum + 1}`;
+      
+      const p = newEntry.querySelector('p');
+      if (p) p.remove();
+      
+      newEntry.querySelectorAll('input').forEach(i => i.value = '');
+      container.appendChild(newEntry);
+      totalForms.value = formNum + 1;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateValidationUI();
+    });
+
+    // Searchable dropdown Nationality
+    (function(){
       const search = document.getElementById('nationalitySearch');
       const dropdown = document.getElementById('nationalityDropdown');
       const hidden = document.getElementById('nationalityValue');
+      if(!search) return;
+
       const options = dropdown.querySelectorAll('.nat-option');
-
-      search.addEventListener('focus', () => { dropdown.style.display = 'block'; filterOptions(); });
-      search.addEventListener('input', filterOptions);
-
-      function filterOptions() {
-        const q = search.value.toLowerCase();
+      search.addEventListener('focus', () => { dropdown.style.display = 'block'; });
+      search.addEventListener('input', (e) => {
+        const val = e.target.value.toLowerCase();
+        let hasMatches = false;
         options.forEach(opt => {
-          opt.style.display = opt.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+          if (opt.dataset.name.toLowerCase().includes(val)) { opt.style.display = 'block'; hasMatches = true; }
+          else { opt.style.display = 'none'; }
         });
-      }
-
+        dropdown.style.display = hasMatches ? 'block' : 'none';
+      });
       options.forEach(opt => {
         opt.addEventListener('click', () => {
           hidden.value = opt.dataset.id;
@@ -453,7 +619,6 @@
           dropdown.style.display = 'none';
         });
       });
-
       document.addEventListener('click', (e) => {
         if (!search.contains(e.target) && !dropdown.contains(e.target)) {
           dropdown.style.display = 'none';
@@ -461,7 +626,5 @@
       });
     })();
   </script>
-<script src="{% static 'js/searchable-dropdown.js' %}"></script>
-<script>initSearchableDropdowns();</script>
 </body>
 </html>

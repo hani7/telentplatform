@@ -8,7 +8,7 @@ from coaches.models import CoachProfile
 from offers.models import Offer
 from search.utils import is_allowed_by_visibility
 from .models import AgentProfile
-from .forms import AgentProfileForm
+from .forms import AgentProfileForm, AgentFileFormSet
 
 
 @login_required
@@ -23,16 +23,21 @@ def agent_profile_edit(request):
     )
 
     if request.method == "POST":
-        form = AgentProfileForm(request.POST, instance=profile)
-        if form.is_valid():
+        form = AgentProfileForm(request.POST, request.FILES, instance=profile)
+        files_fs = AgentFileFormSet(request.POST, request.FILES, instance=profile, prefix="files")
+        
+        if form.is_valid() and files_fs.is_valid():
             form.save()
+            files_fs.save()
             messages.success(request, "Profil agent mis à jour ✅")
             return redirect("agents:profile_edit")
     else:
         form = AgentProfileForm(instance=profile)
+        files_fs = AgentFileFormSet(instance=profile, prefix="files")
 
     return render(request, "agents/profile_edit.html", {
         "form": form,
+        "files_fs": files_fs,
         "profile": profile,
         "nationalities": Nationality.objects.all().order_by("name"),
     })
