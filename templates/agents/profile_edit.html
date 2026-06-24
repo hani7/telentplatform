@@ -240,7 +240,7 @@
 
       <!-- Form -->
       <div class="form-card">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
 
           {% if form.errors %}
@@ -260,6 +260,16 @@
           {% endif %}
 
           <div class="row g-3">
+            
+            <!-- SECTION 1: IDENTIFICATION -->
+            <div class="col-12 mt-4 mb-2">
+              <h5 style="color:#f1b10f; font-weight:700; border-bottom:1px solid rgba(241,177,15,0.3); padding-bottom:5px;"><i class="ti ti-id-badge"></i> 1. Identification</h5>
+            </div>
+            
+            <div class="col-12">
+              <span class="form-label-custom">Photo de profil</span>
+              <input type="file" class="form-control-custom" name="profile_photo" accept="image/*">
+            </div>
             <div class="col-6">
               <span class="form-label-custom">Prénom</span>
               <input class="form-control-custom" name="first_name" value="{{ form.first_name.value|default:'' }}" placeholder="Prénom">
@@ -291,41 +301,85 @@
                      placeholder="Rechercher..."
                      autocomplete="off"
                      value="{% for n in nationalities %}{% if n.pk|stringformat:'d' == form.nationality.value|stringformat:'d' %}{{ n.name }}{% endif %}{% endfor %}">
-              <div id="nationalityDropdown" style="
-                display:none;
-                position:absolute;
-                left:12px; right:12px;
-                top:100%;
-                max-height:200px;
-                overflow-y:auto;
-                background:rgba(13,43,24,0.97);
-                border:1px solid rgba(255,255,255,0.2);
-                border-radius:10px;
-                z-index:50;
-                margin-top:2px;
-              ">
+              <div id="nationalityDropdown" style="display:none; position:absolute; left:12px; right:12px; top:100%; max-height:200px; overflow-y:auto; background:rgba(13,43,24,0.97); border:1px solid rgba(255,255,255,0.2); border-radius:10px; z-index:50; margin-top:2px;">
                 {% for n in nationalities %}
-                <div class="nat-option" data-id="{{ n.pk }}" data-name="{{ n.name }}" style="
-                  padding:8px 12px;
-                  color:rgba(255,255,255,0.8);
-                  font-size:0.88rem;
-                  cursor:pointer;
-                  transition:background 0.15s;
-                " onmouseover="this.style.background='rgba(241,177,15,0.2)'" onmouseout="this.style.background='transparent'">
+                <div class="nat-option" data-id="{{ n.pk }}" data-name="{{ n.name }}" style="padding:8px 12px; color:rgba(255,255,255,0.8); font-size:0.88rem; cursor:pointer; transition:background 0.15s;" onmouseover="this.style.background='rgba(241,177,15,0.2)'" onmouseout="this.style.background='transparent'">
                   {{ n.name }}
                 </div>
                 {% endfor %}
               </div>
             </div>
+            <div class="col-12">
+              <span class="form-label-custom">Pays / Ville</span>
+              <input class="form-control-custom" name="country_city" value="{{ form.country_city.value|default:'' }}" placeholder="Ex: France / Paris">
+            </div>
+            <div class="col-12">
+              <span class="form-label-custom">Adresse professionnelle</span>
+              <textarea class="form-control-custom" name="professional_address" rows="2" placeholder="Votre adresse professionnelle complète">{{ form.professional_address.value|default:'' }}</textarea>
+            </div>
+
+            <!-- SECTION 2: CONTACT -->
+            <div class="col-12 mt-4 mb-2">
+              <h5 style="color:#f1b10f; font-weight:700; border-bottom:1px solid rgba(241,177,15,0.3); padding-bottom:5px;"><i class="ti ti-address-book"></i> 2. Contact</h5>
+            </div>
+
+            <div class="col-12">
+              <span class="form-label-custom">E-mail</span>
+              <input type="email" class="form-control-custom" name="contact_email" value="{{ form.contact_email.value|default:'' }}" placeholder="contact@votre-agence.com">
+            </div>
+            <div class="col-6">
+              <span class="form-label-custom">Téléphone mobile</span>
+              <input class="form-control-custom" name="mobile_phone" value="{{ form.mobile_phone.value|default:'' }}" placeholder="+33 6 00 00 00 00">
+            </div>
+            <div class="col-6">
+              <span class="form-label-custom">Téléphone pro</span>
+              <input class="form-control-custom" name="professional_phone" value="{{ form.professional_phone.value|default:'' }}" placeholder="+33 1 00 00 00 00">
+            </div>
+            <div class="col-12">
+              <span class="form-label-custom">Site web</span>
+              <input type="url" class="form-control-custom" name="website" value="{{ form.website.value|default:'' }}" placeholder="https://www.votre-agence.com">
+            </div>
+            <div class="col-12">
+              <span class="form-label-custom">Réseaux sociaux pro</span>
+              <input type="text" class="form-control-custom" name="social_media" value="{{ form.social_media.value|default:'' }}" placeholder="Lien LinkedIn, Twitter...">
+            </div>
+
+            <!-- SECTION 3: STATUT D'AGENT -->
+            <div class="col-12 mt-4 mb-2">
+              <h5 style="color:#f1b10f; font-weight:700; border-bottom:1px solid rgba(241,177,15,0.3); padding-bottom:5px;"><i class="ti ti-certificate"></i> 3. Statut d'agent</h5>
+            </div>
+
             <div class="col-6">
               <span class="form-label-custom">N° Licence</span>
               <input class="form-control-custom" name="license_number" value="{{ form.license_number.value|default:'' }}" placeholder="FIFA / fédérale">
             </div>
             <div class="col-6">
+              <span class="form-label-custom">Fédération</span>
+              <input class="form-control-custom" name="federation" value="{{ form.federation.value|default:'' }}" placeholder="Fédération de rattachement">
+            </div>
+            <div class="col-12">
+              <span class="form-label-custom">Statut de la licence</span>
+              <select class="form-control-custom" name="license_status">
+                <option value="">-- Sélectionnez --</option>
+                <option value="ACTIVE" {% if form.license_status.value == 'ACTIVE' %}selected{% endif %}>Actif</option>
+                <option value="SUSPENDED" {% if form.license_status.value == 'SUSPENDED' %}selected{% endif %}>Suspendu</option>
+                <option value="RENEWING" {% if form.license_status.value == 'RENEWING' %}selected{% endif %}>En renouvellement</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <span class="form-label-custom">Date d'obtention</span>
+              <input type="date" class="form-control-custom" name="license_obtain_date" value="{{ form.license_obtain_date.value|default:'' }}">
+            </div>
+            <div class="col-6">
+              <span class="form-label-custom">Date d'échéance</span>
+              <input type="date" class="form-control-custom" name="license_expiry_date" value="{{ form.license_expiry_date.value|default:'' }}">
+            </div>
+            
+            <div class="col-6 mt-3">
               <span class="form-label-custom">Nom d'agence</span>
               <input class="form-control-custom" name="agency_name" value="{{ form.agency_name.value|default:'' }}" placeholder="Agence">
             </div>
-            <div class="col-6">
+            <div class="col-6 mt-3">
               <span class="form-label-custom">Spécialisation</span>
               <select class="form-control-custom" name="specialization">
                 <option value="BOTH" {% if form.specialization.value == 'BOTH' %}selected{% endif %}>Joueurs & Entraîneurs</option>
@@ -333,12 +387,8 @@
                 <option value="COACHES" {% if form.specialization.value == 'COACHES' %}selected{% endif %}>Entraîneurs</option>
               </select>
             </div>
-            <div class="col-6">
-              <span class="form-label-custom">Années d'expérience</span>
-              <input type="number" class="form-control-custom" name="years_experience" value="{{ form.years_experience.value|default:'' }}" placeholder="0">
-            </div>
             <div class="col-12">
-              <span class="form-label-custom">Biographie</span>
+              <span class="form-label-custom">Biographie / Expérience</span>
               <textarea class="form-control-custom" name="bio" rows="3" placeholder="Parlez de vous...">{{ form.bio.value|default:'' }}</textarea>
             </div>
           </div>

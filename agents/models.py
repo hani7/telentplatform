@@ -27,11 +27,38 @@ class AgentProfile(models.Model):
         Nationality, on_delete=models.SET_NULL, null=True, blank=True
     )
 
+    # Nouveaux champs d'Identification
+    profile_photo = models.FileField(upload_to="agents/photos/", null=True, blank=True)
+    country_city = models.CharField(max_length=150, blank=True)
+    professional_address = models.TextField(blank=True)
+
+    # Champs de Contact
+    contact_email = models.EmailField(blank=True)
+    mobile_phone = models.CharField(max_length=50, blank=True)
+    professional_phone = models.CharField(max_length=50, blank=True)
+    website = models.URLField(blank=True)
+    social_media = models.CharField(max_length=255, blank=True)
+
+    # Removed duplicated nationality
+
     license_number = models.CharField(
         max_length=80,
         blank=True,
         help_text="Numéro de licence FIFA / fédérale",
     )
+    
+    # Nouveaux champs Statut d'agent
+    federation = models.CharField(max_length=150, blank=True)
+    
+    class LicenseStatus(models.TextChoices):
+        ACTIVE = "ACTIVE", "Actif"
+        SUSPENDED = "SUSPENDED", "Suspendu"
+        RENEWING = "RENEWING", "En renouvellement"
+        
+    license_status = models.CharField(max_length=20, choices=LicenseStatus.choices, blank=True)
+    license_obtain_date = models.DateField(null=True, blank=True)
+    license_expiry_date = models.DateField(null=True, blank=True)
+
     agency_name = models.CharField(max_length=140, blank=True)
 
     class Specialization(models.TextChoices):
