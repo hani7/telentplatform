@@ -284,6 +284,11 @@
               <label class="form-label">Titre de l'offre</label>
               <input type="text" class="form-control" name="title" required placeholder="Ex: Offre de transfert">
             </div>
+            <div class="mb-3">
+              <label class="form-label">Saison</label>
+              <input type="text" class="form-control" name="saison" id="saisonInput"
+                     placeholder="Ex: 2025-2026" maxlength="9" autocomplete="off">
+            </div>
             <div class="mb-0">
               <label class="form-label">Message</label>
               <textarea class="form-control" name="message" rows="3" required placeholder="Décrivez votre offre..."></textarea>
@@ -313,6 +318,29 @@
       var button = event.relatedTarget;
       document.getElementById('modalRecipientId').value = button.getAttribute('data-recipient-id');
       document.getElementById('modalRecipientName').textContent = button.getAttribute('data-recipient-name');
+    });
+
+    /* ── Season auto-complete ──
+       Typing "2025-" auto-fills to "2025-2026" */
+    document.getElementById('saisonInput').addEventListener('input', function () {
+      const val = this.value;
+      // Match pattern: 4-digit year followed by a dash
+      const match = val.match(/^(\d{4})-$/);
+      if (match) {
+        const year = parseInt(match[1], 10);
+        this.value = year + '-' + (year + 1);
+        // Move cursor to end
+        this.setSelectionRange(this.value.length, this.value.length);
+      }
+    });
+
+    // Also handle paste and blur: auto-format if only a year is typed
+    document.getElementById('saisonInput').addEventListener('blur', function () {
+      const val = this.value.trim();
+      if (/^\d{4}$/.test(val)) {
+        const year = parseInt(val, 10);
+        this.value = year + '-' + (year + 1);
+      }
     });
   </script>
 </body>
