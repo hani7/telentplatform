@@ -87,9 +87,9 @@
 
     /* Footer */
     .footer-outer{position:fixed;bottom:0;left:0;right:0;background:transparent;padding:4px 14px calc(4px + env(safe-area-inset-bottom));z-index:999;display:flex;justify-content:center}
-    .footer-pill{background:#1db95b;border-radius:999px;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;width:100%;max-width:500px}
-    .footer-pill-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.67rem;font-weight:500;padding:4px 14px;border-radius:14px;border:none;transition:all .18s ease;white-space:nowrap;min-width:60px}
-    .footer-pill-item i{font-size:1.45rem;line-height:1}
+    .footer-pill{background:#1db95b;border-radius:999px;display:flex;align-items:center;justify-content:space-evenly;padding:8px 4px;width:100%;max-width:500px}
+    .footer-pill-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.67rem;font-weight:500;padding:4px 10px;border-radius:14px;border:none;transition:all .18s ease;white-space:nowrap;flex:1;text-align:center}
+    .footer-pill-item i{font-size:1.35rem;line-height:1}
     .footer-pill-item.is-active{font-weight:700;color:#fff}
     .footer-pill-item:hover{color:#fff;background:rgba(0,0,0,.12)}
   </style>
@@ -770,32 +770,54 @@
 
   /* ── File formset: add / remove ── */
   function addFile() {
-    const container = document.getElementById('files-container');
-    const totalForms = document.getElementById('id_playerfile_set-TOTAL_FORMS');
-    if (!totalForms) return;
+    // Detect prefix dynamically from the management form (e.g. "files" not "playerfile_set")
+    const step3 = document.querySelector('.fc[data-step="3"]');
+    const totalForms = step3 ? step3.querySelector('input[name$="-TOTAL_FORMS"]') : null;
+    if (!totalForms) { console.warn('addFile: TOTAL_FORMS not found'); return; }
+    const prefix = totalForms.name.replace('-TOTAL_FORMS', '');
     const formNum = parseInt(totalForms.value);
-    const firstEntry = container.querySelector('.file-entry');
-    if (!firstEntry) return;
-    const newEntry = firstEntry.cloneNode(true);
-    newEntry.querySelectorAll('input, select, textarea').forEach(el => {
-      if (el.name) el.name = el.name.replace(/playerfile_set-\d+-/, `playerfile_set-${formNum}-`);
-      if (el.id)   el.id   = el.id.replace(/playerfile_set_\d+_/, `playerfile_set_${formNum}_`);
-      if (el.type === 'file')   el.value = '';
-      if (el.type === 'text')   el.value = '';
-      if (el.type === 'checkbox') el.checked = false;
-      if (el.type === 'select-one') el.selectedIndex = 0;
-    });
-    newEntry.querySelectorAll('label').forEach(el => {
-      if (el.htmlFor) el.htmlFor = el.htmlFor.replace(/playerfile_set_\d+_/, `playerfile_set_${formNum}_`);
-    });
-    const title = newEntry.querySelector('.fsi-title');
-    if (title) title.textContent = `Fichier ${formNum + 1}`;
-    // Remove any "currently" file display text from cloned entry
-    newEntry.querySelectorAll('a, p').forEach(el => {
-      if (el.textContent.includes('Currently') || el.textContent.includes('actuellement')) el.remove();
-    });
-    container.appendChild(newEntry);
+    const container = document.getElementById('files-container');
+
+    // Build a fresh entry from scratch (avoids cloning searchable-dropdown UI)
+    const entry = document.createElement('div');
+    entry.className = 'fsi file-entry';
+    entry.innerHTML = `
+      <div class="fsi-head">
+        <span class="fsi-title">Fichier ${formNum + 1}</span>
+        <button type="button" class="btn-clear" onclick="removeFile(this)">
+          <i class="ti ti-eraser"></i> Supprimer
+        </button>
+      </div>
+      <p style="margin-bottom:.4rem">
+        <label style="color:rgba(255,255,255,.62);font-size:.78rem;font-weight:600;display:block;margin-bottom:4px">Type de fichier</label>
+        <select name="${prefix}-${formNum}-file_type" id="id_${prefix}_${formNum}_file_type"
+                style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box">
+          <option value="">---------</option>
+          <option value="CV">CV (PDF)</option>
+          <option value="PHOTO">Photo</option>
+          <option value="PROFILE_PHOTO">Photo de profil</option>
+          <option value="VIDEO">Vidéo</option>
+          <option value="OTHER">Autre</option>
+        </select>
+      </p>
+      <p style="margin-bottom:.4rem">
+        <label style="color:rgba(255,255,255,.62);font-size:.78rem;font-weight:600;display:block;margin-bottom:4px">Fichier</label>
+        <input type="file" name="${prefix}-${formNum}-file" id="id_${prefix}_${formNum}_file"
+               style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box">
+      </p>
+      <p style="margin-bottom:.4rem">
+        <label style="color:rgba(255,255,255,.62);font-size:.78rem;font-weight:600;display:block;margin-bottom:4px">Titre (optionnel)</label>
+        <input type="text" name="${prefix}-${formNum}-title" id="id_${prefix}_${formNum}_title"
+               placeholder="Ex: CV 2025"
+               style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box">
+      </p>
+      <input type="hidden" name="${prefix}-${formNum}-id" value="">
+    `;
+    container.appendChild(entry);
     totalForms.value = formNum + 1;
+
+    // Init pill/popup on the new select
+    if (typeof initSearchableDropdowns === 'function') initSearchableDropdowns(entry);
   }
 
   function removeFile(btn) {
