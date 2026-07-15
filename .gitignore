@@ -7,8 +7,7 @@ __pycache__/
 env/
 venv/
 *.egg-info/
-dist/
-build/
+
 
 # Django
 *.log
