@@ -767,6 +767,49 @@
     document.addEventListener('change', updateValidationUI);
     updateValidationUI();
   })();
+
+  /* ── File formset: add / remove ── */
+  function addFile() {
+    const container = document.getElementById('files-container');
+    const totalForms = document.getElementById('id_playerfile_set-TOTAL_FORMS');
+    if (!totalForms) return;
+    const formNum = parseInt(totalForms.value);
+    const firstEntry = container.querySelector('.file-entry');
+    if (!firstEntry) return;
+    const newEntry = firstEntry.cloneNode(true);
+    newEntry.querySelectorAll('input, select, textarea').forEach(el => {
+      if (el.name) el.name = el.name.replace(/playerfile_set-\d+-/, `playerfile_set-${formNum}-`);
+      if (el.id)   el.id   = el.id.replace(/playerfile_set_\d+_/, `playerfile_set_${formNum}_`);
+      if (el.type === 'file')   el.value = '';
+      if (el.type === 'text')   el.value = '';
+      if (el.type === 'checkbox') el.checked = false;
+      if (el.type === 'select-one') el.selectedIndex = 0;
+    });
+    newEntry.querySelectorAll('label').forEach(el => {
+      if (el.htmlFor) el.htmlFor = el.htmlFor.replace(/playerfile_set_\d+_/, `playerfile_set_${formNum}_`);
+    });
+    const title = newEntry.querySelector('.fsi-title');
+    if (title) title.textContent = `Fichier ${formNum + 1}`;
+    // Remove any "currently" file display text from cloned entry
+    newEntry.querySelectorAll('a, p').forEach(el => {
+      if (el.textContent.includes('Currently') || el.textContent.includes('actuellement')) el.remove();
+    });
+    container.appendChild(newEntry);
+    totalForms.value = formNum + 1;
+  }
+
+  function removeFile(btn) {
+    const entry = btn.closest('.file-entry');
+    if (!entry) return;
+    const deleteInput = entry.querySelector('input[name*="-DELETE"]');
+    if (deleteInput) {
+      deleteInput.checked = true;
+      entry.style.opacity = '0.3';
+      entry.style.pointerEvents = 'none';
+    } else {
+      entry.remove();
+    }
+  }
 </script>
 <script src="{% static 'js/searchable-dropdown.js' %}"></script>
 <script>initSearchableDropdowns();</script>
