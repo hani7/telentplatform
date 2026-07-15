@@ -258,6 +258,7 @@
     injectStyle();
     (root || document).querySelectorAll('select').forEach(select => {
       if (select.dataset.sdDone) return;
+      if (select.hasAttribute('data-sd-skip')) return;  // keep as native select
       // Count real (non-blank) options
       const realOpts = Array.from(select.options).filter(o => o.value).length;
       if (realOpts <= 5) {

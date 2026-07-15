@@ -140,11 +140,11 @@ class PlayerProfileForm(forms.ModelForm):
             "current_club_end": forms.DateInput(attrs={"type": "date"}),
             "contract_end_date": forms.DateInput(attrs={"type": "date"}),
 
-            # ✅ Integer
+            # Integer
             "height_cm": forms.NumberInput(attrs={"type": "number", "min": 0, "step": 1}),
             "weight_kg": forms.NumberInput(attrs={"type": "number", "min": 0, "step": 1}),
 
-            # ✅ Decimal
+            # Decimal
             "desired_salary": forms.NumberInput(attrs={"type": "number", "min": 0, "step": "0.01"}),
             "player_value": forms.NumberInput(attrs={"type": "number", "min": 0, "step": "0.01"}),
 
@@ -154,13 +154,20 @@ class PlayerProfileForm(forms.ModelForm):
 
             "parent_email": forms.EmailInput(attrs={"type": "email", "placeholder": "Email du parent/tuteur"}),
             "parent_phone": forms.TextInput(attrs={"type": "tel", "placeholder": "Téléphone du parent/tuteur"}),
+
+            # Compact dropdowns (no pill, no search popup)
+            "gender": forms.Select(attrs={"data-sd-skip": "1"}),
+            "foot": forms.Select(attrs={"data-sd-skip": "1"}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         bool_choices = [(True, 'Oui'), (False, 'Non')]
         for field in ['has_agent_contract', 'looking_for_agent', 'has_transfermarkt', 'represent_self']:
-            self.fields[field].widget = forms.Select(choices=[('', '---------')] + bool_choices, attrs={"class": "form-control"})
+            self.fields[field].widget = forms.Select(
+                choices=[('', '---------')] + bool_choices,
+                attrs={"class": "form-control", "data-sd-skip": "1"}
+            )
             self.fields[field].required = False
 
     def clean(self):

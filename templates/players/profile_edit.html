@@ -86,11 +86,11 @@
     .msg-bar{border-radius:12px;padding:.65rem 1rem;font-size:.85rem;margin-bottom:1rem}
 
     /* Footer */
-    .footer-outer{position:fixed;bottom:0;left:0;right:0;background:transparent;padding:4px 14px calc(4px + env(safe-area-inset-bottom));z-index:999;display:flex;justify-content:center}
-    .footer-pill{background:#1db95b;border-radius:999px;display:flex;align-items:center;justify-content:space-evenly;padding:8px 4px;width:100%;max-width:500px}
-    .footer-pill-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.67rem;font-weight:500;padding:4px 10px;border-radius:14px;border:none;transition:all .18s ease;white-space:nowrap;flex:1;text-align:center}
-    .footer-pill-item i{font-size:1.35rem;line-height:1}
-    .footer-pill-item.is-active{font-weight:700;color:#fff}
+    .footer-outer{position:fixed;bottom:0;left:0;right:0;background:transparent;padding:6px 12px calc(6px + env(safe-area-inset-bottom));z-index:999;display:flex;justify-content:center}
+    .footer-pill{background:#1db95b;border-radius:999px;display:flex;align-items:center;justify-content:space-around;padding:6px 8px;width:100%;max-width:520px;box-shadow:0 -2px 16px rgba(0,0,0,.25)}
+    .footer-pill-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:rgba(255,255,255,.85);text-decoration:none;font-size:.68rem;font-weight:500;padding:6px 8px;border-radius:14px;border:none;background:none;transition:all .18s ease;flex:1;text-align:center;cursor:pointer}
+    .footer-pill-item i{font-size:1.5rem;line-height:1;display:block}
+    .footer-pill-item.is-active{color:#fff;font-weight:700;background:rgba(0,0,0,.15);border-radius:14px}
     .footer-pill-item:hover{color:#fff;background:rgba(0,0,0,.12)}
   </style>
 </head>
@@ -498,19 +498,26 @@
 <div class="footer-outer">
   <nav class="footer-pill">
     {% if profile.pk %}
-      <a href="{% url 'players:public_profile' profile.pk %}" class="footer-pill-item"><i class="ti ti-user-circle"></i><span>Profil</span></a>
+      <a href="{% url 'players:public_profile' profile.pk %}" class="footer-pill-item">
+        <i class="ti ti-user-circle"></i><span>Profil</span>
+      </a>
     {% else %}
-      <a href="#" class="footer-pill-item"><i class="ti ti-user-circle"></i><span>Profil</span></a>
+      <a href="#" class="footer-pill-item">
+        <i class="ti ti-user-circle"></i><span>Profil</span>
+      </a>
     {% endif %}
-    <a href="{% url 'players:profile_complete' %}" class="footer-pill-item"><i class="ti ti-eye"></i><span>Aperçu</span></a>
-    <a href="{% url 'players:profile_edit' %}" class="footer-pill-item is-active"><i class="ti ti-pencil"></i><span>Editer</span></a>
-    <a href="/offers/my/" class="footer-pill-item"><i class="ti ti-clipboard-list"></i><span>Mes offres</span></a>
-    {% if profile.profile_status == 'ACTIVE' %}
-      <div class="footer-pill-item" style="color:#10b981; cursor:default;"><i class="ti ti-circle-check"></i><span>Actif</span></div>
-    {% else %}
-      <div class="footer-pill-item" style="color:#f59e0b; cursor:pointer;" onclick="alert('En cours de validation (En attente de : Consentement parental). Le tuteur doit valider l\'email reçu.')"><i class="ti ti-clock"></i><span>En attente</span></div>
-    {% endif %}
-    <a href="/accounts/logout/" class="footer-pill-item"><i class="ti ti-logout"></i><span>Déconnexion</span></a>
+    <a href="{% url 'players:profile_complete' %}" class="footer-pill-item">
+      <i class="ti ti-eye"></i><span>Aperçu</span>
+    </a>
+    <a href="{% url 'players:profile_edit' %}" class="footer-pill-item is-active">
+      <i class="ti ti-pencil"></i><span>Éditer</span>
+    </a>
+    <a href="/offers/my/" class="footer-pill-item">
+      <i class="ti ti-clipboard-list"></i><span>Offres</span>
+    </a>
+    <a href="/accounts/logout/" class="footer-pill-item">
+      <i class="ti ti-logout"></i><span>Quitter</span>
+    </a>
   </nav>
 </div>
 
