@@ -27,7 +27,37 @@
 
   <!-- Web App Manifest -->
   <link rel="manifest" href="{% static 'manifest.json' %}">
-</head>
+
+  <style>
+    /* ── Language Switcher ── */
+    .lang-switcher {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: 50px;
+      padding: 4px 8px;
+    }
+    .lang-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 3px 8px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+    .lang-btn:hover { color: #fff; background: rgba(255,255,255,0.12); }
+    .lang-btn.active { color: #fff; background: rgba(255,255,255,0.22); }
+    .lang-divider { color: rgba(255,255,255,0.25); font-size: 0.7rem; }
+  </style>
 
 <body>
   <!-- Preloader -->
@@ -47,24 +77,32 @@
       <div class="home-topbar">
         <!-- Logo -->
         <img src="{% static 'img/core-img/footop-logo-white.png' %}" alt="FOOTOP Logo" class="home-logo">
+        <!-- Language Switcher -->
+        <div class="lang-switcher" id="langSwitcher">
+          <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
+          <span class="lang-divider">|</span>
+          <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+          <span class="lang-divider">|</span>
+          <button class="lang-btn" data-lang="ar" onclick="setLang('ar')">AR</button>
+        </div>
         <!-- Skip Page -->
         <div class="skip-page">
           {% if user.is_authenticated %}
             {% if user.role == 'PLAYER' %}
-              <a href="{% url 'players:profile_edit' %}" class="home-skip-link">Passer</a>
+              <a href="{% url 'players:profile_edit' %}" class="home-skip-link" data-i18n="home_skip">Passer</a>
             {% else %}
-              <a href="{% url 'home' %}" class="home-skip-link">Passer</a>
+              <a href="{% url 'home' %}" class="home-skip-link" data-i18n="home_skip">Passer</a>
             {% endif %}
           {% else %}
-            <a href="{% url 'accounts:login' %}" class="home-skip-link">Passer</a>
+            <a href="{% url 'accounts:login' %}" class="home-skip-link" data-i18n="home_skip">Passer</a>
           {% endif %}
         </div>
       </div>
 
       <!-- Hero Block Content -->
       <div class="home-hero-content">
-        <h1 class="home-hero-title">Élevez Votre <b>Carrière</b></h1>
-        <p class="home-hero-subtitle">
+        <h1 class="home-hero-title"><span data-i18n="home_title">Élevez Votre </span><b data-i18n="home_title_bold">Carrière</b></h1>
+        <p class="home-hero-subtitle" data-i18n="home_subtitle">
           Combler le fossé entre talent et opportunité. La plateforme ultime pour que les joueurs se fassent repérer, que les agents trouvent des talents et que les entraîneurs construisent des équipes gagnantes.
         </p>
         {% if user.is_authenticated %}
@@ -81,10 +119,10 @@
           <!-- Two buttons side by side -->
           <div class="home-hero-actions">
             <a class="btn btn-warning btn-lg home-btn-primary" href="{% url 'accounts:register_role' %}">
-              Commencer <i class="ti ti-arrow-right"></i>
+              <span data-i18n="home_start">Commencer</span> <i class="ti ti-arrow-right"></i>
             </a>
             <a class="btn btn-lg home-btn-secondary" href="{% url 'accounts:login' %}">
-              Se Connecter
+              <span data-i18n="home_login">Se Connecter</span>
             </a>
           </div>
         {% endif %}
@@ -230,6 +268,55 @@
   <script src="{% static 'js/dark-rtl.js' %}"></script>
   <script src="{% static 'js/active.js' %}"></script>
   <script src="{% static 'js/pwa.js' %}"></script>
+
+  <script>
+    /* ── Language Switcher ── */
+    const TRANSLATIONS = {
+      fr: {
+        home_skip: 'Passer',
+        home_title: 'Élevez Votre ',
+        home_title_bold: 'Carrière',
+        home_subtitle: 'Combler le fossé entre talent et opportunité. La plateforme ultime pour que les joueurs se fassent repérer, que les agents trouvent des talents et que les entraîneurs construisent des équipes gagnantes.',
+        home_start: 'Commencer',
+        home_login: 'Se Connecter',
+      },
+      en: {
+        home_skip: 'Skip',
+        home_title: 'Elevate Your ',
+        home_title_bold: 'Career',
+        home_subtitle: 'Bridging the gap between talent and opportunity. The ultimate platform for players to get scouted, agents to find talent, and coaches to build winning teams.',
+        home_start: 'Get Started',
+        home_login: 'Sign In',
+      },
+      ar: {
+        home_skip: 'تخطّي',
+        home_title: 'ارتقِ بمسيرتك ',
+        home_title_bold: 'المهنية',
+        home_subtitle: 'جسر الهوة بين الموهبة والفرصة. المنصّة المثلى لكي يُكتشف اللاعبون ويجد الوكلاء المواهب ويبني المدرّبون فرقاً متميزة.',
+        home_start: 'ابدأ الآن',
+        home_login: 'تسجيل الدخول',
+      },
+    };
+
+    function setLang(lang) {
+      localStorage.setItem('footop_lang', lang);
+      applyLang(lang);
+    }
+
+    function applyLang(lang) {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS['fr'];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key] !== undefined) el.textContent = t[key];
+      });
+      document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+    }
+
+    applyLang(localStorage.getItem('footop_lang') || 'fr');
+  </script>
 </body>
 
 </html>

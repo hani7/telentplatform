@@ -163,6 +163,39 @@
       text-decoration: none;
     }
     .login-meta a:hover { text-decoration: underline; }
+
+    /* ── Language Switcher ── */
+    .lang-switcher {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: 50px;
+      padding: 4px 8px;
+    }
+    .lang-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 3px 8px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+    .lang-btn:hover { color: #fff; background: rgba(255,255,255,0.12); }
+    .lang-btn.active { color: #fff; background: rgba(255,255,255,0.22); }
+    .lang-divider { color: rgba(255,255,255,0.25); font-size: 0.7rem; }
   </style>
 </head>
 
@@ -172,6 +205,15 @@
     <div class="spinner-grow text-primary" role="status">
       <span class="visually-hidden">Chargement...</span>
     </div>
+  </div>
+
+  <!-- Language Switcher -->
+  <div class="lang-switcher" id="langSwitcher">
+    <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
+    <span class="lang-divider">|</span>
+    <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    <span class="lang-divider">|</span>
+    <button class="lang-btn" data-lang="ar" onclick="setLang('ar')">AR</button>
   </div>
 
   <div class="login-page-wrapper">
@@ -189,8 +231,8 @@
         <div class="login-logo-wrap">
           <img src="{% static 'img/core-img/footop-logo-white.png' %}" alt="FOOTOP">
         </div>
-        <h1>Bienvenue</h1>
-        <p>Connectez-vous à votre compte FOOTOP</p>
+        <h1 data-i18n="login_title">Bienvenue</h1>
+        <p data-i18n="login_subtitle">Connectez-vous à votre compte FOOTOP</p>
       </div>
 
       <!-- Form Card -->
@@ -215,8 +257,10 @@
                    type="text"
                    id="id_username"
                    name="username"
-                   placeholder="Nom d'utilisateur"
+                   data-i18n-placeholder="login_identifier_placeholder"
+                   placeholder="Nom d'utilisateur, email ou téléphone"
                    value="{{ form.username.value|default:'' }}"
+                   autocomplete="username"
                    required>
             {% if form.username.errors %}
               <div class="invalid-feedback">{{ form.username.errors.0 }}</div>
@@ -228,6 +272,7 @@
                    id="psw-input"
                    type="password"
                    name="password"
+                   data-i18n-placeholder="login_password_placeholder"
                    placeholder="Mot de passe"
                    required>
             <div class="position-absolute" id="password-visibility">
@@ -240,18 +285,18 @@
           </div>
 
           <div class="text-end mb-4" style="margin-top: -5px;">
-            <a href="{% url 'accounts:password_reset' %}" style="color: rgba(255,255,255,0.7); font-size: 0.85rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#f1b10f'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Mot de passe oublié ?</a>
+            <a href="{% url 'accounts:password_reset' %}" data-i18n="login_forgot" style="color: rgba(255,255,255,0.7); font-size: 0.85rem; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#f1b10f'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">Mot de passe oublié ?</a>
           </div>
 
           <button class="btn btn-warning login-submit-btn" type="submit">
-            Se connecter <i class="ti ti-arrow-right"></i>
+            <span data-i18n="login_btn">Se connecter</span> <i class="ti ti-arrow-right"></i>
           </button>
         </form>
       </div>
 
       <!-- Meta -->
       <div class="login-meta">
-        <p class="mb-0">Pas encore de compte ? <a href="{% url 'accounts:register_role' %}">S'inscrire</a></p>
+        <p class="mb-0"><span data-i18n="login_no_account">Pas encore de compte ?</span> <a href="{% url 'accounts:register_role' %}" data-i18n="login_register_link">S'inscrire</a></p>
       </div>
 
     </div>
@@ -263,6 +308,7 @@
   <script src="{% static 'js/pwa.js' %}"></script>
 
   <script>
+    /* ── Password toggle ── */
     const pswInput = document.getElementById('psw-input');
     const pswToggle = document.getElementById('password-visibility');
     if (pswToggle && pswInput) {
@@ -280,6 +326,68 @@
         }
       });
     }
+
+    /* ── Language Switcher ── */
+    const TRANSLATIONS = {
+      fr: {
+        login_title: 'Bienvenue',
+        login_subtitle: 'Connectez-vous à votre compte FOOTOP',
+        login_identifier_placeholder: "Nom d'utilisateur, email ou téléphone",
+        login_password_placeholder: 'Mot de passe',
+        login_forgot: 'Mot de passe oublié ?',
+        login_btn: 'Se connecter',
+        login_no_account: 'Pas encore de compte ?',
+        login_register_link: "S'inscrire",
+      },
+      en: {
+        login_title: 'Welcome Back',
+        login_subtitle: 'Sign in to your FOOTOP account',
+        login_identifier_placeholder: 'Username, email or phone',
+        login_password_placeholder: 'Password',
+        login_forgot: 'Forgot password?',
+        login_btn: 'Sign In',
+        login_no_account: 'No account yet?',
+        login_register_link: 'Register',
+      },
+      ar: {
+        login_title: 'مرحباً بك',
+        login_subtitle: 'سجّل الدخول إلى حساب FOOTOP',
+        login_identifier_placeholder: 'اسم المستخدم أو البريد أو الهاتف',
+        login_password_placeholder: 'كلمة المرور',
+        login_forgot: 'نسيت كلمة المرور؟',
+        login_btn: 'تسجيل الدخول',
+        login_no_account: 'ليس لديك حساب؟',
+        login_register_link: 'إنشاء حساب',
+      },
+    };
+
+    function setLang(lang) {
+      localStorage.setItem('footop_lang', lang);
+      applyLang(lang);
+    }
+
+    function applyLang(lang) {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS['fr'];
+      // Text nodes
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key] !== undefined) el.textContent = t[key];
+      });
+      // Placeholders
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (t[key] !== undefined) el.placeholder = t[key];
+      });
+      // RTL for Arabic
+      document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+      // Active button
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+    }
+
+    // Init on load
+    applyLang(localStorage.getItem('footop_lang') || 'fr');
   </script>
 </body>
 </html>

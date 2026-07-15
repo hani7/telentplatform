@@ -38,13 +38,16 @@ def _send_otp_email(user, otp_code):
 # ─── Auth ───────────────────────────────────────────────────────────
 
 class APILoginView(APIView):
-    """POST /api/auth/token/  →  {access, refresh, user}"""
+    """POST /api/auth/token/  →  {access, refresh, user}
+    Accepts username, email, or phone number in the `username` field.
+    """
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        username = request.data.get('username', '').strip()
+        identifier = request.data.get('username', '').strip()
         password = request.data.get('password', '')
-        user = authenticate(username=username, password=password)
+        # FlexibleAuthBackend resolves username / email / phone automatically
+        user = authenticate(request, username=identifier, password=password)
         if not user:
             return Response({'detail': 'Identifiants incorrects.'}, status=status.HTTP_401_UNAUTHORIZED)
         refresh = RefreshToken.for_user(user)

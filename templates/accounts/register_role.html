@@ -189,6 +189,39 @@
       text-decoration: none;
     }
     .role-login-meta a:hover { text-decoration: underline; }
+
+    /* ── Language Switcher ── */
+    .lang-switcher {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: 50px;
+      padding: 4px 8px;
+    }
+    .lang-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 3px 8px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+    .lang-btn:hover { color: #fff; background: rgba(255,255,255,0.12); }
+    .lang-btn.active { color: #fff; background: rgba(255,255,255,0.22); }
+    .lang-divider { color: rgba(255,255,255,0.25); font-size: 0.7rem; }
   </style>
 </head>
 
@@ -198,6 +231,15 @@
     <div class="spinner-grow text-primary" role="status">
       <span class="visually-hidden">Chargement...</span>
     </div>
+  </div>
+
+  <!-- Language Switcher -->
+  <div class="lang-switcher" id="langSwitcher">
+    <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
+    <span class="lang-divider">|</span>
+    <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    <span class="lang-divider">|</span>
+    <button class="lang-btn" data-lang="ar" onclick="setLang('ar')">AR</button>
   </div>
 
   <div class="role-page-wrapper">
@@ -212,8 +254,8 @@
 
       <!-- Header -->
       <div class="role-page-header">
-        <h1>Choisissez votre Rôle</h1>
-        <p>Sélectionnez le type de compte qui correspond à votre profil</p>
+        <h1 data-i18n="reg_title">Choisissez votre Rôle</h1>
+        <p data-i18n="reg_subtitle">Sélectionnez le type de compte qui correspond à votre profil</p>
       </div>
 
       <!-- Form -->
@@ -226,12 +268,12 @@
           <!-- Joueur -->
           <div class="col-6">
             <div class="role-card" onclick="selectRole('PLAYER', this)">
-              <span class="role-badge">Populaire</span>
+              <span class="role-badge" data-i18n="reg_badge_popular">Populaire</span>
               <div class="role-icon-wrap">
                 <i class="ti ti-ball-football"></i>
               </div>
-              <h3 class="role-title">Joueur</h3>
-              <p class="role-description">Créez votre profil et soyez découvert par des clubs</p>
+              <h3 class="role-title" data-i18n="reg_player">Joueur</h3>
+              <p class="role-description" data-i18n="reg_player_desc">Créez votre profil et soyez découvert par des clubs</p>
             </div>
           </div>
 
@@ -241,20 +283,20 @@
               <div class="role-icon-wrap">
                 <i class="ti ti-chalkboard-teacher"></i>
               </div>
-              <h3 class="role-title">Entraîneur</h3>
-              <p class="role-description">Présentez votre expérience et découvrez des talents</p>
+              <h3 class="role-title" data-i18n="reg_coach">Entraîneur</h3>
+              <p class="role-description" data-i18n="reg_coach_desc">Présentez votre expérience et découvrez des talents</p>
             </div>
           </div>
 
           <!-- Club -->
           <div class="col-6">
             <div class="role-card" onclick="selectRole('CLUB', this)">
-              <span class="role-badge premium">Premium</span>
+              <span class="role-badge premium" data-i18n="reg_badge_premium">Premium</span>
               <div class="role-icon-wrap">
                 <i class="ti ti-shield-star"></i>
               </div>
-              <h3 class="role-title">Club</h3>
-              <p class="role-description">Recherchez les meilleurs talents pour votre équipe</p>
+              <h3 class="role-title" data-i18n="reg_club">Club</h3>
+              <p class="role-description" data-i18n="reg_club_desc">Recherchez les meilleurs talents pour votre équipe</p>
             </div>
           </div>
 
@@ -264,8 +306,8 @@
               <div class="role-icon-wrap">
                 <i class="ti ti-briefcase"></i>
               </div>
-              <h3 class="role-title">Agent</h3>
-              <p class="role-description">Gérez votre portefeuille de talents professionnels</p>
+              <h3 class="role-title" data-i18n="reg_agent">Agent</h3>
+              <p class="role-description" data-i18n="reg_agent_desc">Gérez votre portefeuille de talents professionnels</p>
             </div>
           </div>
 
@@ -273,14 +315,14 @@
 
         <div class="text-center">
           <button type="submit" class="btn btn-warning btn-lg role-continue-btn" id="continueBtn" disabled>
-            Continuer <i class="ti ti-arrow-right"></i>
+            <span data-i18n="reg_continue">Continuer</span> <i class="ti ti-arrow-right"></i>
           </button>
         </div>
       </form>
 
       <!-- Login Meta -->
       <div class="role-login-meta">
-        <p class="mb-0">Déjà inscrit ? <a href="{% url 'accounts:login' %}">Se connecter</a></p>
+        <p class="mb-0"><span data-i18n="reg_already">Déjà inscrit ?</span> <a href="{% url 'accounts:login' %}" data-i18n="reg_login_link">Se connecter</a></p>
       </div>
 
     </div>
@@ -292,6 +334,7 @@
   <script src="{% static 'js/pwa.js' %}"></script>
 
   <script>
+    /* ── Role selection ── */
     let selectedCard = null;
     function selectRole(role, cardElement) {
       if (selectedCard) selectedCard.classList.remove('selected');
@@ -300,6 +343,80 @@
       document.getElementById('selectedRole').value = role;
       document.getElementById('continueBtn').disabled = false;
     }
+
+    /* ── Language Switcher ── */
+    const TRANSLATIONS = {
+      fr: {
+        reg_title: 'Choisissez votre Rôle',
+        reg_subtitle: 'Sélectionnez le type de compte qui correspond à votre profil',
+        reg_badge_popular: 'Populaire',
+        reg_badge_premium: 'Premium',
+        reg_player: 'Joueur',
+        reg_player_desc: 'Créez votre profil et soyez découvert par des clubs',
+        reg_coach: 'Entraîneur',
+        reg_coach_desc: 'Présentez votre expérience et découvrez des talents',
+        reg_club: 'Club',
+        reg_club_desc: 'Recherchez les meilleurs talents pour votre équipe',
+        reg_agent: 'Agent',
+        reg_agent_desc: 'Gérez votre portefeuille de talents professionnels',
+        reg_continue: 'Continuer',
+        reg_already: 'Déjà inscrit ?',
+        reg_login_link: 'Se connecter',
+      },
+      en: {
+        reg_title: 'Choose Your Role',
+        reg_subtitle: 'Select the account type that fits your profile',
+        reg_badge_popular: 'Popular',
+        reg_badge_premium: 'Premium',
+        reg_player: 'Player',
+        reg_player_desc: 'Create your profile and get discovered by clubs',
+        reg_coach: 'Coach',
+        reg_coach_desc: 'Showcase your experience and discover talents',
+        reg_club: 'Club',
+        reg_club_desc: 'Search for the best talents for your team',
+        reg_agent: 'Agent',
+        reg_agent_desc: 'Manage your professional talent portfolio',
+        reg_continue: 'Continue',
+        reg_already: 'Already registered?',
+        reg_login_link: 'Sign In',
+      },
+      ar: {
+        reg_title: 'اختر دورك',
+        reg_subtitle: 'حدد نوع الحساب المناسب لك',
+        reg_badge_popular: 'شائع',
+        reg_badge_premium: 'مميز',
+        reg_player: 'لاعب',
+        reg_player_desc: 'أنشئ ملفك واجعل الأندية تكتشفك',
+        reg_coach: 'مدرب',
+        reg_coach_desc: 'اعرض خبرتك واكتشف المواهب',
+        reg_club: 'نادي',
+        reg_club_desc: 'ابحث عن أفضل المواهب لفريقك',
+        reg_agent: 'وكيل',
+        reg_agent_desc: 'أدر محفظتك من المواهب الاحترافية',
+        reg_continue: 'متابعة',
+        reg_already: 'مسجّل مسبقاً؟',
+        reg_login_link: 'تسجيل الدخول',
+      },
+    };
+
+    function setLang(lang) {
+      localStorage.setItem('footop_lang', lang);
+      applyLang(lang);
+    }
+
+    function applyLang(lang) {
+      const t = TRANSLATIONS[lang] || TRANSLATIONS['fr'];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key] !== undefined) el.textContent = t[key];
+      });
+      document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+    }
+
+    applyLang(localStorage.getItem('footop_lang') || 'fr');
   </script>
 </body>
 </html>
