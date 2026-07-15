@@ -85,18 +85,6 @@
           <span class="lang-divider">|</span>
           <button class="lang-btn" data-lang="ar" onclick="setLang('ar')">AR</button>
         </div>
-        <!-- Skip Page -->
-        <div class="skip-page">
-          {% if user.is_authenticated %}
-            {% if user.role == 'PLAYER' %}
-              <a href="{% url 'players:profile_edit' %}" class="home-skip-link" data-i18n="home_skip">Passer</a>
-            {% else %}
-              <a href="{% url 'home' %}" class="home-skip-link" data-i18n="home_skip">Passer</a>
-            {% endif %}
-          {% else %}
-            <a href="{% url 'accounts:login' %}" class="home-skip-link" data-i18n="home_skip">Passer</a>
-          {% endif %}
-        </div>
       </div>
 
       <!-- Hero Block Content -->

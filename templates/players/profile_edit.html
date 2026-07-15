@@ -813,5 +813,47 @@
 </script>
 <script src="{% static 'js/searchable-dropdown.js' %}"></script>
 <script>initSearchableDropdowns();</script>
+<script>
+  /* ── Pull-to-Refresh ── */
+  (function(){
+    const PTR_THRESHOLD = 80; // px to pull before releasing triggers reload
+    let startY = 0, pulling = false;
+
+    // Indicator element
+    const ind = document.createElement('div');
+    ind.style.cssText = [
+      'position:fixed','top:0','left:50%','transform:translateX(-50%) translateY(-60px)',
+      'z-index:9999','background:#f1b10f','color:#000','font-weight:700','font-size:.82rem',
+      'padding:8px 20px','border-radius:0 0 20px 20px','transition:transform .2s ease',
+      'pointer-events:none','display:flex','align-items:center','gap:6px'
+    ].join(';');
+    ind.innerHTML = '↓ Libérer pour actualiser';
+    document.body.appendChild(ind);
+
+    document.addEventListener('touchstart', e => {
+      if (window.scrollY === 0) { startY = e.touches[0].clientY; pulling = true; }
+    }, { passive: true });
+
+    document.addEventListener('touchmove', e => {
+      if (!pulling) return;
+      const dy = e.touches[0].clientY - startY;
+      if (dy > 0) {
+        const progress = Math.min(dy, PTR_THRESHOLD + 20);
+        ind.style.transform = `translateX(-50%) translateY(${Math.min(progress - 60, 0)}px)`;
+        ind.innerHTML = dy >= PTR_THRESHOLD ? '↑ Libérer pour actualiser' : '↓ Tirer pour actualiser';
+      }
+    }, { passive: true });
+
+    document.addEventListener('touchend', e => {
+      if (!pulling) return;
+      pulling = false;
+      const dy = e.changedTouches[0].clientY - startY;
+      ind.style.transform = 'translateX(-50%) translateY(-60px)';
+      if (dy >= PTR_THRESHOLD && window.scrollY === 0) {
+        setTimeout(() => window.location.reload(), 150);
+      }
+    });
+  })();
+</script>
 </body>
 </html>
