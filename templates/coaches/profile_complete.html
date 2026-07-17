@@ -147,7 +147,7 @@
         <h5><i class="ti ti-link"></i> Transfermarkt</h5>
         <div class="ir"><span class="il">Profil existant</span><span class="iv">{% if profile.has_transfermarkt %}Oui{% else %}Non{% endif %}</span></div>
         {% if profile.has_transfermarkt %}
-        <div class="ir"><span class="il">Username</span><span class="iv {% if not profile.transfermarkt_username %}empty{% endif %}">{{ profile.transfermarkt_username|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Username ou lien</span><span class="iv {% if not profile.transfermarkt_username %}empty{% endif %}">{{ profile.transfermarkt_username|default:"—" }}</span></div>
         {% endif %}
       </div>
 

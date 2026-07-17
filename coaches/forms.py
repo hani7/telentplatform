@@ -41,7 +41,7 @@ class CoachProfileForm(forms.ModelForm):
             "search_objective": "Objectif sur la plateforme (Stage, Contrat, Test…)",
             "target_club_notes": "Clubs visés (notes)",
             "has_transfermarkt": "Avez-vous un profil sur Transfermarkt ?",
-            "transfermarkt_username": "Username",
+            "transfermarkt_username": "Username ou lien",
             "visibility_filters": "Filtres de visibilité (JSON)",
             "visibility_exceptions": "Exceptions de visibilité (JSON)",
         }
@@ -89,7 +89,7 @@ class CoachProfileForm(forms.ModelForm):
                 
         if cleaned.get("has_transfermarkt"):
             if not cleaned.get("transfermarkt_username"):
-                self.add_error("transfermarkt_username", "Veuillez renseigner votre username Transfermarkt.")
+                self.add_error("transfermarkt_username", "Veuillez renseigner votre username ou lien Transfermarkt.")
         else:
             cleaned["transfermarkt_username"] = ""
             

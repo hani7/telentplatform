@@ -123,7 +123,7 @@ class PlayerProfileForm(forms.ModelForm):
             "target_club_notes": "Vous visez quel club ? (notes)",
 
             "has_transfermarkt": "Avez-vous un profil sur Transfermarkt ?",
-            "transfermarkt_username": "Username",
+            "transfermarkt_username": "Username ou lien",
         }
 
         help_texts = {
@@ -172,7 +172,7 @@ class PlayerProfileForm(forms.ModelForm):
 
         if cleaned.get("has_transfermarkt"):
             if not cleaned.get("transfermarkt_username"):
-                self.add_error("transfermarkt_username", "Veuillez renseigner votre username Transfermarkt.")
+                self.add_error("transfermarkt_username", "Veuillez renseigner votre username ou lien Transfermarkt.")
         else:
             cleaned["transfermarkt_username"] = ""
 
