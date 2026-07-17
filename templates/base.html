@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" dir="ltr">
 
 <head>
   <meta charset="utf-8">
@@ -109,8 +109,8 @@
               <h6 class="user-name mb-0">{{ user.get_full_name|default:user.username }}</h6>
               <span>{% if user.role %}{{ user.get_role_display }}{% else %}Member{% endif %}</span>
             {% else %}
-              <h6 class="user-name mb-0">Guest</h6>
-              <span>Welcome to FOOTOP</span>
+              <h6 class="user-name mb-0" data-i18n="sidebar.guest">Guest</h6>
+              <span data-i18n="sidebar.welcome">Welcome to FOOTOP</span>
             {% endif %}
           </div>
         </div>
@@ -118,51 +118,51 @@
         <!-- Sidenav Nav -->
         <ul class="sidenav-nav ps-0">
           <li>
-            <a href="{% url 'home' %}"><i class="ti ti-home"></i> Accueil</a>
+            <a href="{% url 'home' %}"><i class="ti ti-home"></i> <span data-i18n="nav.home">Accueil</span></a>
           </li>
 
           {% if user.is_authenticated %}
             {% if user.role == 'PLAYER' %}
               <li>
-                <a href="{% url 'players:profile_edit' %}"><i class="ti ti-user"></i> Mon Profil</a>
+                <a href="{% url 'players:profile_edit' %}"><i class="ti ti-user"></i> <span data-i18n="nav.my_profile">Mon Profil</span></a>
               </li>
             {% elif user.role == 'COACH' %}
               <li>
-                <a href="{% url 'coaches:profile_edit' %}"><i class="ti ti-user"></i> Mon Profil</a>
+                <a href="{% url 'coaches:profile_edit' %}"><i class="ti ti-user"></i> <span data-i18n="nav.my_profile">Mon Profil</span></a>
               </li>
               <li>
-                <a href="{% url 'search:players_list' %}"><i class="ti ti-search"></i> Rechercher Joueurs</a>
+                <a href="{% url 'search:players_list' %}"><i class="ti ti-search"></i> <span data-i18n="nav.search">Rechercher Joueurs</span></a>
               </li>
             {% elif user.role == 'CLUB' or user.role == 'AGENT' %}
               {% if user.role == 'AGENT' %}
               <li>
-                <a href="{% url 'agents:profile_edit' %}"><i class="ti ti-user"></i> Mon Profil</a>
+                <a href="{% url 'agents:profile_edit' %}"><i class="ti ti-user"></i> <span data-i18n="nav.my_profile">Mon Profil</span></a>
               </li>
               <li>
-                <a href="{% url 'agents:dashboard' %}"><i class="ti ti-layout-dashboard"></i> Tableau de bord</a>
+                <a href="{% url 'agents:dashboard' %}"><i class="ti ti-layout-dashboard"></i> <span data-i18n="nav.dashboard">Tableau de bord</span></a>
               </li>
               {% elif user.role == 'CLUB' %}
               <li>
-                <a href="{% url 'clubs:profile_edit' %}"><i class="ti ti-building-stadium"></i> Mon Profil</a>
+                <a href="{% url 'clubs:profile_edit' %}"><i class="ti ti-building-stadium"></i> <span data-i18n="nav.my_profile">Mon Profil</span></a>
               </li>
               <li>
-                <a href="{% url 'clubs:dashboard' %}"><i class="ti ti-layout-dashboard"></i> Tableau de bord</a>
+                <a href="{% url 'clubs:dashboard' %}"><i class="ti ti-layout-dashboard"></i> <span data-i18n="nav.dashboard">Tableau de bord</span></a>
               </li>
               {% endif %}
               <li>
-                <a href="{% url 'search:players_list' %}"><i class="ti ti-search"></i> Rechercher</a>
+                <a href="{% url 'search:players_list' %}"><i class="ti ti-search"></i> <span data-i18n="nav.search_short">Rechercher</span></a>
               </li>
             {% endif %}
 
             <li>
-              <a href="{% url 'accounts:logout' %}"><i class="ti ti-logout"></i> Déconnexion</a>
+              <a href="{% url 'accounts:logout' %}"><i class="ti ti-logout"></i> <span data-i18n="nav.logout">Déconnexion</span></a>
             </li>
           {% else %}
             <li>
-              <a href="{% url 'accounts:login' %}"><i class="ti ti-login"></i> Connexion</a>
+              <a href="{% url 'accounts:login' %}"><i class="ti ti-login"></i> <span data-i18n="nav.login">Connexion</span></a>
             </li>
             <li>
-              <a href="{% url 'accounts:register_role' %}"><i class="ti ti-user-plus"></i> Inscription</a>
+              <a href="{% url 'accounts:register_role' %}"><i class="ti ti-user-plus"></i> <span data-i18n="nav.register">Inscription</span></a>
             </li>
           {% endif %}
         </ul>
@@ -177,7 +177,7 @@
 
         <!-- Copyright Info -->
         <div class="copyright-info">
-          <p>&copy; <span id="copyrightYear"></span> FOOTOP. Tous droits réservés.</p>
+          <p>&copy; <span id="copyrightYear"></span> FOOTOP. <span data-i18n="sidebar.copyright">Tous droits réservés.</span></p>
         </div>
       </div>
     </div>
@@ -196,75 +196,75 @@
       {% if user.role == 'PLAYER' %}
         <a href="/offers/my/" class="footer-pill-item {% if '/offers/my' in request.path %}is-active{% endif %}">
           <i class="ti ti-clipboard-list"></i>
-          <span>Offres</span>
+          <span data-i18n="footer.offers">Offres</span>
         </a>
         <a href="{% url 'players:profile_edit' %}" class="footer-pill-item {% if '/players/me' in request.path and 'edit' not in request.path %}is-active{% endif %}">
           <i class="ti ti-user-circle"></i>
-          <span>Profil</span>
+          <span data-i18n="footer.profile">Profil</span>
         </a>
         <a href="{% url 'players:profile_edit' %}" class="footer-pill-item {% if '/players/me' in request.path %}is-active{% endif %}">
           <i class="ti ti-edit"></i>
-          <span>Modifier</span>
+          <span data-i18n="footer.edit">Modifier</span>
         </a>
         <a href="{% url 'accounts:logout' %}" class="footer-pill-item">
           <i class="ti ti-logout"></i>
-          <span>Déconnexion</span>
+          <span data-i18n="footer.logout">Déconnexion</span>
         </a>
 
       {% elif user.role == 'COACH' %}
         <a href="/offers/my/" class="footer-pill-item {% if '/offers/my' in request.path %}is-active{% endif %}">
           <i class="ti ti-clipboard-list"></i>
-          <span>Offres</span>
+          <span data-i18n="footer.offers">Offres</span>
         </a>
         <a href="{% url 'coaches:profile_edit' %}" class="footer-pill-item">
           <i class="ti ti-user-circle"></i>
-          <span>Profil</span>
+          <span data-i18n="footer.profile">Profil</span>
         </a>
         <a href="{% url 'coaches:profile_edit' %}" class="footer-pill-item {% if '/coaches/me' in request.path %}is-active{% endif %}">
           <i class="ti ti-edit"></i>
-          <span>Modifier</span>
+          <span data-i18n="footer.edit">Modifier</span>
         </a>
         <a href="{% url 'accounts:logout' %}" class="footer-pill-item">
           <i class="ti ti-logout"></i>
-          <span>Déconnexion</span>
+          <span data-i18n="footer.logout">Déconnexion</span>
         </a>
 
       {% elif user.role == 'AGENT' %}
         {# AGENT #}
         <a href="{% url 'agents:dashboard' %}" class="footer-pill-item {% if '/agents/dashboard' in request.path %}is-active{% endif %}">
           <i class="ti ti-layout-dashboard"></i>
-          <span>Dashboard</span>
+          <span data-i18n="footer.dashboard">Dashboard</span>
         </a>
         <a href="{% url 'agents:profile_edit' %}" class="footer-pill-item {% if '/agents/me' in request.path %}is-active{% endif %}">
           <i class="ti ti-user-circle"></i>
-          <span>Profil</span>
+          <span data-i18n="footer.profile">Profil</span>
         </a>
         <a href="/offers/suggestions/" class="footer-pill-item {% if '/offers/suggestions' in request.path %}is-active{% endif %}">
           <i class="ti ti-clipboard-list"></i>
-          <span>Offres</span>
+          <span data-i18n="footer.offers">Offres</span>
         </a>
         <a href="{% url 'accounts:logout' %}" class="footer-pill-item">
           <i class="ti ti-logout"></i>
-          <span>Déconnexion</span>
+          <span data-i18n="footer.logout">Déconnexion</span>
         </a>
 
       {% else %}
         {# CLUB #}
         <a href="{% url 'clubs:dashboard' %}" class="footer-pill-item {% if '/clubs/dashboard' in request.path %}is-active{% endif %}">
           <i class="ti ti-layout-dashboard"></i>
-          <span>Dashboard</span>
+          <span data-i18n="footer.dashboard">Dashboard</span>
         </a>
         <a href="{% url 'clubs:profile_edit' %}" class="footer-pill-item {% if '/clubs/me' in request.path %}is-active{% endif %}">
           <i class="ti ti-user-circle"></i>
-          <span>Profil</span>
+          <span data-i18n="footer.profile">Profil</span>
         </a>
         <a href="/offers/suggestions/" class="footer-pill-item {% if '/offers/suggestions' in request.path %}is-active{% endif %}">
           <i class="ti ti-clipboard-list"></i>
-          <span>Offres</span>
+          <span data-i18n="footer.offers">Offres</span>
         </a>
         <a href="{% url 'accounts:logout' %}" class="footer-pill-item">
           <i class="ti ti-logout"></i>
-          <span>Déconnexion</span>
+          <span data-i18n="footer.logout">Déconnexion</span>
         </a>
       {% endif %}
 
@@ -388,6 +388,7 @@
   <script src="{% static 'js/isotope.pkgd.min.js' %}"></script>
   <script src="{% static 'js/nice-select2.js' %}"></script>
   <script src="{% static 'js/dark-rtl.js' %}"></script>
+  <script src="{% static 'js/i18n.js' %}"></script>
   <script src="{% static 'js/active.js' %}"></script>
   <script src="{% static 'js/pwa.js' %}"></script>
 
