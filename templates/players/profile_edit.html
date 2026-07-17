@@ -746,7 +746,7 @@
         birthDateInput.addEventListener('change', updateMinorStatus);
         updateMinorStatus();
     }
-    const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent', 'is_minor'];
+    const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent', 'desired_salary', 'player_value', 'is_minor'];
     function updateValidationUI() {
       document.querySelectorAll('.fc input:not([type=hidden]):not([type=file]), .fc select, .fc textarea').forEach(el => {
         if (el.type === 'checkbox') {

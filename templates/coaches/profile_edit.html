@@ -400,7 +400,7 @@
     const tmk=document.querySelector('select[name=has_transfermarkt]');
     const tmw=document.getElementById('transfermarkt-wrap');
     if(tmk&&tmw){const f=()=>tmw.style.display=tmk.value==='True'?'block':'none';tmk.addEventListener('change',f);f()}
-    const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent'];
+    const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent', 'salary_min', 'salary_max'];
     function updateValidationUI() {
       document.querySelectorAll('.fc input:not([type=hidden]):not([type=checkbox]):not([type=file]), .fc select, .fc textarea').forEach(el => {
         if (skipRequired.includes(el.name)) {
