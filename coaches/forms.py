@@ -10,8 +10,7 @@ class CoachProfileForm(forms.ModelForm):
             "first_name", "last_name", "birth_date", "birth_place", "gender", "nationality",
             "diplomas_certificates", "status", "salary_min", "salary_max",
             "current_club_name", "current_club_country", "current_club_division",
-            "current_club_start", "current_club_end",
-            "contract_end_date", "achievements",
+            "current_club_start", "current_club_end", "achievements",
             "has_agent_contract", "agent_full_name", "agent_id", "looking_for_agent", "represent_self",
             "has_transfermarkt", "transfermarkt_username",
             "search_objective", "target_club_notes",
@@ -33,7 +32,6 @@ class CoachProfileForm(forms.ModelForm):
             "current_club_division": "Division",
             "current_club_start": "Date début",
             "current_club_end": "Date fin",
-            "contract_end_date": "Date de fin de contrat",
             "achievements": "Réalisations & Palmarès",
             "has_agent_contract": "Avez-vous un contrat avec un Agent de Football ?",
             "agent_full_name": "Nom complet de l'agent",
@@ -51,7 +49,6 @@ class CoachProfileForm(forms.ModelForm):
             "birth_date": forms.DateInput(attrs={"type": "date"}),
             "current_club_start": forms.DateInput(attrs={"type": "date"}),
             "current_club_end": forms.DateInput(attrs={"type": "date"}),
-            "contract_end_date": forms.DateInput(attrs={"type": "date"}),
             "diplomas_certificates": forms.Textarea(attrs={
                 "rows": 3,
                 "placeholder": "Ex: CAF-A, UEFA-Pro, Licence nationale..."

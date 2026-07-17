@@ -16,7 +16,7 @@ class PlayerProfileForm(forms.ModelForm):
     # Override current_club_country to use choices
     current_club_country = forms.ChoiceField(
         choices=[('', '-- Sélectionner un pays --')] + COUNTRIES,
-        required=False,
+        required=True,
         label="Pays"
     )
     
@@ -73,7 +73,6 @@ class PlayerProfileForm(forms.ModelForm):
 
             "availability", "current_club_name", "current_club_country", "current_club_division",
             "current_club_start", "current_club_end",
-            "contract_end_date",
 
             "player_value", "search_objective",
 
@@ -111,7 +110,6 @@ class PlayerProfileForm(forms.ModelForm):
             "current_club_division": "Division",
             "current_club_start": "Date début",
             "current_club_end": "Date fin",
-            "contract_end_date": "Date de fin de contrat",
 
             "player_value": "Valeur du joueur",
             "search_objective": "Je cherche...",
@@ -138,7 +136,6 @@ class PlayerProfileForm(forms.ModelForm):
             "birth_date": forms.DateInput(attrs={"type": "date"}),
             "current_club_start": forms.DateInput(attrs={"type": "date"}),
             "current_club_end": forms.DateInput(attrs={"type": "date"}),
-            "contract_end_date": forms.DateInput(attrs={"type": "date"}),
 
             # Integer
             "height_cm": forms.NumberInput(attrs={"type": "number", "min": 0, "step": 1}),
