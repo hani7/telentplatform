@@ -498,10 +498,6 @@
             </div>
           </div>
 
-          {{ form.parents_declaration.errors }}
-          <span class="fl">{{ form.parents_declaration.label }}</span>
-          {{ form.parents_declaration }}
-
           {{ form.parents_notes.errors }}
           <span class="fl">{{ form.parents_notes.label }}</span>
           {{ form.parents_notes }}
@@ -570,6 +566,7 @@
         parentOtherWrap.style.display = 'none';
         document.getElementById('id_parent_relation_other').value = '';
       }
+      if(typeof updateValidationUI === 'function') updateValidationUI();
     });
     if(parentRel.value === 'AUTRE') parentOtherWrap.style.display = 'block';
   }
@@ -593,6 +590,7 @@
     next.style.display=s===tot?'none':'flex';
     sub.style.display=s===tot?'flex':'none';
     window.scrollTo({top:0,behavior:'smooth'});
+    if(typeof updateValidationUI === 'function') updateValidationUI();
   }
 
   // Restore step from URL param (after save redirect) or sessionStorage
@@ -861,7 +859,7 @@
         birthDateInput.addEventListener('change', updateMinorStatus);
         updateMinorStatus();
     }
-    const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent', 'desired_salary', 'player_value', 'is_minor'];
+    const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent', 'desired_salary', 'player_value', 'is_minor', 'parents_notes'];
     function updateValidationUI() {
       document.querySelectorAll('.fc input:not([type=hidden]):not([type=file]), .fc select, .fc textarea').forEach(el => {
         if (el.type === 'checkbox') {

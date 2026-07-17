@@ -66,7 +66,7 @@ class PlayerProfileForm(forms.ModelForm):
         fields = [
             "first_name", "last_name", "birth_date", "birth_place", "gender",
             "is_minor",
-            "parents_declaration", "parents_notes",
+            "parents_notes",
             "parent_name", "parent_relation", "parent_relation_other",
             "parent_birth_date", "parent_nationality", "parent_address",
             "parent_email", "parent_phone",
@@ -94,7 +94,6 @@ class PlayerProfileForm(forms.ModelForm):
             "nationality": "Nationalité",
 
             "is_minor": "Joueur mineur ?",
-            "parents_declaration": "Déclaration des parents (fichier)",
             "parents_notes": "Renseignements / Notes des parents",
             "parent_name": "Nom et prénom du parent ou tuteur légal",
             "parent_relation": "Lien avec le joueur",
@@ -102,7 +101,7 @@ class PlayerProfileForm(forms.ModelForm):
             "parent_birth_date": "Date de naissance",
             "parent_nationality": "Nationalité",
             "parent_address": "Adresse",
-            "parent_email": "Adresse courriel",
+            "parent_email": "Email",
             "parent_phone": "Téléphone",
 
             "status": "Statut",
@@ -162,6 +161,7 @@ class PlayerProfileForm(forms.ModelForm):
             "parent_relation": forms.Select(attrs={"data-sd-skip": "1", "id": "id_parent_relation"}),
             "parent_relation_other": forms.TextInput(attrs={"id": "id_parent_relation_other"}),
             "parent_birth_date": forms.DateInput(attrs={"type": "date"}),
+            "parent_nationality": forms.Select(attrs={"data-sd-skip": "1"}),
             "parent_address": forms.TextInput(attrs={"placeholder": "Adresse complète"}),
 
             # Compact dropdowns (no pill, no search popup)
