@@ -455,17 +455,46 @@
           {{ form.parent_name.errors }}
           <span class="fl">{{ form.parent_name.label }}</span>
           {{ form.parent_name }}
+
+          {{ form.parent_relation.errors }}
+          <span class="fl">{{ form.parent_relation.label }}</span>
+          {{ form.parent_relation }}
+
+          <div id="parent-relation-other-wrap" style="display:none;">
+            {{ form.parent_relation_other.errors }}
+            <span class="fl">{{ form.parent_relation_other.label }}</span>
+            {{ form.parent_relation_other }}
+          </div>
           
           <div class="row g-2">
             <div class="col-6">
-              {{ form.parent_email.errors }}
-              <span class="fl">{{ form.parent_email.label }}</span>
-              {{ form.parent_email }}
+              {{ form.parent_birth_date.errors }}
+              <span class="fl">{{ form.parent_birth_date.label }}</span>
+              {{ form.parent_birth_date }}
             </div>
+            <div class="col-6">
+              {{ form.parent_nationality.errors }}
+              <span class="fl">{{ form.parent_nationality.label }}</span>
+              {{ form.parent_nationality }}
+            </div>
+          </div>
+
+          {{ form.parent_address.errors }}
+          <span class="fl">{{ form.parent_address.label }}</span>
+          {{ form.parent_address }}
+
+          <hr style="margin: 1rem 0; border-top: 1px solid rgba(255,255,255,0.1);">
+
+          <div class="row g-2">
             <div class="col-6">
               {{ form.parent_phone.errors }}
               <span class="fl">{{ form.parent_phone.label }}</span>
               {{ form.parent_phone }}
+            </div>
+            <div class="col-6">
+              {{ form.parent_email.errors }}
+              <span class="fl">{{ form.parent_email.label }}</span>
+              {{ form.parent_email }}
             </div>
           </div>
 
@@ -530,6 +559,21 @@
 
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 <script>
+  // Toggle pour le champ "Autre"
+  const parentRel = document.getElementById('id_parent_relation');
+  const parentOtherWrap = document.getElementById('parent-relation-other-wrap');
+  if(parentRel) {
+    parentRel.addEventListener('change', function() {
+      if(this.value === 'AUTRE') {
+        parentOtherWrap.style.display = 'block';
+      } else {
+        parentOtherWrap.style.display = 'none';
+        document.getElementById('id_parent_relation_other').value = '';
+      }
+    });
+    if(parentRel.value === 'AUTRE') parentOtherWrap.style.display = 'block';
+  }
+
   let cur=1;const tot=4;
   const tabs=document.querySelectorAll('.si');
   const cards=document.querySelectorAll('.fc');

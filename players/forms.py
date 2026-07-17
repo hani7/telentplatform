@@ -65,8 +65,11 @@ class PlayerProfileForm(forms.ModelForm):
         model = PlayerProfile
         fields = [
             "first_name", "last_name", "birth_date", "birth_place", "gender",
-            "is_minor", "parents_declaration", "parents_notes",
-            "parent_name", "parent_email", "parent_phone",
+            "is_minor",
+            "parents_declaration", "parents_notes",
+            "parent_name", "parent_relation", "parent_relation_other",
+            "parent_birth_date", "parent_nationality", "parent_address",
+            "parent_email", "parent_phone",
 
             "status", "position", "desired_salary", "foot",
             "height_cm", "weight_kg",
@@ -94,7 +97,12 @@ class PlayerProfileForm(forms.ModelForm):
             "parents_declaration": "Déclaration des parents (fichier)",
             "parents_notes": "Renseignements / Notes des parents",
             "parent_name": "Nom et prénom du parent ou tuteur légal",
-            "parent_email": "Adresse email",
+            "parent_relation": "Lien avec le joueur",
+            "parent_relation_other": "Autre (Précisez)",
+            "parent_birth_date": "Date de naissance",
+            "parent_nationality": "Nationalité",
+            "parent_address": "Adresse",
+            "parent_email": "Adresse courriel",
             "parent_phone": "Téléphone",
 
             "status": "Statut",
@@ -151,6 +159,10 @@ class PlayerProfileForm(forms.ModelForm):
 
             "parent_email": forms.EmailInput(attrs={"type": "email", "placeholder": "Email du parent/tuteur"}),
             "parent_phone": forms.TextInput(attrs={"type": "tel", "placeholder": "Téléphone du parent/tuteur"}),
+            "parent_relation": forms.Select(attrs={"data-sd-skip": "1", "id": "id_parent_relation"}),
+            "parent_relation_other": forms.TextInput(attrs={"id": "id_parent_relation_other"}),
+            "parent_birth_date": forms.DateInput(attrs={"type": "date"}),
+            "parent_address": forms.TextInput(attrs={"placeholder": "Adresse complète"}),
 
             # Compact dropdowns (no pill, no search popup)
             "gender": forms.Select(attrs={"data-sd-skip": "1"}),

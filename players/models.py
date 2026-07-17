@@ -29,6 +29,19 @@ class PlayerProfile(models.Model):
     parents_notes = models.TextField(blank=True)
     
     parent_name = models.CharField(max_length=140, blank=True)
+    
+    class ParentRelation(models.TextChoices):
+        PERE = "PERE", "Père"
+        MERE = "MERE", "Mère"
+        TUTEUR = "TUTEUR", "Tuteur légal"
+        AUTRE = "AUTRE", "Autre"
+        
+    parent_relation = models.CharField(max_length=15, choices=ParentRelation.choices, blank=True)
+    parent_relation_other = models.CharField(max_length=80, blank=True)
+    parent_birth_date = models.DateField(null=True, blank=True)
+    parent_nationality = models.ForeignKey(Nationality, on_delete=models.SET_NULL, null=True, blank=True, related_name="parent_profiles")
+    parent_address = models.CharField(max_length=255, blank=True)
+    
     parent_email = models.EmailField(blank=True)
     parent_phone = models.CharField(max_length=50, blank=True)
 
