@@ -292,7 +292,7 @@ class SeasonStatForm(forms.ModelForm):
             "season": "Saison",
             "matches": "Matchs",
             "goals": "Buts",
-            "assists": "Passes D",
+            "assists": "Passes décisives",
         }
         widgets = {
             "season": forms.TextInput(attrs={"placeholder": "Ex: 2023-2024"}),

@@ -561,14 +561,11 @@
     if(cur<tot){cur++;goStep(cur)}
   });
 
-  // Précédent: save form first, then go back
+  // Précédent: ne pas soumettre, juste reculer
   prev.addEventListener('click',()=>{
     if(cur>1){
-      const targetStep = cur - 1;
-      if(stepInput) stepInput.value = cur; // remember current step to come back
-      // Submit the form to save, will redirect back to targetStep
-      if(stepInput) stepInput.value = targetStep;
-      document.getElementById('pForm').submit();
+      cur--;
+      goStep(cur);
     }
   });
 
@@ -590,6 +587,18 @@
     const firstEntry = container.querySelector('.club-entry');
     if (!firstEntry) return;
     const newEntry = firstEntry.cloneNode(true);
+    
+    // Reset seasons: keep only one season row
+    const seasonContainer = newEntry.querySelector('.seasons-container');
+    if (seasonContainer) {
+      const seasonRows = Array.from(seasonContainer.querySelectorAll('.season-row'));
+      for (let i = 1; i < seasonRows.length; i++) {
+        seasonRows[i].remove();
+      }
+    }
+    const seasonTotal = newEntry.querySelector('input[name*="-TOTAL_FORMS"]');
+    if (seasonTotal) seasonTotal.value = '1';
+
     newEntry.querySelectorAll('input, select, textarea').forEach(el => {
       if (el.name) {
         el.name = el.name.replace(/previous_clubs-\d+-/, `previous_clubs-${formNum}-`);
@@ -622,6 +631,56 @@
 
   function removeClub(btn) {
     const entry = btn.closest('.club-entry');
+    if (!entry) return;
+    const deleteInput = entry.querySelector('input[name*="-DELETE"]');
+    if (deleteInput) {
+      deleteInput.checked = true;
+      entry.style.opacity = '0.3';
+      entry.style.pointerEvents = 'none';
+    } else {
+      entry.remove();
+    }
+  }
+
+  // Dynamic file adding
+  function addFile() {
+    const container = document.getElementById('files-container');
+    const totalForms = document.querySelector('input[name$="files-TOTAL_FORMS"]');
+    if(!totalForms) return;
+    const prefixMatch = totalForms.name.match(/(.*)-TOTAL_FORMS/);
+    if(!prefixMatch) return;
+    const prefix = prefixMatch[1];
+    const formNum = parseInt(totalForms.value);
+    
+    const firstEntry = container.querySelector('.file-entry');
+    if (!firstEntry) return;
+    const newEntry = firstEntry.cloneNode(true);
+    
+    newEntry.querySelectorAll('input, select, textarea').forEach(el => {
+      if (el.name) el.name = el.name.replace(new RegExp(`${prefix}-\\d+-`), `${prefix}-${formNum}-`);
+      if (el.id) el.id = el.id.replace(new RegExp(`${prefix}_\\d+_`), `${prefix}_${formNum}_`);
+      if (el.type !== 'checkbox' && el.type !== 'hidden') el.value = '';
+      if (el.type === 'checkbox') el.checked = false;
+      if (el.type === 'select-one') el.selectedIndex = 0;
+    });
+    newEntry.querySelectorAll('label').forEach(el => {
+      if (el.htmlFor) el.htmlFor = el.htmlFor.replace(new RegExp(`${prefix}_\\d+_`), `${prefix}_${formNum}_`);
+    });
+    const title = newEntry.querySelector('.fsi-title');
+    if (title) title.textContent = `Fichier ${formNum + 1}`;
+    
+    const deleteInput = newEntry.querySelector('input[name*="-DELETE"]');
+    if (deleteInput) deleteInput.checked = false;
+    
+    newEntry.style.opacity = '1';
+    newEntry.style.pointerEvents = 'auto';
+    container.appendChild(newEntry);
+    totalForms.value = formNum + 1;
+    if (typeof initSearchableDropdowns === 'function') initSearchableDropdowns();
+  }
+
+  function removeFile(btn) {
+    const entry = btn.closest('.file-entry');
     if (!entry) return;
     const deleteInput = entry.querySelector('input[name*="-DELETE"]');
     if (deleteInput) {

@@ -211,7 +211,7 @@
         {% if stats %}
           <div style="overflow-x:auto">
             <table class="ptable">
-              <thead><tr><th>Saison</th><th>Matchs</th><th>Buts</th><th>Passes D.</th><th>Minutes</th></tr></thead>
+              <thead><tr><th>Saison</th><th>Matchs</th><th>Buts</th><th>Passes décisives</th><th>Minutes</th></tr></thead>
               <tbody>
                 {% for s in stats %}
                 <tr><td>{{ s.season|default:"—" }}</td><td>{{ s.matches }}</td><td>{{ s.goals }}</td><td>{{ s.assists }}</td><td>{{ s.minutes }}</td></tr>
