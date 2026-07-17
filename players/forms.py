@@ -327,7 +327,7 @@ SeasonStatFormSet = inlineformset_factory(
 FileFormSet = inlineformset_factory(
     PlayerProfile,
     PlayerFile,
-    fields=["file_type", "file", "title"],
+    fields=["file_type", "file"],
     extra=1,
     can_delete=True
 )

@@ -115,7 +115,7 @@ PreviousClubFormSet = inlineformset_factory(
 
 FileFormSet = inlineformset_factory(
     CoachProfile, CoachFile,
-    fields=["file_type", "file", "title"],
+    fields=["file_type", "file"],
     labels={
         "file_type": "Type de fichier",
         "file": "Fichier",
