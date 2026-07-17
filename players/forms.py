@@ -17,7 +17,7 @@ class PlayerProfileForm(forms.ModelForm):
     current_club_country = forms.ChoiceField(
         choices=[('', '-- Sélectionner un pays --')] + COUNTRIES,
         required=False,
-        label="Pays (avec club actuel)"
+        label="Pays"
     )
     
     # Override position to be a dropdown
@@ -106,11 +106,11 @@ class PlayerProfileForm(forms.ModelForm):
             "weight_kg": "Poids (kg)",
 
             "availability": "Disponibilité actuelle",
-            "current_club_name": "Avec club actuel",
-            "current_club_country": "Pays (avec club actuel)",
-            "current_club_division": "Division (avec club actuel)",
-            "current_club_start": "Date début (avec club actuel)",
-            "current_club_end": "Date fin (avec club actuel)",
+            "current_club_name": "Nom du club",
+            "current_club_country": "Pays",
+            "current_club_division": "Division",
+            "current_club_start": "Date début",
+            "current_club_end": "Date fin",
             "contract_end_date": "Date de fin de contrat",
 
             "player_value": "Valeur du joueur",

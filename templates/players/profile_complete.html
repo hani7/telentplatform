@@ -140,7 +140,7 @@
 
       {% if profile.availability == 'IN_CLUB' %}
       <div class="ic">
-        <h5><i class="ti ti-home"></i> Avec club actuel</h5>
+        <h5><i class="ti ti-home"></i> Nom du club</h5>
         <div class="ir"><span class="il">Nom du club</span><span class="iv {% if not profile.current_club_name %}empty{% endif %}">{{ profile.current_club_name|default:"—" }}</span></div>
         <div class="ir"><span class="il">Pays</span><span class="iv {% if not profile.current_club_country %}empty{% endif %}">{{ profile.current_club_country|default:"—" }}</span></div>
         <div class="ir"><span class="il">Division</span><span class="iv {% if not profile.current_club_division %}empty{% endif %}">{{ profile.current_club_division|default:"—" }}</span></div>
