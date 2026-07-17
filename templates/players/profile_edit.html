@@ -584,6 +584,12 @@
     cur=s;
     if(stepInput) stepInput.value=s;
     sessionStorage.setItem(STEP_KEY, s);
+    
+    // Mettre à jour l'URL sans recharger la page
+    const url = new URL(window.location);
+    url.searchParams.set('step', s);
+    window.history.replaceState({}, '', url);
+
     cards.forEach(c=>{c.classList.toggle('active',+c.dataset.step===s)});
     tabs.forEach((t,i)=>{t.classList.remove('active','done');if(i+1===s)t.classList.add('active');else if(i+1<s)t.classList.add('done')});
     prev.style.display=s===1?'none':'flex';
@@ -592,6 +598,28 @@
     window.scrollTo({top:0,behavior:'smooth'});
     if(typeof updateValidationUI === 'function') updateValidationUI();
   }
+
+  const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent', 'desired_salary', 'player_value', 'is_minor', 'parents_notes'];
+  function updateValidationUI() {
+    document.querySelectorAll('.fc input:not([type=hidden]):not([type=file]), .fc select, .fc textarea').forEach(el => {
+      if (el.type === 'checkbox') {
+        el.required = false;
+      } else if (skipRequired.includes(el.name)) {
+        el.required = false;
+      } else {
+        el.required = (el.offsetParent !== null);
+      }
+      
+      const label = el.previousElementSibling;
+      if (label && label.classList.contains('fl')) {
+        label.innerHTML = label.innerHTML.replace(/ <span style="color:#f87171">\*<\/span>/g, '');
+        if (el.required) {
+          label.innerHTML += ' <span style="color:#f87171">*</span>';
+        }
+      }
+    });
+  }
+  document.addEventListener('change', updateValidationUI);
 
   // Restore step from URL param (after save redirect) or sessionStorage
   (function(){
@@ -859,27 +887,6 @@
         birthDateInput.addEventListener('change', updateMinorStatus);
         updateMinorStatus();
     }
-    const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent', 'desired_salary', 'player_value', 'is_minor', 'parents_notes'];
-    function updateValidationUI() {
-      document.querySelectorAll('.fc input:not([type=hidden]):not([type=file]), .fc select, .fc textarea').forEach(el => {
-        if (el.type === 'checkbox') {
-          el.required = false;
-        } else if (skipRequired.includes(el.name)) {
-          el.required = false;
-        } else {
-          el.required = (el.offsetParent !== null);
-        }
-        
-        const label = el.previousElementSibling;
-        if (label && label.classList.contains('fl')) {
-          label.innerHTML = label.innerHTML.replace(/ <span style="color:#f87171">\*<\/span>/g, '');
-          if (el.required) {
-            label.innerHTML += ' <span style="color:#f87171">*</span>';
-          }
-        }
-      });
-    }
-    document.addEventListener('change', updateValidationUI);
     updateValidationUI();
   })();
 
