@@ -209,11 +209,11 @@
 
   <!-- Language Switcher -->
   <div class="lang-switcher" id="langSwitcher">
-    <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
+    <button class="lang-btn" data-lang="fr">FR</button>
     <span class="lang-divider">|</span>
-    <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" data-lang="en">EN</button>
     <span class="lang-divider">|</span>
-    <button class="lang-btn" data-lang="ar" onclick="setLang('ar')">AR</button>
+    <button class="lang-btn" data-lang="ar">AR</button>
   </div>
 
   <div class="login-page-wrapper">
@@ -304,6 +304,8 @@
 
   <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'js/internet-status.js' %}"></script>
+  <script src="{% static 'js/dark-rtl.js' %}"></script>
+  <script src="{% static 'js/i18n.js' %}"></script>
   <script src="{% static 'js/active.js' %}"></script>
   <script src="{% static 'js/pwa.js' %}"></script>
 
@@ -326,68 +328,6 @@
         }
       });
     }
-
-    /* ── Language Switcher ── */
-    const TRANSLATIONS = {
-      fr: {
-        login_title: 'Bienvenue',
-        login_subtitle: 'Connectez-vous à votre compte FOOTOP',
-        login_identifier_placeholder: "Nom d'utilisateur, email ou téléphone",
-        login_password_placeholder: 'Mot de passe',
-        login_forgot: 'Mot de passe oublié ?',
-        login_btn: 'Se connecter',
-        login_no_account: 'Pas encore de compte ?',
-        login_register_link: "S'inscrire",
-      },
-      en: {
-        login_title: 'Welcome Back',
-        login_subtitle: 'Sign in to your FOOTOP account',
-        login_identifier_placeholder: 'Username, email or phone',
-        login_password_placeholder: 'Password',
-        login_forgot: 'Forgot password?',
-        login_btn: 'Sign In',
-        login_no_account: 'No account yet?',
-        login_register_link: 'Register',
-      },
-      ar: {
-        login_title: 'مرحباً بك',
-        login_subtitle: 'سجّل الدخول إلى حساب FOOTOP',
-        login_identifier_placeholder: 'اسم المستخدم أو البريد أو الهاتف',
-        login_password_placeholder: 'كلمة المرور',
-        login_forgot: 'نسيت كلمة المرور؟',
-        login_btn: 'تسجيل الدخول',
-        login_no_account: 'ليس لديك حساب؟',
-        login_register_link: 'إنشاء حساب',
-      },
-    };
-
-    function setLang(lang) {
-      localStorage.setItem('footop_lang', lang);
-      applyLang(lang);
-    }
-
-    function applyLang(lang) {
-      const t = TRANSLATIONS[lang] || TRANSLATIONS['fr'];
-      // Text nodes
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (t[key] !== undefined) el.textContent = t[key];
-      });
-      // Placeholders
-      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-        const key = el.getAttribute('data-i18n-placeholder');
-        if (t[key] !== undefined) el.placeholder = t[key];
-      });
-      // RTL for Arabic
-      document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
-      // Active button
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-      });
-    }
-
-    // Init on load
-    applyLang(localStorage.getItem('footop_lang') || 'fr');
   </script>
 </body>
 </html>

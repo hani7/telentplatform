@@ -74,6 +74,8 @@ class CoachProfileForm(forms.ModelForm):
         for field in ['has_agent_contract', 'looking_for_agent', 'has_transfermarkt', 'represent_self']:
             self.fields[field].widget = forms.Select(choices=[('', '---------')] + bool_choices, attrs={"class": "form-control"})
             self.fields[field].required = False
+        
+        self.fields['nationality'].required = True
 
     def clean(self):
         cleaned = super().clean()

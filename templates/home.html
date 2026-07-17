@@ -79,11 +79,11 @@
         <img src="{% static 'img/core-img/footop-logo-white.png' %}" alt="FOOTOP Logo" class="home-logo">
         <!-- Language Switcher -->
         <div class="lang-switcher" id="langSwitcher">
-          <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
+          <button class="lang-btn" data-lang="fr">FR</button>
           <span class="lang-divider">|</span>
-          <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+          <button class="lang-btn" data-lang="en">EN</button>
           <span class="lang-divider">|</span>
-          <button class="lang-btn" data-lang="ar" onclick="setLang('ar')">AR</button>
+          <button class="lang-btn" data-lang="ar">AR</button>
         </div>
       </div>
 
@@ -254,57 +254,9 @@
   <script src="{% static 'js/isotope.pkgd.min.js' %}"></script>
   <script src="{% static 'js/nice-select2.js' %}"></script>
   <script src="{% static 'js/dark-rtl.js' %}"></script>
+  <script src="{% static 'js/i18n.js' %}"></script>
   <script src="{% static 'js/active.js' %}"></script>
   <script src="{% static 'js/pwa.js' %}"></script>
-
-  <script>
-    /* ── Language Switcher ── */
-    const TRANSLATIONS = {
-      fr: {
-        home_skip: 'Passer',
-        home_title: 'Élevez Votre ',
-        home_title_bold: 'Carrière',
-        home_subtitle: 'Combler le fossé entre talent et opportunité. La plateforme ultime pour que les joueurs se fassent repérer, que les agents trouvent des talents et que les entraîneurs construisent des équipes gagnantes.',
-        home_start: 'Commencer',
-        home_login: 'Se Connecter',
-      },
-      en: {
-        home_skip: 'Skip',
-        home_title: 'Elevate Your ',
-        home_title_bold: 'Career',
-        home_subtitle: 'Bridging the gap between talent and opportunity. The ultimate platform for players to get scouted, agents to find talent, and coaches to build winning teams.',
-        home_start: 'Get Started',
-        home_login: 'Sign In',
-      },
-      ar: {
-        home_skip: 'تخطّي',
-        home_title: 'ارتقِ بمسيرتك ',
-        home_title_bold: 'المهنية',
-        home_subtitle: 'جسر الهوة بين الموهبة والفرصة. المنصّة المثلى لكي يُكتشف اللاعبون ويجد الوكلاء المواهب ويبني المدرّبون فرقاً متميزة.',
-        home_start: 'ابدأ الآن',
-        home_login: 'تسجيل الدخول',
-      },
-    };
-
-    function setLang(lang) {
-      localStorage.setItem('footop_lang', lang);
-      applyLang(lang);
-    }
-
-    function applyLang(lang) {
-      const t = TRANSLATIONS[lang] || TRANSLATIONS['fr'];
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (t[key] !== undefined) el.textContent = t[key];
-      });
-      document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-      });
-    }
-
-    applyLang(localStorage.getItem('footop_lang') || 'fr');
-  </script>
 </body>
 
 </html>

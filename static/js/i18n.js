@@ -45,6 +45,37 @@
       "lang.fr":          "Français",
       "lang.en":          "English",
       "lang.ar":          "العربية",
+
+      "home_title": "Élevez Votre ",
+      "home_title_bold": "Carrière",
+      "home_subtitle": "Combler le fossé entre talent et opportunité. La plateforme ultime pour que les joueurs se fassent repérer, que les agents trouvent des talents et que les entraîneurs construisent des équipes gagnantes.",
+      "home_start": "Commencer",
+      "home_login": "Se Connecter",
+      
+      "login_title": "Bienvenue",
+      "login_subtitle": "Connectez-vous à votre compte FOOTOP",
+      "login_identifier_placeholder": "Nom d'utilisateur, email ou téléphone",
+      "login_password_placeholder": "Mot de passe",
+      "login_forgot": "Mot de passe oublié ?",
+      "login_btn": "Se connecter",
+      "login_no_account": "Pas encore de compte ?",
+      "login_register_link": "S'inscrire",
+      
+      "reg_title": "Choisissez votre Rôle",
+      "reg_subtitle": "Sélectionnez le type de compte qui correspond à votre profil",
+      "reg_badge_popular": "Populaire",
+      "reg_badge_premium": "Premium",
+      "reg_player": "Joueur",
+      "reg_player_desc": "Créez votre profil et soyez découvert par des clubs",
+      "reg_coach": "Entraîneur",
+      "reg_coach_desc": "Présentez votre expérience et découvrez des talents",
+      "reg_club": "Club",
+      "reg_club_desc": "Recherchez les meilleurs talents pour votre équipe",
+      "reg_agent": "Agent",
+      "reg_agent_desc": "Gérez votre portefeuille de talents professionnels",
+      "reg_continue": "Continuer",
+      "reg_already": "Déjà inscrit ?",
+      "reg_login_link": "Se connecter",
     },
 
     en: {
@@ -73,6 +104,37 @@
       "lang.fr":          "Français",
       "lang.en":          "English",
       "lang.ar":          "العربية",
+
+      "home_title": "Elevate Your ",
+      "home_title_bold": "Career",
+      "home_subtitle": "Bridging the gap between talent and opportunity. The ultimate platform for players to get scouted, agents to find talent, and coaches to build winning teams.",
+      "home_start": "Get Started",
+      "home_login": "Sign In",
+      
+      "login_title": "Welcome Back",
+      "login_subtitle": "Sign in to your FOOTOP account",
+      "login_identifier_placeholder": "Username, email or phone",
+      "login_password_placeholder": "Password",
+      "login_forgot": "Forgot password?",
+      "login_btn": "Sign In",
+      "login_no_account": "No account yet?",
+      "login_register_link": "Register",
+      
+      "reg_title": "Choose Your Role",
+      "reg_subtitle": "Select the account type that fits your profile",
+      "reg_badge_popular": "Popular",
+      "reg_badge_premium": "Premium",
+      "reg_player": "Player",
+      "reg_player_desc": "Create your profile and get discovered by clubs",
+      "reg_coach": "Coach",
+      "reg_coach_desc": "Showcase your experience and discover talents",
+      "reg_club": "Club",
+      "reg_club_desc": "Search for the best talents for your team",
+      "reg_agent": "Agent",
+      "reg_agent_desc": "Manage your professional talent portfolio",
+      "reg_continue": "Continue",
+      "reg_already": "Already registered?",
+      "reg_login_link": "Sign In",
     },
 
     ar: {
@@ -101,6 +163,37 @@
       "lang.fr":          "Français",
       "lang.en":          "English",
       "lang.ar":          "العربية",
+
+      "home_title": "ارتقِ بمسيرتك ",
+      "home_title_bold": "المهنية",
+      "home_subtitle": "جسر الهوة بين الموهبة والفرصة. المنصّة المثلى لكي يُكتشف اللاعبون ويجد الوكلاء المواهب ويبني المدرّبون فرقاً متميزة.",
+      "home_start": "ابدأ الآن",
+      "home_login": "تسجيل الدخول",
+      
+      "login_title": "مرحباً بك",
+      "login_subtitle": "سجّل الدخول إلى حساب FOOTOP",
+      "login_identifier_placeholder": "اسم المستخدم أو البريد أو الهاتف",
+      "login_password_placeholder": "كلمة المرور",
+      "login_forgot": "نسيت كلمة المرور؟",
+      "login_btn": "تسجيل الدخول",
+      "login_no_account": "ليس لديك حساب؟",
+      "login_register_link": "إنشاء حساب",
+      
+      "reg_title": "اختر دورك",
+      "reg_subtitle": "حدد نوع الحساب المناسب لك",
+      "reg_badge_popular": "شائع",
+      "reg_badge_premium": "مميز",
+      "reg_player": "لاعب",
+      "reg_player_desc": "أنشئ ملفك واجعل الأندية تكتشفك",
+      "reg_coach": "مدرب",
+      "reg_coach_desc": "اعرض خبرتك واكتشف المواهب",
+      "reg_club": "نادي",
+      "reg_club_desc": "ابحث عن أفضل المواهب لفريقك",
+      "reg_agent": "وكيل",
+      "reg_agent_desc": "أدر محفظتك من المواهب الاحترافية",
+      "reg_continue": "متابعة",
+      "reg_already": "مسجّل مسبقاً؟",
+      "reg_login_link": "تسجيل الدخول",
     },
   };
 
@@ -184,7 +277,23 @@
 
   // ─── Créer le widget sélecteur de langue ─────────────────────────────────
   function createLangSwitcher() {
-    // Vérifier si le widget existe déjà dans le HTML (via data-i18n-switcher)
+    // Si un widget ".lang-switcher" existe déjà, on l'utilise
+    const existingSwitcher = document.querySelector(".lang-switcher");
+    if (existingSwitcher) {
+      existingSwitcher.querySelectorAll('.lang-btn').forEach(function(btn) {
+        // Enlever onclick s'il existe pour éviter le doublon
+        btn.removeAttribute('onclick');
+        // Cloner le bouton pour nettoyer les anciens event listeners
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        newBtn.addEventListener("click", function () {
+          applyLanguage(newBtn.dataset.lang);
+        });
+      });
+      return;
+    }
+
+    // Vérifier si le widget généré existe déjà dans le HTML
     if (document.getElementById("footopLangSwitcher")) return;
 
     const container = document.createElement("div");

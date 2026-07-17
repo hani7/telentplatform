@@ -47,3 +47,7 @@ class AgentProfileForm(forms.ModelForm):
                 "placeholder": "Ex: Elite Football Agency"
             }),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['nationality'].required = True

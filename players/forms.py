@@ -8,7 +8,7 @@ class PlayerProfileForm(forms.ModelForm):
     # Override nationality to use choices directly instead of ForeignKey
     nationality = forms.ChoiceField(
         choices=[('', '-- Sélectionner une nationalité --')] + COUNTRIES,
-        required=False,
+        required=True,
         label="Nationalité",
         widget=forms.Select(attrs={"class": "form-control"})
     )

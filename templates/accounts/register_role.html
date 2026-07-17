@@ -235,11 +235,11 @@
 
   <!-- Language Switcher -->
   <div class="lang-switcher" id="langSwitcher">
-    <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
+    <button class="lang-btn" data-lang="fr">FR</button>
     <span class="lang-divider">|</span>
-    <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" data-lang="en">EN</button>
     <span class="lang-divider">|</span>
-    <button class="lang-btn" data-lang="ar" onclick="setLang('ar')">AR</button>
+    <button class="lang-btn" data-lang="ar">AR</button>
   </div>
 
   <div class="role-page-wrapper">
@@ -330,6 +330,8 @@
 
   <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'js/internet-status.js' %}"></script>
+  <script src="{% static 'js/dark-rtl.js' %}"></script>
+  <script src="{% static 'js/i18n.js' %}"></script>
   <script src="{% static 'js/active.js' %}"></script>
   <script src="{% static 'js/pwa.js' %}"></script>
 
@@ -343,80 +345,6 @@
       document.getElementById('selectedRole').value = role;
       document.getElementById('continueBtn').disabled = false;
     }
-
-    /* ── Language Switcher ── */
-    const TRANSLATIONS = {
-      fr: {
-        reg_title: 'Choisissez votre Rôle',
-        reg_subtitle: 'Sélectionnez le type de compte qui correspond à votre profil',
-        reg_badge_popular: 'Populaire',
-        reg_badge_premium: 'Premium',
-        reg_player: 'Joueur',
-        reg_player_desc: 'Créez votre profil et soyez découvert par des clubs',
-        reg_coach: 'Entraîneur',
-        reg_coach_desc: 'Présentez votre expérience et découvrez des talents',
-        reg_club: 'Club',
-        reg_club_desc: 'Recherchez les meilleurs talents pour votre équipe',
-        reg_agent: 'Agent',
-        reg_agent_desc: 'Gérez votre portefeuille de talents professionnels',
-        reg_continue: 'Continuer',
-        reg_already: 'Déjà inscrit ?',
-        reg_login_link: 'Se connecter',
-      },
-      en: {
-        reg_title: 'Choose Your Role',
-        reg_subtitle: 'Select the account type that fits your profile',
-        reg_badge_popular: 'Popular',
-        reg_badge_premium: 'Premium',
-        reg_player: 'Player',
-        reg_player_desc: 'Create your profile and get discovered by clubs',
-        reg_coach: 'Coach',
-        reg_coach_desc: 'Showcase your experience and discover talents',
-        reg_club: 'Club',
-        reg_club_desc: 'Search for the best talents for your team',
-        reg_agent: 'Agent',
-        reg_agent_desc: 'Manage your professional talent portfolio',
-        reg_continue: 'Continue',
-        reg_already: 'Already registered?',
-        reg_login_link: 'Sign In',
-      },
-      ar: {
-        reg_title: 'اختر دورك',
-        reg_subtitle: 'حدد نوع الحساب المناسب لك',
-        reg_badge_popular: 'شائع',
-        reg_badge_premium: 'مميز',
-        reg_player: 'لاعب',
-        reg_player_desc: 'أنشئ ملفك واجعل الأندية تكتشفك',
-        reg_coach: 'مدرب',
-        reg_coach_desc: 'اعرض خبرتك واكتشف المواهب',
-        reg_club: 'نادي',
-        reg_club_desc: 'ابحث عن أفضل المواهب لفريقك',
-        reg_agent: 'وكيل',
-        reg_agent_desc: 'أدر محفظتك من المواهب الاحترافية',
-        reg_continue: 'متابعة',
-        reg_already: 'مسجّل مسبقاً؟',
-        reg_login_link: 'تسجيل الدخول',
-      },
-    };
-
-    function setLang(lang) {
-      localStorage.setItem('footop_lang', lang);
-      applyLang(lang);
-    }
-
-    function applyLang(lang) {
-      const t = TRANSLATIONS[lang] || TRANSLATIONS['fr'];
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (t[key] !== undefined) el.textContent = t[key];
-      });
-      document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-      });
-    }
-
-    applyLang(localStorage.getItem('footop_lang') || 'fr');
   </script>
 </body>
 </html>
