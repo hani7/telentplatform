@@ -35,18 +35,41 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   if (!event.request.url.startsWith('http')) return;
 
+  const url = new URL(event.request.url);
+
+  // 1. Cache-First pour les assets statiques et médias
+  if (url.pathname.startsWith('/static/') || url.pathname.startsWith('/media/')) {
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse; // Retourne immédiatement depuis le cache (très rapide)
+        }
+        // Sinon, va sur le réseau et met en cache
+        return fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.ok) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          }
+          return networkResponse;
+        });
+      })
+    );
+    return; // Stop ici pour les assets
+  }
+
+  // 2. Network-First pour le HTML et l'API (assure des données à jour)
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        if (response.ok && event.request.url.includes('/static/')) {
+        // Mettre en cache seulement les pages HTML complètes
+        if (response.ok && event.request.mode === 'navigate') {
           const responseClone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
-          });
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
         }
         return response;
       })
       .catch(() => {
+        // En cas de panne réseau, renvoyer la version en cache ou la page hors ligne
         return caches.match(event.request).then((cached) => {
           if (cached) return cached;
           if (event.request.mode === 'navigate') {
