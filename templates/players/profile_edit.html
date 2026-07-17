@@ -645,7 +645,7 @@
   // Dynamic file adding
   function addFile() {
     const container = document.getElementById('files-container');
-    const totalForms = document.querySelector('input[name$="files-TOTAL_FORMS"]');
+    const totalForms = document.querySelector('.fc[data-step="3"] input[name$="-TOTAL_FORMS"]');
     if(!totalForms) return;
     const prefixMatch = totalForms.name.match(/(.*)-TOTAL_FORMS/);
     if(!prefixMatch) return;
