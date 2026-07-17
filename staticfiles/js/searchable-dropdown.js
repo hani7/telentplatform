@@ -10,6 +10,9 @@
 
   /* ── Injected CSS ── */
   const STYLE = `
+    /* ── Visually hide original select for HTML5 validation ── */
+    .sd-hidden-select { position:absolute; opacity:0; pointer-events:none; height:0; width:0; margin:0; padding:0; border:none; z-index:-1; }
+
     /* ── Pill chips (small selects) ── */
     .sd-pills { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:.6rem; }
     .sd-pill {
@@ -184,7 +187,7 @@
   function convertLarge(select) {
     if (select.dataset.sdDone) return;
     select.dataset.sdDone = '1';
-    select.style.display = 'none';
+    select.classList.add('sd-hidden-select');
 
     const wrap    = document.createElement('div');
     wrap.className = 'sd-wrap';
@@ -222,7 +225,7 @@
   function convertSmall(select) {
     if (select.dataset.sdDone) return;
     select.dataset.sdDone = '1';
-    select.style.display = 'none';
+    select.classList.add('sd-hidden-select');
 
     const pills = document.createElement('div');
     pills.className = 'sd-pills';
