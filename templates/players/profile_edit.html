@@ -121,6 +121,7 @@
       <div class="si active"><i class="ti ti-user"></i> Infos</div>
       <div class="si"><i class="ti ti-building"></i> Clubs</div>
       <div class="si"><i class="ti ti-file-upload"></i> Fichiers</div>
+      <div class="si"><i class="ti ti-shield-check"></i> Consent</div>
     </div>
 
     <!-- Form -->
@@ -163,36 +164,6 @@
             <span class="fl">{{ form.gender.label }}</span>
             {{ form.gender }}
           </div>
-        </div>
-
-        <div class="ck" style="display:none;">{{ form.is_minor }} <label>{{ form.is_minor.label }}</label></div>
-        <div id="minor-wrap" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed rgba(241,177,15,0.6); border-radius: 8px; background: rgba(241,177,15,0.05);">
-          <h6 style="color:#f1b10f; font-size:0.9rem; margin-bottom:10px;">Informations Parentales Obligatoires</h6>
-          
-          {{ form.parent_name.errors }}
-          <span class="fl">{{ form.parent_name.label }}</span>
-          {{ form.parent_name }}
-          
-          <div class="row g-2">
-            <div class="col-6">
-              {{ form.parent_email.errors }}
-              <span class="fl">{{ form.parent_email.label }}</span>
-              {{ form.parent_email }}
-            </div>
-            <div class="col-6">
-              {{ form.parent_phone.errors }}
-              <span class="fl">{{ form.parent_phone.label }}</span>
-              {{ form.parent_phone }}
-            </div>
-          </div>
-
-          {{ form.parents_declaration.errors }}
-          <span class="fl">{{ form.parents_declaration.label }}</span>
-          {{ form.parents_declaration }}
-
-          {{ form.parents_notes.errors }}
-          <span class="fl">{{ form.parents_notes.label }}</span>
-          {{ form.parents_notes }}
         </div>
 
         <hr>
@@ -470,6 +441,43 @@
           <i class="ti ti-plus"></i> Ajouter un fichier
         </button>
         
+      </div>
+
+      <!-- ═══ STEP 4 : Consentement ═══ -->
+      <div class="fc" data-step="4">
+        <h5><i class="ti ti-shield-check"></i> Consentement</h5>
+        <p style="color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:1rem">Confirme tes informations et donne ton accord</p>
+
+        <div class="ck" style="display:none;">{{ form.is_minor }} <label>{{ form.is_minor.label }}</label></div>
+        <div id="minor-wrap" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed rgba(241,177,15,0.6); border-radius: 8px; background: rgba(241,177,15,0.05);">
+          <h6 style="color:#f1b10f; font-size:0.9rem; margin-bottom:10px;">Informations Parentales Obligatoires</h6>
+          
+          {{ form.parent_name.errors }}
+          <span class="fl">{{ form.parent_name.label }}</span>
+          {{ form.parent_name }}
+          
+          <div class="row g-2">
+            <div class="col-6">
+              {{ form.parent_email.errors }}
+              <span class="fl">{{ form.parent_email.label }}</span>
+              {{ form.parent_email }}
+            </div>
+            <div class="col-6">
+              {{ form.parent_phone.errors }}
+              <span class="fl">{{ form.parent_phone.label }}</span>
+              {{ form.parent_phone }}
+            </div>
+          </div>
+
+          {{ form.parents_declaration.errors }}
+          <span class="fl">{{ form.parents_declaration.label }}</span>
+          {{ form.parents_declaration }}
+
+          {{ form.parents_notes.errors }}
+          <span class="fl">{{ form.parents_notes.label }}</span>
+          {{ form.parents_notes }}
+        </div>
+
         <hr>
         <div class="ck" style="margin-top: 1.5rem; align-items: flex-start;">
           <input type="checkbox" id="consent_checkbox" required style="margin-top: 3px;">
@@ -522,7 +530,7 @@
 
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 <script>
-  let cur=1;const tot=3;
+  let cur=1;const tot=4;
   const tabs=document.querySelectorAll('.si');
   const cards=document.querySelectorAll('.fc');
   const prev=document.getElementById('prevBtn');
