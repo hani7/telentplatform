@@ -4,27 +4,13 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
-from django.http import HttpResponse
 import uuid
-import traceback
 
 from .models import PlayerProfile
 from .forms import PlayerProfileForm, PreviousClubFormSet, SeasonStatFormSet, FileFormSet
 
 @login_required
 def player_profile_edit(request):
-    try:
-        return _player_profile_edit(request)
-    except Exception:
-        # TEMPORARY: show traceback on production — remove after fixing
-        return HttpResponse(
-            f"<pre>{traceback.format_exc()}</pre>",
-            content_type="text/html",
-            status=500,
-        )
-
-@login_required
-def _player_profile_edit(request):
     profile, _ = PlayerProfile.objects.get_or_create(
         user=request.user,
         defaults={"first_name": request.user.first_name or "", "last_name": request.user.last_name or ""}

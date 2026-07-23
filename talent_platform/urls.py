@@ -85,28 +85,9 @@ def home_view(request):
     return render(request, "home.html")
 
 
-# ── TEMPORARY: run migrations via browser (no Terminal on cPanel) ──
-def run_migrate_view(request):
-    """Visit /run-migrate-now/?key=footop2026 to apply migrations."""
-    if request.GET.get("key") != "footop2026":
-        return HttpResponse("Forbidden", status=403)
-    from io import StringIO
-    from django.core.management import call_command
-    out = StringIO()
-    try:
-        call_command("migrate", "--noinput", stdout=out, stderr=out)
-        call_command("check", stdout=out, stderr=out)
-        result = out.getvalue()
-    except Exception as e:
-        import traceback
-        result = f"ERROR:\n{traceback.format_exc()}\n\nOutput so far:\n{out.getvalue()}"
-    return HttpResponse(f"<pre>{result}</pre>", content_type="text/html")
-
-
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", home_view, name="home"),
-    path("run-migrate-now/", run_migrate_view),
 
     # ── APK Download (public) ──
     path("download/", download_apk_page, name="download_page"),
