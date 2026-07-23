@@ -6,56 +6,37 @@ from django.conf import settings
 
 def search_clubs_api(request):
     """
-    Proxy view for searching football clubs via API-Sports (API-Football).
-    Requires API_FOOTBALL_KEY in settings or environment.
-    If no key is present, returns a fallback mock list for demonstration.
+    Proxy view for searching football clubs via TheSportsDB (Free Public API).
+    Provides a massive database of clubs and information.
     """
     query = request.GET.get('q', '').strip()
     if not query:
         return JsonResponse({'results': []})
 
-    # Retrieve API key from settings (you should add this to your .env)
-    api_key = getattr(settings, 'API_FOOTBALL_KEY', None)
-
-    if not api_key:
-        # Fallback / Mock mode if API key is not yet configured
-        mock_db = [
-            {"name": "Real Madrid", "logo": "https://media.api-sports.io/football/teams/541.png", "country": "Spain"},
-            {"name": "FC Barcelona", "logo": "https://media.api-sports.io/football/teams/529.png", "country": "Spain"},
-            {"name": "Paris Saint-Germain", "logo": "https://media.api-sports.io/football/teams/85.png", "country": "France"},
-            {"name": "Manchester United", "logo": "https://media.api-sports.io/football/teams/33.png", "country": "England"},
-            {"name": "Manchester City", "logo": "https://media.api-sports.io/football/teams/50.png", "country": "England"},
-            {"name": "Arsenal", "logo": "https://media.api-sports.io/football/teams/42.png", "country": "England"},
-            {"name": "Bayern Munich", "logo": "https://media.api-sports.io/football/teams/157.png", "country": "Germany"},
-            {"name": "Juventus", "logo": "https://media.api-sports.io/football/teams/496.png", "country": "Italy"},
-            {"name": "AC Milan", "logo": "https://media.api-sports.io/football/teams/489.png", "country": "Italy"},
-            {"name": "Inter Milan", "logo": "https://media.api-sports.io/football/teams/505.png", "country": "Italy"},
-            {"name": "Mouloudia d'Alger (MCA)", "logo": "", "country": "Algeria"},
-            {"name": "CR Belouizdad", "logo": "", "country": "Algeria"},
-            {"name": "USM Alger", "logo": "", "country": "Algeria"},
-            {"name": "JS Kabylie", "logo": "", "country": "Algeria"},
-        ]
-        results = [c for c in mock_db if query.lower() in c['name'].lower()]
-        return JsonResponse({'results': results})
-
-    # Real API Call using standard library urllib
-    url = f"https://v3.football.api-sports.io/teams?search={urllib.parse.quote(query)}"
+    url = f"https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t={urllib.parse.quote(query)}"
     req = urllib.request.Request(url)
-    req.add_header('x-rapidapi-host', 'v3.football.api-sports.io')
-    req.add_header('x-rapidapi-key', api_key)
+    # TheSportsDB recommends a user agent
+    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)')
     
     try:
-        with urllib.request.urlopen(req) as response:
+        with urllib.request.urlopen(req, timeout=5) as response:
             if response.status == 200:
                 data = json.loads(response.read().decode('utf-8'))
-                teams = data.get('response', [])
+                teams = data.get('teams')
+                
+                if not teams:
+                    return JsonResponse({'results': []})
+                
                 formatted_results = []
-                for item in teams:
-                    team = item.get('team', {})
+                for team in teams:
+                    # Filter to only include Soccer (Football) teams to avoid NFL/NBA teams if names overlap
+                    if team.get('strSport', '').lower() != 'soccer':
+                        continue
+                        
                     formatted_results.append({
-                        "name": team.get('name'),
-                        "logo": team.get('logo'),
-                        "country": team.get('country')
+                        "name": team.get('strTeam'),
+                        "logo": team.get('strBadge'),
+                        "country": team.get('strCountry')
                     })
                 return JsonResponse({'results': formatted_results})
             else:
