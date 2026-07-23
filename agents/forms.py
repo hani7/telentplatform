@@ -37,9 +37,6 @@ class AgentProfileForm(forms.ModelForm):
                 "rows": 3,
                 "placeholder": "Parlez de vous, votre expérience, vos spécialités..."
             }),
-            "specialization": forms.TextInput(attrs={
-                "placeholder": "Ex: Joueurs offensifs, Ligue 1 algérienne..."
-            }),
             "license_number": forms.TextInput(attrs={
                 "placeholder": "Ex: FIFA-2024-DZ-001"
             }),

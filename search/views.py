@@ -1,114 +1,110 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie
+
 from accounts.models import User
 from players.models import PlayerProfile
 from coaches.models import CoachProfile
-from .utils import is_allowed_by_visibility
+from .utils import split_by_visibility, get_viewer_context
 
-
-def _viewer_context(user):
-    # MVP: on n'a pas encore ClubProfile/AgentProfile => on utilise juste username comme "club"
-    return {
-        "viewer_club": user.username if user.is_authenticated else None,
-        "viewer_country": None,
-        "viewer_division": None,
-    }
+_PLAYER_LIST_FIELDS = (
+    "id", "first_name", "last_name", "position", "status", "foot",
+    "height_cm", "desired_salary", "availability",
+    "current_club_name", "current_club_country",
+    "nationality_id",
+    "visibility_mode", "visibility_filters", "visibility_exceptions",
+    "user_id",
+)
+_COACH_LIST_FIELDS = (
+    "id", "first_name", "last_name", "status",
+    "current_club_name", "current_club_country",
+    "diplomas_certificates",
+    "nationality_id",
+    "visibility_mode", "visibility_filters", "visibility_exceptions",
+    "user_id",
+)
 
 
 @login_required
+@vary_on_cookie
+@cache_page(60 * 5)
 def players_list(request):
     if request.user.role not in [User.Role.CLUB, User.Role.AGENT]:
-        return render(request, "search/players_list.html", {"error": "Accès réservé aux Clubs/Agents."})
+        return render(request, "search/players_list.html",
+                      {"error": "Accès réservé aux Clubs/Agents."})
 
-    qs = PlayerProfile.objects.filter(is_active=True).select_related("nationality")
+    qs = (
+        PlayerProfile.objects
+        .filter(is_active=True)
+        .select_related("nationality")
+        .only(*_PLAYER_LIST_FIELDS)
+    )
 
-    # filtres GET (inchangé)
-    position = (request.GET.get("position") or "").strip()
-    country = (request.GET.get("country") or "").strip()
-    status = (request.GET.get("status") or "").strip()
-
-    # ✅ détecter si on est en mode filtre
+    position   = (request.GET.get("position") or "").strip()
+    country    = (request.GET.get("country") or "").strip()
+    status     = (request.GET.get("status") or "").strip()
     has_filters = any([position, country, status])
 
-    # ✅ Si pas de filtres : afficher une liste par défaut (ex: derniers profils)
     if not has_filters:
-        qs = qs.order_by("-id")[:30]   # tu peux changer 30
-
-    # ✅ Si filtres présents : appliquer filtres
+        qs = qs.order_by("-id")[:30]
     else:
-        if position:
-            qs = qs.filter(position__icontains=position)
-        if status:
-            qs = qs.filter(status=status)
-        if country:
-            qs = qs.filter(current_club_country__icontains=country)
+        if position: qs = qs.filter(position__icontains=position)
+        if status:   qs = qs.filter(status=status)
+        if country:  qs = qs.filter(current_club_country__icontains=country)
+        qs = qs.order_by("-id")[:50]
 
-    viewer = _viewer_context(request.user)
-
-    # appliquer visibilité en python (MVP) - inchangé
-    results = []
-    for p in qs:
-        if is_allowed_by_visibility(
-            p.visibility_mode, p.visibility_filters, p.visibility_exceptions,
-            viewer_country=viewer["viewer_country"],
-            viewer_division=viewer["viewer_division"],
-            viewer_club=viewer["viewer_club"]
-        ):
-            results.append(p)
-
-    return render(
-        request,
-        "search/players_list.html",
-        {
-            "players": results,
-            "has_filters": has_filters,  # ✅ pour template
-        }
+    viewer = get_viewer_context(request.user)
+    results = split_by_visibility(
+        qs,
+        viewer_country=viewer["viewer_country"],
+        viewer_division=viewer["viewer_division"],
+        viewer_club=viewer["viewer_club"],
     )
+
+    return render(request, "search/players_list.html", {
+        "players": results,
+        "has_filters": has_filters,
+    })
 
 
 @login_required
+@vary_on_cookie
+@cache_page(60 * 5)
 def coaches_list(request):
     if request.user.role not in [User.Role.CLUB, User.Role.AGENT]:
-        return render(request, "search/coaches_list.html", {"error": "Accès réservé aux Clubs/Agents."})
+        return render(request, "search/coaches_list.html",
+                      {"error": "Accès réservé aux Clubs/Agents."})
 
-    qs = CoachProfile.objects.filter(is_active=True).select_related("nationality")
+    qs = (
+        CoachProfile.objects
+        .filter(is_active=True)
+        .select_related("nationality")
+        .only(*_COACH_LIST_FIELDS)
+    )
 
-    status = (request.GET.get("status") or "").strip()
-    country = (request.GET.get("country") or "").strip()
+    status     = (request.GET.get("status") or "").strip()
+    country    = (request.GET.get("country") or "").strip()
     diploma_kw = (request.GET.get("diploma") or "").strip()
-
-    # ✅ détecter si on est en mode filtre
     has_filters = any([status, country, diploma_kw])
 
-    # ✅ Si pas de filtres : afficher une liste par défaut
     if not has_filters:
-        qs = qs.order_by("-id")[:30]  # tu peux changer 30
+        qs = qs.order_by("-id")[:30]
     else:
-        # filtres (inchangé)
-        if status:
-            qs = qs.filter(status=status)
-        if country:
-            qs = qs.filter(current_club_country__icontains=country)
-        if diploma_kw:
-            qs = qs.filter(diplomas_certificates__icontains=diploma_kw)
+        if status:      qs = qs.filter(status=status)
+        if country:     qs = qs.filter(current_club_country__icontains=country)
+        if diploma_kw:  qs = qs.filter(diplomas_certificates__icontains=diploma_kw)
+        qs = qs.order_by("-id")[:50]
 
-    viewer = _viewer_context(request.user)
-
-    results = []
-    for c in qs:
-        if is_allowed_by_visibility(
-            c.visibility_mode, c.visibility_filters, c.visibility_exceptions,
-            viewer_country=viewer["viewer_country"],
-            viewer_division=viewer["viewer_division"],
-            viewer_club=viewer["viewer_club"]
-        ):
-            results.append(c)
-
-    return render(
-        request,
-        "search/coaches_list.html",
-        {
-            "coaches": results,
-            "has_filters": has_filters,  # ✅ pour template
-        }
+    viewer = get_viewer_context(request.user)
+    results = split_by_visibility(
+        qs,
+        viewer_country=viewer["viewer_country"],
+        viewer_division=viewer["viewer_division"],
+        viewer_club=viewer["viewer_club"],
     )
+
+    return render(request, "search/coaches_list.html", {
+        "coaches": results,
+        "has_filters": has_filters,
+    })

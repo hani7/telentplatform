@@ -11,13 +11,13 @@ class NationalitySerializer(serializers.ModelSerializer):
 class PlayerPreviousClubSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayerPreviousClub
-        fields = ['id', 'club_name', 'country', 'division', 'start_date', 'end_date']
+        fields = ['id', 'club_name', 'country', 'division', 'season']
 
 
 class PlayerStatSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayerStat
-        fields = ['id', 'season', 'matches', 'goals', 'assists', 'minutes']
+        fields = ['id', 'season', 'matches', 'goals', 'assists', 'competitions', 'collective_results']
 
 
 class PlayerFileSerializer(serializers.ModelSerializer):

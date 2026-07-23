@@ -3,11 +3,10 @@ from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods, require_POST
 from django.contrib.auth.views import LoginView
-from django.core.mail import send_mail
-from django.conf import settings
 
 from .forms import LoginForm, BaseRegisterForm
 from .models import User, OTPCode
+from .utils import send_otp_email as _send_otp_email
 from players.models import PlayerProfile
 from coaches.models import CoachProfile
 from agents.models import AgentProfile
@@ -51,18 +50,6 @@ def register_role(request):
     return render(request, "accounts/register_role.html")
 
 
-def _send_otp_email(user, otp):
-    """Generate a new OTP for user and send it via email."""
-    subject = "Votre code de vérification FOOTOP"
-    message = (
-        f"Bonjour {user.first_name or user.username},\n\n"
-        f"Votre code de vérification FOOTOP est :\n\n"
-        f"    {otp.code}\n\n"
-        f"Ce code expire dans 10 minutes. Ne le partagez avec personne.\n\n"
-        f"— L'équipe FOOTOP"
-    )
-    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
-
 
 def _register_generic(request, role, template_name):
     if request.method == "POST":
@@ -96,7 +83,7 @@ def _register_generic(request, role, template_name):
 
             # Generate OTP and send email
             otp = OTPCode.generate_for(user)
-            _send_otp_email(user, otp)
+            _send_otp_email(user, otp.code)
 
             # Store user id in session for the verify step
             request.session["otp_user_id"] = user.pk
@@ -188,7 +175,7 @@ def resend_otp(request):
 
     user = get_object_or_404(User, pk=user_id)
     otp = OTPCode.generate_for(user)
-    _send_otp_email(user, otp)
+    _send_otp_email(user, otp.code)
     messages.info(request, "Un nouveau code a été envoyé à votre adresse email.")
     return redirect("accounts:verify_otp")
 

@@ -62,7 +62,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-
+    "django.middleware.gzip.GZipMiddleware",          # ✅ compress HTML responses
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -80,13 +80,23 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
-        "APP_DIRS": True,
+        "APP_DIRS": False,                           # must be False when using loaders
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+            ],
+            # ✅ Cached loader: compiles templates once per process (big win on Passenger)
+            "loaders": [
+                ("django.template.loaders.cached.Loader", [
+                    "django.template.loaders.filesystem.Loader",
+                    "django.template.loaders.app_directories.Loader",
+                ]),
+            ] if not DEBUG else [
+                "django.template.loaders.filesystem.Loader",
+                "django.template.loaders.app_directories.Loader",
             ],
         },
     },
@@ -106,6 +116,8 @@ else:
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / "db.sqlite3",
+            "OPTIONS": {"timeout": 20},    # ✅ avoid SQLite lock errors under load
+            "CONN_MAX_AGE": 60,            # ✅ reuse DB connection for 60s
         }
     }
 
@@ -146,13 +158,22 @@ STATICFILES_DIRS = [
 # WhiteNoise storage — compression + cache headers (works in dev too for ngrok speed)
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
-# Cache en mémoire pour accélérer les réponses Django
+# ✅ In-process cache (no Redis needed — works on cPanel shared hosting)
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         "LOCATION": "talent-platform-cache",
+        "TIMEOUT": 300,        # 5 minutes default TTL
+        "OPTIONS": {
+            "MAX_ENTRIES": 1000
+        }
     }
 }
+
+# ✅ Session stored in DB — persists across Passenger restarts
+SESSION_ENGINE = "django.contrib.sessions.backends.db"
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 14   # 2 weeks
+SESSION_SAVE_EVERY_REQUEST = False         # only save when data changes
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"

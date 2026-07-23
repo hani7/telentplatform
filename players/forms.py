@@ -16,8 +16,16 @@ class PlayerProfileForm(forms.ModelForm):
     # Override current_club_country to use choices
     current_club_country = forms.ChoiceField(
         choices=[('', '-- Sélectionner un pays --')] + COUNTRIES,
-        required=True,
+        required=False,  # not required when availability=FREE
         label="Pays"
+    )
+
+    # Override parent_nationality to use choices (avoids empty dropdown when Nationality table is empty)
+    parent_nationality = forms.ChoiceField(
+        choices=[('', '-- Nationalité du parent --')] + COUNTRIES,
+        required=False,
+        label="Nationalité",
+        widget=forms.Select(attrs={"data-sd-skip": "1"})
     )
     
     # Override position to be a dropdown
@@ -65,10 +73,13 @@ class PlayerProfileForm(forms.ModelForm):
         model = PlayerProfile
         fields = [
             "first_name", "last_name", "birth_date", "birth_place", "gender",
+            # NOTE: nationality is a class-level ChoiceField resolved in save() — not in Meta.fields
             "is_minor",
             "parents_notes",
             "parent_name", "parent_relation", "parent_relation_other",
-            "parent_birth_date", "parent_nationality", "parent_address",
+            "parent_birth_date",
+            # NOTE: parent_nationality is a class-level ChoiceField resolved in save() — not in Meta.fields
+            "parent_address",
             "parent_email", "parent_phone",
 
             "status", "position", "desired_salary", "foot",
@@ -161,7 +172,7 @@ class PlayerProfileForm(forms.ModelForm):
             "parent_relation": forms.Select(attrs={"data-sd-skip": "1", "id": "id_parent_relation"}),
             "parent_relation_other": forms.TextInput(attrs={"id": "id_parent_relation_other"}),
             "parent_birth_date": forms.DateInput(attrs={"type": "date"}),
-            "parent_nationality": forms.Select(attrs={"data-sd-skip": "1"}),
+            # parent_nationality widget is defined on the class-level ChoiceField override
             "parent_address": forms.TextInput(attrs={"placeholder": "Adresse complète"}),
 
             # Compact dropdowns (no pill, no search popup)
@@ -218,16 +229,25 @@ class PlayerProfileForm(forms.ModelForm):
 
     def save(self, commit=True):
         instance = super().save(commit=False)
-        
-        # Convert nationality string to Nationality instance
+
+        from .models import Nationality
+
+        # Convert nationality string → Nationality FK
         nationality_name = self.cleaned_data.get('nationality')
         if nationality_name:
-            from .models import Nationality
-            nationality_obj, created = Nationality.objects.get_or_create(name=nationality_name)
+            nationality_obj, _ = Nationality.objects.get_or_create(name=nationality_name)
             instance.nationality = nationality_obj
         else:
             instance.nationality = None
-        
+
+        # Convert parent_nationality string → Nationality FK
+        parent_nat_name = self.cleaned_data.get('parent_nationality')
+        if parent_nat_name:
+            parent_nat_obj, _ = Nationality.objects.get_or_create(name=parent_nat_name)
+            instance.parent_nationality = parent_nat_obj
+        else:
+            instance.parent_nationality = None
+
         if commit:
             instance.save()
         return instance

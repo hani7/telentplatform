@@ -25,7 +25,14 @@ def my_offers(request):
     if not _require_role(request, User.Role.PLAYER, User.Role.COACH):
         return redirect("home")
 
-    offers = Offer.objects.filter(recipient=request.user).select_related("sender")
+    offers = (
+        Offer.objects
+        .filter(recipient=request.user)
+        .select_related("sender")
+        .only("id", "title", "status", "created_at",
+              "sender__id", "sender__username", "sender__first_name", "sender__last_name")
+        .order_by("-created_at")
+    )
     return render(request, "offers/my_offers.html", {"offers": offers})
 
 
@@ -61,7 +68,14 @@ def my_suggestions(request):
     if not _require_role(request, User.Role.AGENT, User.Role.CLUB):
         return redirect("home")
 
-    sent = Offer.objects.filter(sender=request.user).select_related("recipient")
+    sent = (
+        Offer.objects
+        .filter(sender=request.user)
+        .select_related("recipient")
+        .only("id", "title", "status", "created_at",
+              "recipient__id", "recipient__username", "recipient__first_name", "recipient__last_name")
+        .order_by("-created_at")
+    )
     return render(request, "offers/my_suggestions.html", {"sent_offers": sent})
 
 
@@ -71,9 +85,19 @@ def send_offer(request):
     if not _require_role(request, User.Role.AGENT, User.Role.CLUB):
         return redirect("home")
 
-    # Build recipient list: active players + coaches
-    players = User.objects.filter(role=User.Role.PLAYER, is_verified=True).order_by("username")
-    coaches = User.objects.filter(role=User.Role.COACH,  is_verified=True).order_by("username")
+    # ✅ only fetch columns needed for the recipient dropdown
+    players = (
+        User.objects
+        .filter(role=User.Role.PLAYER, is_verified=True)
+        .only("id", "username", "first_name", "last_name")
+        .order_by("username")
+    )
+    coaches = (
+        User.objects
+        .filter(role=User.Role.COACH, is_verified=True)
+        .only("id", "username", "first_name", "last_name")
+        .order_by("username")
+    )
 
     error = None
     if request.method == "POST":
