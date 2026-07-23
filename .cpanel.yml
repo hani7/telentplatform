@@ -3,13 +3,7 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/baitmtzi/foot3
     - export PYTHONPATH=/home/baitmtzi/virtualenv/foot3/3.12/bin
-    # ✅ Pull latest code from GitHub
-    - cd $DEPLOYPATH && git pull origin main
-    # ✅ Install/update dependencies
     - $PYTHONPATH/pip install -r $DEPLOYPATH/requirements.txt --quiet
-    # ✅ Apply database migrations
     - $PYTHONPATH/python $DEPLOYPATH/manage.py migrate --noinput
-    # ✅ Collect static files
     - $PYTHONPATH/python $DEPLOYPATH/manage.py collectstatic --noinput
-    # ✅ Restart Passenger (touch restart.txt)
     - mkdir -p $DEPLOYPATH/tmp && touch $DEPLOYPATH/tmp/restart.txt
