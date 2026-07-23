@@ -223,3 +223,8 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+# =========================
+# API KEYS
+# =========================
+API_FOOTBALL_KEY = os.getenv("API_FOOTBALL_KEY", "3d80716128e87f13c443ad76b5e5049d")

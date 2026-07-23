@@ -6,8 +6,8 @@ from django.conf import settings
 
 def search_clubs_api(request):
     """
-    Proxy view for searching football clubs via TheSportsDB (Free Public API).
-    Provides a massive database of clubs and information.
+    Proxy view for searching football clubs via API-Sports (API-Football).
+    Uses the API key provided in settings.
     """
     query = request.GET.get('q', '').strip()
     if not query:
@@ -26,18 +26,22 @@ def search_clubs_api(request):
                     if translated:
                         query = translated
         except Exception:
-            pass # Silently fallback to original query if translation fails
+            pass
 
-    url = f"https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t={urllib.parse.quote(query)}"
+    api_key = getattr(settings, 'API_FOOTBALL_KEY', None)
+    if not api_key:
+        return JsonResponse({'error': 'API key not configured'}, status=500)
+
+    url = f"https://v3.football.api-sports.io/teams?search={urllib.parse.quote(query)}"
     req = urllib.request.Request(url)
-    # TheSportsDB recommends a user agent
-    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)')
+    req.add_header('x-rapidapi-host', 'v3.football.api-sports.io')
+    req.add_header('x-rapidapi-key', api_key)
     
     try:
         with urllib.request.urlopen(req, timeout=5) as response:
             if response.status == 200:
                 data = json.loads(response.read().decode('utf-8'))
-                teams = data.get('teams')
+                teams = data.get('response', [])
                 
                 if not teams:
                     return JsonResponse({'results': []})
@@ -64,19 +68,16 @@ def search_clubs_api(request):
                 }
                 
                 formatted_results = []
-                for team in teams:
-                    # Filter to only include Soccer (Football) teams to avoid NFL/NBA teams if names overlap
-                    if team.get('strSport', '').lower() != 'soccer':
-                        continue
-                        
-                    en_country = team.get('strCountry', '')
+                for item in teams:
+                    team = item.get('team', {})
+                    en_country = team.get('country', '')
                     fr_country = COUNTRY_MAP.get(en_country, en_country)
                         
                     formatted_results.append({
-                        "name": team.get('strTeam'),
-                        "logo": team.get('strBadge'),
+                        "name": team.get('name'),
+                        "logo": team.get('logo'),
                         "country": fr_country,
-                        "division": team.get('strLeague', '')
+                        "division": ""  # API-Football doesn't provide league in team search
                     })
                 return JsonResponse({'results': formatted_results})
             else:
