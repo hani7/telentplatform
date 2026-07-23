@@ -76,6 +76,8 @@ def player_profile_edit(request):
             messages.success(request, "Profil joueur mis à jour ✅")
             from django.http import HttpResponseRedirect
             from django.urls import reverse
+            if step == '4' or step == 4:
+                return redirect("players:profile_success")
             return HttpResponseRedirect(reverse("players:profile_edit") + f"?step={step}")
     else:
         form = PlayerProfileForm(instance=profile)
@@ -177,3 +179,8 @@ def profile_complete(request):
         'files_progress': files_progress,
     }
     return render(request, 'players/profile_complete.html', context)
+
+@login_required
+def profile_success(request):
+    profile = get_object_or_404(PlayerProfile, user=request.user)
+    return render(request, 'players/profile_success.html', {'profile': profile})

@@ -7,6 +7,7 @@ app_name = "players"
 urlpatterns = [
     path("me/", views.player_profile_edit, name="profile_edit"),
     path("me/complete/", views.profile_complete, name="profile_complete"),
+    path("me/success/", views.profile_success, name="profile_success"),
     path("me/activate/", views.player_activate_ad, name="activate_ad"),
     path("me/deactivate/", views.player_deactivate_ad, name="deactivate_ad"),
     path("consent/verify/<uuid:token>/", views.verify_consent, name="verify_consent"),

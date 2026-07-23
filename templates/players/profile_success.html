@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Profil Créé - Footop{% endblock %}
+{% block head %}
+<style>
+  body {
+    background: #0f1e14;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .success-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    padding: 3rem 2rem;
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(20px);
+  }
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(39, 174, 96, 0.2);
+    color: #2ecc71;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    margin: 0 auto 1.5rem auto;
+    box-shadow: 0 0 20px rgba(46, 204, 113, 0.4);
+  }
+  .success-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #fff;
+  }
+  .success-text {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+    margin-bottom: 2rem;
+  }
+  .btn-view-profile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #f1b10f, #f59e0b);
+    color: #000;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 12px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .btn-view-profile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(241, 177, 15, 0.4);
+    color: #000;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="success-card">
+  <div class="success-icon">
+    <i class="ti ti-circle-check-filled"></i>
+  </div>
+  <h1 class="success-title">Compte créé avec succès !</h1>
+  <p class="success-text">
+    Félicitations, vous avez bien créé votre compte sur Talent Platform. <br><br>
+    Votre profil est en cours d'examen et sera validé par notre équipe très prochainement.
+  </p>
+  <a href="{% url 'players:public_profile' profile.pk %}" class="btn-view-profile">
+    <i class="ti ti-eye"></i> Voir mon profil
+  </a>
+</div>
+{% endblock %}
