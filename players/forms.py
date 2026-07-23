@@ -321,18 +321,34 @@ class SeasonStatForm(forms.ModelForm):
 
     class Meta:
         model = PlayerStat
-        fields = ["season", "matches", "goals", "assists", "competitions", "collective_results"]
+        fields = ["season", "matches", "goals", "assists", "clean_sheets", "saves", "goals_conceded", "tackles", "interceptions", "key_passes", "dribbles", "shots", "competitions", "collective_results"]
         labels = {
             "season": "Saison",
             "matches": "Matchs",
             "goals": "Buts",
             "assists": "Passes décisives",
+            "clean_sheets": "Clean sheets",
+            "saves": "Arrêts",
+            "goals_conceded": "Buts encaissés",
+            "tackles": "Tacles",
+            "interceptions": "Interceptions",
+            "key_passes": "Passes clés",
+            "dribbles": "Dribbles",
+            "shots": "Tirs",
         }
         widgets = {
             "season": forms.TextInput(attrs={"placeholder": "Ex: 2023-2024"}),
             "matches": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
             "goals": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
             "assists": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
+            "clean_sheets": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
+            "saves": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
+            "goals_conceded": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
+            "tackles": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
+            "interceptions": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
+            "key_passes": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
+            "dribbles": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
+            "shots": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
         }
 
     def __init__(self, *args, **kwargs):

@@ -363,21 +363,57 @@
                       <span class="fl" style="font-size:.75rem">{{ sf.season.label }}</span>
                       {{ sf.season }}
                     </div>
-                    <div class="col-3">
+                    <div class="col-3" data-stat-group="all">
                       <span class="fl" style="font-size:.72rem">{{ sf.matches.label }}</span>
                       {{ sf.matches }}
                     </div>
-                    <div class="col-3">
+                    <div class="col-3" data-stat-group="all">
+                      <span class="fl" style="font-size:.72rem">{{ sf.minutes.label }}</span>
+                      {{ sf.minutes }}
+                    </div>
+                    <!-- Goalkeeper Stats -->
+                    <div class="col-3" data-stat-group="gk" style="display:none;">
+                      <span class="fl" style="font-size:.72rem">{{ sf.clean_sheets.label }}</span>
+                      {{ sf.clean_sheets }}
+                    </div>
+                    <div class="col-3" data-stat-group="gk" style="display:none;">
+                      <span class="fl" style="font-size:.72rem">{{ sf.saves.label }}</span>
+                      {{ sf.saves }}
+                    </div>
+                    <div class="col-3" data-stat-group="gk" style="display:none;">
+                      <span class="fl" style="font-size:.72rem">{{ sf.goals_conceded.label }}</span>
+                      {{ sf.goals_conceded }}
+                    </div>
+                    <!-- Defender Stats -->
+                    <div class="col-3" data-stat-group="def" style="display:none;">
+                      <span class="fl" style="font-size:.72rem">{{ sf.tackles.label }}</span>
+                      {{ sf.tackles }}
+                    </div>
+                    <div class="col-3" data-stat-group="def" style="display:none;">
+                      <span class="fl" style="font-size:.72rem">{{ sf.interceptions.label }}</span>
+                      {{ sf.interceptions }}
+                    </div>
+                    <!-- Midfielder/Attacker Stats -->
+                    <div class="col-3" data-stat-group="att" style="display:none;">
+                      <span class="fl" style="font-size:.72rem">{{ sf.key_passes.label }}</span>
+                      {{ sf.key_passes }}
+                    </div>
+                    <div class="col-3" data-stat-group="att" style="display:none;">
+                      <span class="fl" style="font-size:.72rem">{{ sf.dribbles.label }}</span>
+                      {{ sf.dribbles }}
+                    </div>
+                    <div class="col-3" data-stat-group="att" style="display:none;">
+                      <span class="fl" style="font-size:.72rem">{{ sf.shots.label }}</span>
+                      {{ sf.shots }}
+                    </div>
+                    <!-- Goals and Assists (Shared by DEF and ATT) -->
+                    <div class="col-3" data-stat-group="def,att" style="display:none;">
                       <span class="fl" style="font-size:.72rem">{{ sf.goals.label }}</span>
                       {{ sf.goals }}
                     </div>
-                    <div class="col-3">
+                    <div class="col-3" data-stat-group="def,att" style="display:none;">
                       <span class="fl" style="font-size:.72rem">{{ sf.assists.label }}</span>
                       {{ sf.assists }}
-                    </div>
-                    <div class="col-3">
-                      <span class="fl" style="font-size:.72rem">{{ sf.minutes.label }}</span>
-                      {{ sf.minutes }}
                     </div>
                     <!-- Compétitions -->
                     <div class="col-12" style="margin-top:.5rem">
@@ -956,7 +992,44 @@
   }
 </script>
 <script src="{% static 'js/searchable-dropdown.js' %}"></script>
-<script>initSearchableDropdowns();</script>
+<script>
+  initSearchableDropdowns();
+
+  /* ── Dynamic Stats by Position ── */
+  function updateStatsVisibility() {
+    const positionSelect = document.getElementById('id_position');
+    if (!positionSelect) return;
+    const pos = positionSelect.value || '';
+
+    let role = 'att'; // Default to attacker/midfielder
+    if (pos === 'Gardien de but') {
+      role = 'gk';
+    } else if (['Défenseur central', 'Arrière droit', 'Arrière gauche', 'Piston droit', 'Piston gauche'].includes(pos)) {
+      role = 'def';
+    }
+
+    // Hide/show in all season stat groups
+    document.querySelectorAll('[data-stat-group]').forEach(el => {
+      const groups = el.getAttribute('data-stat-group').split(',');
+      if (groups.includes('all') || groups.includes(role)) {
+        el.style.display = 'block';
+      } else {
+        el.style.display = 'none';
+        // Optional: clear values when hidden?
+        // const inputs = el.querySelectorAll('input');
+        // inputs.forEach(inp => inp.value = 0);
+      }
+    });
+  }
+
+  // Run on load and listen to changes
+  document.addEventListener('DOMContentLoaded', updateStatsVisibility);
+  document.addEventListener('change', (e) => {
+    if (e.target.id === 'id_position') {
+      updateStatsVisibility();
+    }
+  });
+</script>
 <script>
   /* ── Pull-to-Refresh ── */
   (function(){
