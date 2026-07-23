@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import views_api
 
 app_name = "players"
 
@@ -10,4 +11,5 @@ urlpatterns = [
     path("me/deactivate/", views.player_deactivate_ad, name="deactivate_ad"),
     path("consent/verify/<uuid:token>/", views.verify_consent, name="verify_consent"),
     path("p/<int:pk>/", views.player_public_profile, name="public_profile"),
+    path("api/clubs/search/", views_api.search_clubs_api, name="api_clubs_search"),
 ]

@@ -328,10 +328,11 @@
               <button type="button" class="btn-clear" onclick="removeClub(this)"><i class="ti ti-trash"></i> Supprimer</button>
             </div>
             <div class="row g-2">
-              <div class="col-12">
+              <div class="col-12 club-name-container" style="position:relative;">
                 {{ club_form.club_name.errors }}
                 <span class="fl">{{ club_form.club_name.label }}</span>
                 {{ club_form.club_name }}
+                <div class="club-autocomplete-results" style="display:none; position:absolute; z-index:100; background:#1c1c1e; border:1px solid rgba(255,255,255,.1); border-radius:8px; width:100%; max-height:200px; overflow-y:auto; box-shadow:0 10px 15px -3px rgba(0,0,0,0.5); margin-top:4px;"></div>
               </div>
               <div class="col-6">
                 {{ club_form.country.errors }}
@@ -838,13 +839,31 @@
   function removeSeason(btn) {
     const row = btn.closest('.season-row');
     if (!row) return;
+    
+    const container = row.closest('.seasons-container');
+    const allRows = container.querySelectorAll('.season-row');
+    const isFirstRow = (allRows.length > 0 && allRows[0] === row);
+    
     const deleteInput = row.querySelector('input[name*="-DELETE"]');
-    if (deleteInput) {
-      deleteInput.checked = true;
-      row.style.opacity = '0.2';
-      row.style.pointerEvents = 'none';
+    
+    if (isFirstRow) {
+      // Don't hide the first row, just clear its fields
+      row.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.type !== 'checkbox' && el.type !== 'hidden' && el.type !== 'radio') {
+          el.value = '';
+        } else if (el.type === 'checkbox' && el.name.indexOf('-DELETE') === -1) {
+          el.checked = false;
+        }
+      });
+      if (deleteInput) deleteInput.checked = false;
     } else {
-      row.remove();
+      // For other rows, hide them normally
+      if (deleteInput) {
+        deleteInput.checked = true;
+        row.style.display = 'none';
+      } else {
+        row.remove();
+      }
     }
   }
 
@@ -1038,6 +1057,78 @@
         let nextYear = parseInt(val) + 1;
         e.target.value = val + '-' + nextYear;
       }
+    }
+  });
+
+  /* ── API Club Autocomplete ── */
+  let clubSearchTimeout;
+  document.addEventListener('input', function(e) {
+    if (e.target && e.target.name && e.target.name.includes('-club_name')) {
+      const input = e.target;
+      const query = input.value.trim();
+      const container = input.closest('.club-name-container');
+      if (!container) return;
+      const resultsDiv = container.querySelector('.club-autocomplete-results');
+      if (!resultsDiv) return;
+
+      if (query.length < 2) {
+        resultsDiv.style.display = 'none';
+        return;
+      }
+
+      clearTimeout(clubSearchTimeout);
+      clubSearchTimeout = setTimeout(() => {
+        fetch(`/api/clubs/search/?q=${encodeURIComponent(query)}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.results && data.results.length > 0) {
+              resultsDiv.innerHTML = '';
+              data.results.forEach(club => {
+                const item = document.createElement('div');
+                item.style.cssText = 'padding:10px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,.05); display:flex; align-items:center; gap:10px; transition:background 0.2s;';
+                item.onmouseover = () => item.style.background = 'rgba(255,255,255,.05)';
+                item.onmouseout = () => item.style.background = 'transparent';
+                
+                let imgHtml = club.logo ? `<img src="${club.logo}" style="width:24px;height:24px;object-fit:contain;border-radius:4px;">` : `<div style="width:24px;height:24px;border-radius:4px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;"><i class="ti ti-building" style="font-size:12px;"></i></div>`;
+                
+                item.innerHTML = `
+                  ${imgHtml}
+                  <div style="display:flex;flex-direction:column;">
+                    <span style="font-size:.85rem;color:#fff;font-weight:600;">${club.name}</span>
+                    <span style="font-size:.7rem;color:rgba(255,255,255,.5);">${club.country || ''}</span>
+                  </div>
+                `;
+                
+                item.addEventListener('click', () => {
+                  input.value = club.name;
+                  resultsDiv.style.display = 'none';
+                  // Auto-fill country if available and the country input exists
+                  const countryInput = container.closest('.row').querySelector('select[name$="-country"], input[name$="-country"]');
+                  if (countryInput && club.country) {
+                    countryInput.value = club.country;
+                    // Trigger change in case it's a searchable dropdown
+                    countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+                  }
+                });
+                resultsDiv.appendChild(item);
+              });
+              resultsDiv.style.display = 'block';
+            } else {
+              resultsDiv.style.display = 'none';
+            }
+          })
+          .catch(err => {
+            console.error('Club API Error:', err);
+            resultsDiv.style.display = 'none';
+          });
+      }, 300); // 300ms debounce
+    }
+  });
+
+  // Hide autocomplete when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.club-name-container')) {
+      document.querySelectorAll('.club-autocomplete-results').forEach(el => el.style.display = 'none');
     }
   });
 </script>
