@@ -1105,6 +1105,13 @@
                     // Trigger change in case it's a searchable dropdown
                     countryInput.dispatchEvent(new Event('change', { bubbles: true }));
                   }
+                  // Auto-fill division if available
+                  const divisionInput = container.closest('.row').querySelector('input[name$="-division"]');
+                  if (divisionInput && club.division) {
+                    divisionInput.value = club.division;
+                  }
+                  // Trigger global saveDraft
+                  input.dispatchEvent(new Event('input', { bubbles: true }));
                 });
                 resultsDiv.appendChild(item);
               });

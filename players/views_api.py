@@ -27,16 +27,40 @@ def search_clubs_api(request):
                 if not teams:
                     return JsonResponse({'results': []})
                 
+                COUNTRY_MAP = {
+                    "England": "Royaume-Uni",
+                    "Spain": "Espagne",
+                    "Italy": "Italie",
+                    "Germany": "Allemagne",
+                    "Algeria": "Algérie",
+                    "Netherlands": "Pays-Bas",
+                    "Belgium": "Belgique",
+                    "Brazil": "Brésil",
+                    "Argentina": "Argentine",
+                    "Morocco": "Maroc",
+                    "Tunisia": "Tunisie",
+                    "Egypt": "Égypte",
+                    "Turkey": "Turquie",
+                    "Russia": "Russie",
+                    "Switzerland": "Suisse",
+                    "Scotland": "Royaume-Uni",
+                    "Wales": "Royaume-Uni"
+                }
+                
                 formatted_results = []
                 for team in teams:
                     # Filter to only include Soccer (Football) teams to avoid NFL/NBA teams if names overlap
                     if team.get('strSport', '').lower() != 'soccer':
                         continue
                         
+                    en_country = team.get('strCountry', '')
+                    fr_country = COUNTRY_MAP.get(en_country, en_country)
+                        
                     formatted_results.append({
                         "name": team.get('strTeam'),
                         "logo": team.get('strBadge'),
-                        "country": team.get('strCountry')
+                        "country": fr_country,
+                        "division": team.get('strLeague', '')
                     })
                 return JsonResponse({'results': formatted_results})
             else:
