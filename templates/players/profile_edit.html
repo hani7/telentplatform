@@ -88,8 +88,8 @@
     .wb-prev:hover{background:rgba(255,255,255,.18);color:#fff}
     .wb-next{background:#f1b10f;color:#000}
     .wb-next:hover{background:#d9a00d}
-    .wb-sub{background:#1db95b;color:#fff}
-    .wb-sub:hover{background:#17a34a}
+    .wb-sub{background:#f1b10f;color:#000}
+    .wb-sub:hover{background:#d49a0a}
 
     .msg-bar{border-radius:12px;padding:.65rem 1rem;font-size:.85rem;margin-bottom:1rem}
 
@@ -594,11 +594,6 @@
     <a href="/offers/my/" class="footer-pill-item">
       <i class="ti ti-clipboard-text"></i><span>Mes offres</span>
     </a>
-    {% if profile.pk %}
-      <a href="{% if profile.is_active %}{% url 'players:deactivate_ad' %}{% else %}{% url 'players:activate_ad' %}{% endif %}" class="footer-pill-item">
-        <i class="{% if profile.is_active %}ti ti-circle-check{% else %}ti ti-circle-x{% endif %}"></i><span>{% if profile.is_active %}Actif{% else %}Inactif{% endif %}</span>
-      </a>
-    {% endif %}
     <a href="/accounts/logout/" class="footer-pill-item">
       <i class="ti ti-logout"></i><span>Déconnexion</span>
     </a>

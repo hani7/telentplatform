@@ -25,7 +25,7 @@ class PlayerProfileForm(forms.ModelForm):
         choices=[('', '-- Nationalité du parent --')] + COUNTRIES,
         required=False,
         label="Nationalité",
-        widget=forms.Select(attrs={"data-sd-skip": "1"})
+        widget=forms.Select()
     )
     
     # Override position to be a dropdown
