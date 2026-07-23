@@ -42,7 +42,7 @@
     /* All Django widgets inside form card */
     .fc input[type=text],.fc input[type=number],.fc input[type=date],.fc input[type=email],.fc input[type=tel],.fc select,.fc textarea{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.22);border-radius:50px;color:#fff;padding:.6rem .9rem;width:100%;font-size:.88rem;box-sizing:border-box;transition:border-color .2s,background .2s;margin-bottom:.6rem}
     .fc textarea{border-radius:15px;min-height:80px;resize:vertical}
-    .fc input[type=file]{background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.2);border-radius:11px;padding:12px;color:rgba(255,255,255,.6);font-size:.85rem;width:100%;margin-bottom:.6rem;cursor:pointer;transition:all .2s ease;box-sizing:border-box;display:block}
+    .fc input[type=file]{background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.2);border-radius:50px;padding:12px;color:rgba(255,255,255,.6);font-size:.85rem;width:100%;margin-bottom:.6rem;cursor:pointer;transition:all .2s ease;box-sizing:border-box;display:block}
     .fc input[type=file]:hover{background:rgba(255,255,255,.06);border-color:rgba(241,177,15,.6)}
     .fc input[type=file]::file-selector-button{background:var(--gradient-primary, linear-gradient(135deg, #f1b10f, #e67e22));color:#111;border:none;padding:6px 14px;border-radius:50px;margin-right:15px;cursor:pointer;font-weight:700;font-size:.8rem;transition:opacity .2s}
     .fc input[type=file]::file-selector-button:hover{opacity:.85}
@@ -70,7 +70,7 @@
     /* Formset Django auto-rendered */
     .fsi p{margin-bottom:.4rem}
     .fsi label{color:rgba(255,255,255,.62);font-size:.78rem;font-weight:600;display:block;margin-bottom:2px}
-    .fsi input[type=text],.fsi input[type=number],.fsi input[type=date],.fsi input[type=email],.fsi input[type=tel],.fsi select,.fsi textarea{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box;margin-bottom:.4rem}
+    .fsi input[type=text],.fsi input[type=number],.fsi input[type=date],.fsi input[type=email],.fsi input[type=tel],.fsi select,.fsi textarea{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:50px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box;margin-bottom:.4rem}
     .fsi input[type=file]{width:100%;margin-bottom:.4rem;padding:10px 0;color:#fff;cursor:pointer;position:relative;z-index:50;display:block;opacity:1}
     .fsi input:focus,.fsi select:focus,.fsi textarea:focus{outline:none;border-color:#f1b10f;background:rgba(255,255,255,.13)}
     .fsi select option{background:#0d2b18;color:#fff}
@@ -366,7 +366,7 @@
               {{ season_fs.management_form }}
               <div class="seasons-container">
               {% for sf in season_fs %}
-                <div class="season-row" style="background:rgba(255,255,255,.05);border-radius:10px;padding:.7rem;margin-bottom:.5rem;position:relative">
+                <div class="season-row" style="background:rgba(255,255,255,.05);border-radius:50px;padding:.7rem;margin-bottom:.5rem;position:relative">
                   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
                     <span style="font-size:.78rem;font-weight:600;color:rgba(255,255,255,.7)">Saison {{ forloop.counter }}</span>
                     <button type="button" onclick="removeSeason(this)" style="background:rgba(248,113,113,.15);border:none;border-radius:6px;padding:2px 8px;color:#f87171;font-size:.75rem;cursor:pointer">✕</button>
@@ -979,7 +979,7 @@
       <p style="margin-bottom:.4rem">
         <label style="color:rgba(255,255,255,.62);font-size:.78rem;font-weight:600;display:block;margin-bottom:4px">Type de fichier</label>
         <select name="${prefix}-${formNum}-file_type" id="id_${prefix}_${formNum}_file_type"
-                style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box">
+                style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:50px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box">
           <option value="">---------</option>
           <option value="CV">CV (PDF)</option>
           <option value="PHOTO">Photo</option>
@@ -991,13 +991,13 @@
       <p style="margin-bottom:.4rem">
         <label style="color:rgba(255,255,255,.62);font-size:.78rem;font-weight:600;display:block;margin-bottom:4px">Fichier</label>
         <input type="file" name="${prefix}-${formNum}-file" id="id_${prefix}_${formNum}_file"
-               style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box">
+               style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:50px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box">
       </p>
       <p style="margin-bottom:.4rem">
         <label style="color:rgba(255,255,255,.62);font-size:.78rem;font-weight:600;display:block;margin-bottom:4px">Titre (optionnel)</label>
         <input type="text" name="${prefix}-${formNum}-title" id="id_${prefix}_${formNum}_title"
                placeholder="Ex: CV 2025"
-               style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box">
+               style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:50px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box">
       </p>
       <button type="button" onclick="saveDraft(true); const btn=this; btn.innerHTML='<i class=\'ti ti-loader\'></i> Sauvegarde...'; setTimeout(() => btn.innerHTML='<i class=\'ti ti-check\'></i> Sauvegardé !', 1200);" style="width:100%;padding:10px;border-radius:50px;background:var(--footop-green-dark, #27ae60);color:#fff;border:none;font-weight:600;font-size:.85rem;cursor:pointer;margin-top:5px;transition:all 0.2s;">
         <i class="ti ti-device-floppy"></i> Sauvegarder ce fichier
