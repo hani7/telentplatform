@@ -13,6 +13,33 @@ def search_clubs_api(request):
     if not query:
         return JsonResponse({'results': []})
 
+    query_lower = query.lower()
+    ALIASES = {
+        "psg": "paris saint germain",
+        "fcb": "barcelona",
+        "mca": "mc alger",
+        "jsk": "js kabylie",
+        "usma": "usm alger",
+        "crb": "cr belouizdad",
+        "mco": "mc oran",
+        "csc": "cs constantine",
+        "ess": "es setif",
+        "om": "marseille",
+        "ol": "lyon",
+        "bvb": "dortmund",
+        "rma": "real madrid",
+        "lfc": "liverpool",
+        "mci": "manchester city",
+        "man u": "manchester united",
+        "atm": "atletico madrid",
+        "acm": "ac milan",
+        "rca": "raja",
+        "wac": "wydad"
+    }
+
+    if query_lower in ALIASES:
+        query = ALIASES[query_lower]
+
     import re
     # If query contains Arabic characters, translate it to English first
     if re.search(r'[\u0600-\u06FF]', query):
