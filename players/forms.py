@@ -177,6 +177,7 @@ class PlayerProfileForm(forms.ModelForm):
 
             "gender": forms.Select(),
             "foot": forms.Select(),
+            "availability": forms.Select(attrs={"data-sd-skip": "1"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -187,7 +188,9 @@ class PlayerProfileForm(forms.ModelForm):
                 choices=[('', '---------')] + bool_choices,
                 attrs={"class": "form-control"}
             )
-            self.fields[field].required = False
+        self.fields['has_transfermarkt'].required = False
+        self.fields['has_agent_contract'].required = True
+        self.fields['looking_for_agent'].required = True
 
     def clean(self):
         cleaned = super().clean()

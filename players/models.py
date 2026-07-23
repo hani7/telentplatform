@@ -140,6 +140,17 @@ class PlayerStat(models.Model):
     goals = models.PositiveIntegerField(default=0)
     assists = models.PositiveIntegerField(default=0)
     minutes = models.PositiveIntegerField(default=0)
+    # Goalkeeper stats
+    clean_sheets = models.PositiveIntegerField(default=0)
+    saves = models.PositiveIntegerField(default=0)
+    goals_conceded = models.PositiveIntegerField(default=0)
+    # Defender stats
+    tackles = models.PositiveIntegerField(default=0)
+    interceptions = models.PositiveIntegerField(default=0)
+    # Midfielder / Attacker stats
+    key_passes = models.PositiveIntegerField(default=0)
+    dribbles = models.PositiveIntegerField(default=0)
+    shots = models.PositiveIntegerField(default=0)
     competitions = models.JSONField(default=list, blank=True)
     collective_results = models.JSONField(default=list, blank=True)
 
