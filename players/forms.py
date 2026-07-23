@@ -211,8 +211,6 @@ class PlayerProfileForm(forms.ModelForm):
             cleaned["agent_id"] = ""
 
         if cleaned.get("is_minor"):
-            if not cleaned.get("parents_declaration"):
-                self.add_error("parents_declaration", "La déclaration des parents est obligatoire si le joueur est mineur.")
             if not cleaned.get("parent_name"):
                 self.add_error("parent_name", "Le nom et prénom du parent ou tuteur légal est obligatoire.")
             if not cleaned.get("parent_email"):
