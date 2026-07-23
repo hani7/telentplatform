@@ -28,23 +28,24 @@ def search_clubs_api(request):
                     return JsonResponse({'results': []})
                 
                 COUNTRY_MAP = {
-                    "England": "Royaume-Uni",
-                    "Spain": "Espagne",
-                    "Italy": "Italie",
-                    "Germany": "Allemagne",
-                    "Algeria": "Algérie",
-                    "Netherlands": "Pays-Bas",
-                    "Belgium": "Belgique",
-                    "Brazil": "Brésil",
-                    "Argentina": "Argentine",
-                    "Morocco": "Maroc",
-                    "Tunisia": "Tunisie",
-                    "Egypt": "Égypte",
-                    "Turkey": "Turquie",
-                    "Russia": "Russie",
-                    "Switzerland": "Suisse",
-                    "Scotland": "Royaume-Uni",
-                    "Wales": "Royaume-Uni"
+                    "England": "Royaume-Uni", "Spain": "Espagne", "Italy": "Italie",
+                    "Germany": "Allemagne", "Algeria": "Algérie", "Netherlands": "Pays-Bas",
+                    "Belgium": "Belgique", "Brazil": "Brésil", "Argentina": "Argentine",
+                    "Morocco": "Maroc", "Tunisia": "Tunisie", "Egypt": "Égypte",
+                    "Turkey": "Turquie", "Russia": "Russie", "Switzerland": "Suisse",
+                    "Scotland": "Royaume-Uni", "Wales": "Royaume-Uni", "Sweden": "Suède",
+                    "Denmark": "Danemark", "Norway": "Norvège", "Finland": "Finlande",
+                    "Poland": "Pologne", "Austria": "Autriche", "Greece": "Grèce",
+                    "Croatia": "Croatie", "Serbia": "Serbie", "Czech Republic": "République Tchèque",
+                    "Romania": "Roumanie", "Bulgaria": "Bulgarie", "Hungary": "Hongrie",
+                    "Ireland": "Irlande", "USA": "États-Unis", "Mexico": "Mexique",
+                    "Colombia": "Colombie", "Chile": "Chili", "Peru": "Pérou",
+                    "Saudi Arabia": "Arabie Saoudite", "Qatar": "Qatar",
+                    "United Arab Emirates": "Émirats Arabes Unis", "Japan": "Japon",
+                    "South Korea": "Corée du Sud", "China": "Chine", "Australia": "Australie",
+                    "Ivory Coast": "Côte d'Ivoire", "Senegal": "Sénégal", "Cameroon": "Cameroun",
+                    "Nigeria": "Nigeria", "Ghana": "Ghana", "Mali": "Mali",
+                    "South Africa": "Afrique du Sud"
                 }
                 
                 formatted_results = []

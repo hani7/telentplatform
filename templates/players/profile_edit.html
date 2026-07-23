@@ -1046,12 +1046,17 @@
   });
 
   /* ── Auto-complete Season Input ── */
-  document.addEventListener('focusout', function(e) {
+  document.addEventListener('input', function(e) {
     if (e.target && e.target.name && e.target.name.includes('-season')) {
+      // Ignore if user is deleting content (e.g., backspacing)
+      if (e.inputType && e.inputType.startsWith('delete')) return;
+      
       let val = e.target.value.trim();
       if (/^\d{4}$/.test(val)) {
         let nextYear = parseInt(val) + 1;
         e.target.value = val + '-' + nextYear;
+        // Trigger saveDraft
+        e.target.dispatchEvent(new Event('change', { bubbles: true }));
       }
     }
   });
@@ -1110,8 +1115,8 @@
                   if (divisionInput && club.division) {
                     divisionInput.value = club.division;
                   }
-                  // Trigger global saveDraft
-                  input.dispatchEvent(new Event('input', { bubbles: true }));
+                  // Trigger global saveDraft but avoid 'input' to prevent autocomplete infinite loop
+                  input.dispatchEvent(new Event('change', { bubbles: true }));
                 });
                 resultsDiv.appendChild(item);
               });
