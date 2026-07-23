@@ -478,6 +478,9 @@
                 <button type="button" class="btn-clear" onclick="removeFile(this)"><i class="ti ti-eraser"></i> Supprimer</button>
               </div>
               {{ f.as_p }}
+              <button type="button" onclick="saveDraft(true); const btn=this; btn.innerHTML='<i class=\'ti ti-loader\'></i> Sauvegarde...'; setTimeout(() => btn.innerHTML='<i class=\'ti ti-check\'></i> Sauvegardé !', 1200);" style="width:100%;padding:10px;border-radius:50px;background:var(--footop-green-dark, #27ae60);color:#fff;border:none;font-weight:600;font-size:.85rem;cursor:pointer;margin-top:5px;transition:all 0.2s;">
+                <i class="ti ti-device-floppy"></i> Sauvegarder ce fichier
+              </button>
               {{ f.DELETE }}
             </div>
           {% endfor %}
@@ -996,6 +999,10 @@
                placeholder="Ex: CV 2025"
                style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box">
       </p>
+      <button type="button" onclick="saveDraft(true); const btn=this; btn.innerHTML='<i class=\'ti ti-loader\'></i> Sauvegarde...'; setTimeout(() => btn.innerHTML='<i class=\'ti ti-check\'></i> Sauvegardé !', 1200);" style="width:100%;padding:10px;border-radius:50px;background:var(--footop-green-dark, #27ae60);color:#fff;border:none;font-weight:600;font-size:.85rem;cursor:pointer;margin-top:5px;transition:all 0.2s;">
+        <i class="ti ti-device-floppy"></i> Sauvegarder ce fichier
+      </button>
+      <p style="margin-bottom:.4rem">
       <input type="hidden" name="${prefix}-${formNum}-id" value="">
     `;
     container.appendChild(entry);
