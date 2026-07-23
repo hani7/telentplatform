@@ -1,4 +1,6 @@
-import requests
+import json
+import urllib.request
+import urllib.parse
 from django.http import JsonResponse
 from django.conf import settings
 
@@ -17,7 +19,6 @@ def search_clubs_api(request):
 
     if not api_key:
         # Fallback / Mock mode if API key is not yet configured
-        # To make it feel real during tests, we return some dummy data based on the query
         mock_db = [
             {"name": "Real Madrid", "logo": "https://media.api-sports.io/football/teams/541.png", "country": "Spain"},
             {"name": "FC Barcelona", "logo": "https://media.api-sports.io/football/teams/529.png", "country": "Spain"},
@@ -37,27 +38,27 @@ def search_clubs_api(request):
         results = [c for c in mock_db if query.lower() in c['name'].lower()]
         return JsonResponse({'results': results})
 
-    # Real API Call
-    url = "https://v3.football.api-sports.io/teams"
-    headers = {
-        'x-rapidapi-host': "v3.football.api-sports.io",
-        'x-rapidapi-key': api_key
-    }
+    # Real API Call using standard library urllib
+    url = f"https://v3.football.api-sports.io/teams?search={urllib.parse.quote(query)}"
+    req = urllib.request.Request(url)
+    req.add_header('x-rapidapi-host', 'v3.football.api-sports.io')
+    req.add_header('x-rapidapi-key', api_key)
+    
     try:
-        response = requests.get(url, headers=headers, params={'search': query})
-        if response.status_code == 200:
-            data = response.json()
-            teams = data.get('response', [])
-            formatted_results = []
-            for item in teams:
-                team = item.get('team', {})
-                formatted_results.append({
-                    "name": team.get('name'),
-                    "logo": team.get('logo'),
-                    "country": team.get('country')
-                })
-            return JsonResponse({'results': formatted_results})
-        else:
-            return JsonResponse({'error': 'API Error'}, status=response.status_code)
+        with urllib.request.urlopen(req) as response:
+            if response.status == 200:
+                data = json.loads(response.read().decode('utf-8'))
+                teams = data.get('response', [])
+                formatted_results = []
+                for item in teams:
+                    team = item.get('team', {})
+                    formatted_results.append({
+                        "name": team.get('name'),
+                        "logo": team.get('logo'),
+                        "country": team.get('country')
+                    })
+                return JsonResponse({'results': formatted_results})
+            else:
+                return JsonResponse({'error': 'API Error'}, status=response.status)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
