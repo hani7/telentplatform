@@ -1120,8 +1120,27 @@
                   }
                   // Auto-fill division if available
                   const divisionInput = container.closest('.row').querySelector('input[name$="-division"]');
-                  if (divisionInput && club.division) {
-                    divisionInput.value = club.division;
+                  if (divisionInput) {
+                    if (club.division) {
+                      divisionInput.value = club.division;
+                    } else if (club.id) {
+                      // Fetch division asynchronously from the backend
+                      const originalValue = divisionInput.value;
+                      divisionInput.value = "Chargement...";
+                      fetch(`/players/api/clubs/division/?team_id=${club.id}`)
+                        .then(res => res.json())
+                        .then(data => {
+                          if (data.division) {
+                            divisionInput.value = data.division;
+                          } else {
+                            divisionInput.value = "";
+                          }
+                          input.dispatchEvent(new Event('change', { bubbles: true }));
+                        })
+                        .catch(() => {
+                          divisionInput.value = "";
+                        });
+                    }
                   }
                   // Trigger global saveDraft but avoid 'input' to prevent autocomplete infinite loop
                   input.dispatchEvent(new Event('change', { bubbles: true }));

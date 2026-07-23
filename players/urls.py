@@ -12,4 +12,5 @@ urlpatterns = [
     path("consent/verify/<uuid:token>/", views.verify_consent, name="verify_consent"),
     path("p/<int:pk>/", views.player_public_profile, name="public_profile"),
     path("api/clubs/search/", views_api.search_clubs_api, name="api_clubs_search"),
+    path("api/clubs/division/", views_api.get_team_division_api, name="api_clubs_division"),
 ]
