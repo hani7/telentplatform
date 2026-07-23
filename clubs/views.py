@@ -97,12 +97,13 @@ def club_dashboard(request):
             if salary_min:  qs = qs.filter(desired_salary__gte=int(salary_min))
             if salary_max:  qs = qs.filter(desired_salary__lte=int(salary_max))
 
-        qs = qs.order_by("-id")[:50]
+        qs = qs.order_by("-id")  # unsliced — split_by_visibility slices internally
         players = split_by_visibility(
             qs,
             viewer_country=viewer["viewer_country"],
             viewer_division=viewer["viewer_division"],
             viewer_club=viewer["viewer_club"],
+            limit=50,
         )
 
     # ── Coaches ────────────────────────────────────────────────────────────────
@@ -123,12 +124,13 @@ def club_dashboard(request):
             if country:     qs = qs.filter(current_club_country__icontains=country)
             if diploma_kw:  qs = qs.filter(diplomas_certificates__icontains=diploma_kw)
 
-        qs = qs.order_by("-id")[:50]
+        qs = qs.order_by("-id")  # unsliced — split_by_visibility slices internally
         coaches = split_by_visibility(
             qs,
             viewer_country=viewer["viewer_country"],
             viewer_division=viewer["viewer_division"],
             viewer_club=viewer["viewer_club"],
+            limit=50,
         )
 
     return render(request, "clubs/dashboard.html", {

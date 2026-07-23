@@ -47,12 +47,12 @@ def players_list(request):
     has_filters = any([position, country, status])
 
     if not has_filters:
-        qs = qs.order_by("-id")[:30]
+        qs = qs.order_by("-id")
     else:
         if position: qs = qs.filter(position__icontains=position)
         if status:   qs = qs.filter(status=status)
         if country:  qs = qs.filter(current_club_country__icontains=country)
-        qs = qs.order_by("-id")[:50]
+        qs = qs.order_by("-id")
 
     viewer = get_viewer_context(request.user)
     results = split_by_visibility(
@@ -60,6 +60,7 @@ def players_list(request):
         viewer_country=viewer["viewer_country"],
         viewer_division=viewer["viewer_division"],
         viewer_club=viewer["viewer_club"],
+        limit=30 if not has_filters else 50,
     )
 
     return render(request, "search/players_list.html", {
@@ -89,12 +90,12 @@ def coaches_list(request):
     has_filters = any([status, country, diploma_kw])
 
     if not has_filters:
-        qs = qs.order_by("-id")[:30]
+        qs = qs.order_by("-id")
     else:
         if status:      qs = qs.filter(status=status)
         if country:     qs = qs.filter(current_club_country__icontains=country)
         if diploma_kw:  qs = qs.filter(diplomas_certificates__icontains=diploma_kw)
-        qs = qs.order_by("-id")[:50]
+        qs = qs.order_by("-id")
 
     viewer = get_viewer_context(request.user)
     results = split_by_visibility(
@@ -102,6 +103,7 @@ def coaches_list(request):
         viewer_country=viewer["viewer_country"],
         viewer_division=viewer["viewer_division"],
         viewer_club=viewer["viewer_club"],
+        limit=30 if not has_filters else 50,
     )
 
     return render(request, "search/coaches_list.html", {
