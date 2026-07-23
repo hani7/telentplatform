@@ -363,56 +363,56 @@
                       <span class="fl" style="font-size:.75rem">{{ sf.season.label }}</span>
                       {{ sf.season }}
                     </div>
-                    <div class="col-3" data-stat-group="all">
+                    <div class="col-4" data-stat-group="all">
                       <span class="fl" style="font-size:.72rem">{{ sf.matches.label }}</span>
                       {{ sf.matches }}
                     </div>
-                    <div class="col-3" data-stat-group="all">
+                    <div class="col-4" data-stat-group="all">
                       <span class="fl" style="font-size:.72rem">{{ sf.minutes.label }}</span>
                       {{ sf.minutes }}
                     </div>
                     <!-- Goalkeeper Stats -->
-                    <div class="col-3" data-stat-group="gk" style="display:none;">
+                    <div class="col-4" data-stat-group="gk" style="display:none;">
                       <span class="fl" style="font-size:.72rem">{{ sf.clean_sheets.label }}</span>
                       {{ sf.clean_sheets }}
                     </div>
-                    <div class="col-3" data-stat-group="gk" style="display:none;">
+                    <div class="col-4" data-stat-group="gk" style="display:none;">
                       <span class="fl" style="font-size:.72rem">{{ sf.saves.label }}</span>
                       {{ sf.saves }}
                     </div>
-                    <div class="col-3" data-stat-group="gk" style="display:none;">
+                    <div class="col-4" data-stat-group="gk" style="display:none;">
                       <span class="fl" style="font-size:.72rem">{{ sf.goals_conceded.label }}</span>
                       {{ sf.goals_conceded }}
                     </div>
                     <!-- Defender Stats -->
-                    <div class="col-3" data-stat-group="def" style="display:none;">
+                    <div class="col-4" data-stat-group="def" style="display:none;">
                       <span class="fl" style="font-size:.72rem">{{ sf.tackles.label }}</span>
                       {{ sf.tackles }}
                     </div>
-                    <div class="col-3" data-stat-group="def" style="display:none;">
+                    <div class="col-4" data-stat-group="def" style="display:none;">
                       <span class="fl" style="font-size:.72rem">{{ sf.interceptions.label }}</span>
                       {{ sf.interceptions }}
                     </div>
                     <!-- Midfielder/Attacker Stats -->
-                    <div class="col-3" data-stat-group="att" style="display:none;">
+                    <div class="col-4" data-stat-group="att" style="display:none;">
                       <span class="fl" style="font-size:.72rem">{{ sf.key_passes.label }}</span>
                       {{ sf.key_passes }}
                     </div>
-                    <div class="col-3" data-stat-group="att" style="display:none;">
+                    <div class="col-4" data-stat-group="att" style="display:none;">
                       <span class="fl" style="font-size:.72rem">{{ sf.dribbles.label }}</span>
                       {{ sf.dribbles }}
                     </div>
-                    <div class="col-3" data-stat-group="att" style="display:none;">
+                    <div class="col-4" data-stat-group="att" style="display:none;">
                       <span class="fl" style="font-size:.72rem">{{ sf.shots.label }}</span>
                       {{ sf.shots }}
                     </div>
                     <!-- Goals and Assists (Shared by DEF and ATT) -->
-                    <div class="col-3" data-stat-group="def,att" style="display:none;">
+                    <div class="col-4" data-stat-group="def,att" style="display:none;">
                       <span class="fl" style="font-size:.72rem">{{ sf.goals.label }}</span>
                       {{ sf.goals }}
                     </div>
-                    <div class="col-3" data-stat-group="def,att" style="display:none;">
-                      <span class="fl" style="font-size:.72rem">{{ sf.assists.label }}</span>
+                    <div class="col-4" data-stat-group="def,att" style="display:none;">
+                      <span class="fl" style="font-size:.72rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis" title="Passes décisives">{{ sf.assists.label }}</span>
                       {{ sf.assists }}
                     </div>
                     <!-- Compétitions -->
@@ -1027,6 +1027,17 @@
   document.addEventListener('change', (e) => {
     if (e.target.id === 'id_position') {
       updateStatsVisibility();
+    }
+  });
+
+  /* ── Auto-complete Season Input ── */
+  document.addEventListener('focusout', function(e) {
+    if (e.target && e.target.name && e.target.name.includes('-season')) {
+      let val = e.target.value.trim();
+      if (/^\d{4}$/.test(val)) {
+        let nextYear = parseInt(val) + 1;
+        e.target.value = val + '-' + nextYear;
+      }
     }
   });
 </script>
