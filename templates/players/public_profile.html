@@ -1,300 +1,428 @@
 {% extends "base.html" %}
 {% load static %}
+{% block title %}{{ p.first_name }} {{ p.last_name }} - Profil{% endblock %}
 
-{% block title %}{{ p.first_name }} {{ p.last_name }} - Profil Joueur{% endblock %}
-
-{% block extra_css %}
+{% block head %}
 <style>
-  .profile-header-banner {
-    height: 300px;
-    background: var(--gradient-primary);
-    position: relative;
-    margin-bottom: 80px;
+  body {
+    background: #0f1e14;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding-bottom: 90px; /* Space for footer */
   }
-  
-  .profile-avatar-wrapper {
-    position: absolute;
-    bottom: -60px;
-    left: 50%;
-    transform: translateX(-50%);
+
+  /* Header / Cover */
+  .p-header {
+    background: linear-gradient(to bottom, rgba(29, 185, 91, 0.15), #0f1e14);
+    padding: 3rem 1.5rem 1.5rem;
     text-align: center;
+    position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
   }
-  
-  .profile-avatar {
-    width: 150px;
-    height: 150px;
+
+  .p-avatar-box {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .p-avatar {
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
-    border: 5px solid white;
-    box-shadow: var(--shadow-lg);
     object-fit: cover;
-    background: white;
+    border: 4px solid #f1b10f;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background: rgba(255,255,255,0.05);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 4rem;
-    margin: 0 auto;
+    font-size: 3rem;
+    color: rgba(255,255,255,0.2);
   }
-  
-  .profile-name {
-    margin-top: var(--space-md);
-  }
-  
-  .profile-verified {
-    display: inline-block;
-    background: var(--footop-success);
-    color: white;
+
+  .badge-mineur {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #e74c3c;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
     padding: 4px 12px;
-    border-radius: var(--radius-full);
-    font-size: var(--font-xs);
-    margin-left: 10px;
-    vertical-align: middle;
+    border-radius: 50px;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+    border: 2px solid #0f1e14;
   }
-  
-  .stat-card-mini {
-    background: white;
-    border-radius: var(--radius-md);
-    padding: var(--space-lg);
-    box-shadow: var(--shadow-sm);
-    transition: all var(--transition-base);
-    border-left: 4px solid var(--footop-green-dark);
-  }
-  
-  .stat-card-mini:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
-  }
-  
-  .stat-icon {
-    font-size: 2rem;
-    margin-bottom: var(--space-sm);
-  }
-  
-  .stat-value {
-    font-size: var(--font-2xl);
-    font-weight: 700;
-    color: var(--footop-dark);
-    display: block;
-  }
-  
-  .stat-label {
-    font-size: var(--font-sm);
-    color: var(--footop-gray);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .file-card {
-    background: white;
-    border-radius: var(--radius-md);
-    padding: var(--space-lg);
-    box-shadow: var(--shadow-sm);
-    transition: all var(--transition-base);
+
+  .p-name {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem;
+    color: #fff;
     display: flex;
     align-items: center;
-    gap: var(--space-md);
+    justify-content: center;
+    gap: 8px;
   }
-  
-  .file-card:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateX(5px);
+
+  .p-verified {
+    color: #1db95b;
+    font-size: 1.2rem;
   }
-  
+
+  .p-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .p-tag {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .p-tag-gold {
+    background: rgba(241, 177, 15, 0.1);
+    border-color: rgba(241, 177, 15, 0.3);
+    color: #f1b10f;
+  }
+
+  .p-tag-green {
+    background: rgba(29, 185, 91, 0.1);
+    border-color: rgba(29, 185, 91, 0.3);
+    color: #1db95b;
+  }
+
+  /* Cards */
+  .p-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .p-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .p-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .p-card-title i {
+    color: #1db95b;
+    font-size: 1.4rem;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .info-label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  .info-val {
+    font-size: 0.95rem;
+    color: #fff;
+    font-weight: 500;
+  }
+
+  /* Files */
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255,255,255,0.03);
+    padding: 12px 15px;
+    border-radius: 16px;
+    text-decoration: none;
+    color: #fff;
+    margin-bottom: 10px;
+    transition: background 0.2s;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .file-item:hover {
+    background: rgba(255,255,255,0.06);
+  }
   .file-icon {
-    font-size: 2.5rem;
-    color: var(--footop-green-dark);
+    width: 40px;
+    height: 40px;
+    background: rgba(29,185,91,0.15);
+    color: #1db95b;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
   }
-  
-  .contact-btn-float {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    z-index: 1000;
-    box-shadow: var(--shadow-xl);
+  .file-info {
+    flex: 1;
   }
+  .file-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+  }
+  .file-type {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* Club Seasons */
+  .season-item {
+    padding-left: 15px;
+    border-left: 2px solid rgba(255,255,255,0.1);
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  .season-item::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    background: #f1b10f;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(241,177,15,0.5);
+  }
+
+  /* Mobile Footer Premium */
+  .footer-outer{position:fixed;bottom:0;left:0;right:0;padding:0 12px calc(10px + env(safe-area-inset-bottom));z-index:999;display:flex;justify-content:center;pointer-events:none}
+  .footer-pill{pointer-events:auto;background:linear-gradient(135deg, #2ecc71, #27ae60);border-radius:50px;display:flex;align-items:center;justify-content:space-around;padding:8px 6px;width:100%;max-width:480px;box-shadow:0 10px 30px rgba(39,174,96,.4)}
+  .footer-pill-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:rgba(255,255,255,.85);text-decoration:none;font-size:.65rem;font-weight:500;letter-spacing:.02em;padding:8px 6px;border-radius:16px;border:none;background:none;transition:all .25s cubic-bezier(.4,0,.2,1);flex:1;text-align:center;cursor:pointer}
+  .footer-pill-item i{font-size:1.35rem;line-height:1;display:block;transition:transform .25s cubic-bezier(.4,0,.2,1),color .25s}
+  .footer-pill-item span{transition:color .25s}
+  .footer-pill-item:hover{color:#fff}
+  .footer-pill-item:hover i{transform:translateY(-1px)}
+  .footer-pill-item:active i{transform:scale(.9)}
+  .footer-pill-item.is-active{color:#fff;font-weight:700}
+  .footer-pill-item.is-active i{color:#fff;transform:translateY(-2px);filter:drop-shadow(0 2px 6px rgba(255,255,255,.5))}
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Profile Header -->
-<div class="profile-header-banner">
-  <div class="profile-avatar-wrapper">
-    <div class="profile-avatar">
-      <i class="ti ti-ball-football"></i>
+<!-- Header -->
+<div class="p-header">
+  <div class="p-avatar-box">
+    {% if p.profile_photo %}
+      <img src="{{ p.profile_photo.url }}" class="p-avatar" alt="Photo de profil">
+    {% else %}
+      <div class="p-avatar"><i class="ti ti-user"></i></div>
+    {% endif %}
+    {% if p.is_minor %}
+      <div class="badge-mineur">MINEUR</div>
+    {% endif %}
+  </div>
+
+  <h1 class="p-name">
+    {{ p.first_name }} {{ p.last_name }}
+    {% if p.is_active %}<i class="ti ti-discount-check-filled p-verified" title="Vérifié"></i>{% endif %}
+  </h1>
+
+  <div class="p-tags">
+    <!-- Club Logo & Name -->
+    <div class="p-tag p-tag-green">
+      <i class="ti ti-shield"></i> {{ p.current_club_name|default:"Libre" }}
     </div>
-    <div class="profile-name">
-      <h1 class="mb-2">
-        {{ p.first_name }} {{ p.last_name }}
-        <span class="profile-verified">✓ Vérifié</span>
-      </h1>
-      <p class="text-muted mb-3">
-        <span class="icon-map-marker"></span> {{ p.current_club_country|default:"International" }}
-      </p>
-      <div class="d-flex gap-2 justify-content-center">
-        <span class="badge badge-primary">{{ p.position|upper }}</span>
-        <span class="badge badge-info">{{ p.status }}</span>
-        {% if p.age %}
-          <span class="badge" style="background: var(--footop-gold); color: var(--footop-dark);">{{ p.age }} ans</span>
+    <!-- Nationality -->
+    <div class="p-tag">
+      <i class="ti ti-flag"></i> {{ p.nationality|default:"International" }}
+    </div>
+    <!-- Age -->
+    {% if p.age %}
+    <div class="p-tag">
+      <i class="ti ti-calendar"></i> {{ p.age }} ans
+    </div>
+    {% endif %}
+    <!-- Position -->
+    <div class="p-tag p-tag-gold">
+      <i class="ti ti-shoe"></i> {{ p.position|default:"Non spécifié" }}
+    </div>
+    <!-- Foot -->
+    {% if p.get_foot_display %}
+    <div class="p-tag">
+      <i class="ti ti-footprints"></i> Pied: {{ p.get_foot_display }}
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="p-container">
+
+  <!-- Infos Personnelles -->
+  <div class="p-card">
+    <div class="p-card-title"><i class="ti ti-user-scan"></i> Informations du joueur</div>
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-label">Statut</span>
+        <span class="info-val">{{ p.get_status_display|default:"-" }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Disponibilité</span>
+        <span class="info-val">{{ p.get_availability_display|default:"-" }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Taille</span>
+        <span class="info-val">{% if p.height_cm %}{{ p.height_cm }} cm{% else %}-{% endif %}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Poids</span>
+        <span class="info-val">{% if p.weight_kg %}{{ p.weight_kg }} kg{% else %}-{% endif %}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Agent</span>
+        <span class="info-val">{% if p.has_agent_contract %}Oui ({{ p.agent_full_name }}){% else %}Non{% endif %}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Recherche d'agent</span>
+        <span class="info-val">{% if p.looking_for_agent %}Oui{% else %}Non{% endif %}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Objectif de Recherche -->
+  {% if p.search_objective or p.desired_salary or p.player_value %}
+  <div class="p-card">
+    <div class="p-card-title"><i class="ti ti-target"></i> Objectifs & Valeur</div>
+    <div class="info-grid">
+      {% if p.search_objective %}
+      <div class="info-item" style="grid-column: 1 / -1;">
+        <span class="info-label">Je cherche...</span>
+        <span class="info-val">{{ p.get_search_objective_display|default:p.search_objective }}</span>
+      </div>
+      {% endif %}
+      
+      {% if p.desired_salary %}
+      <div class="info-item">
+        <span class="info-label">Salaire Souhaité</span>
+        <span class="info-val" style="color:#f1b10f; font-weight:700;">{{ p.desired_salary }} {{ p.currency|default:"EUR" }}</span>
+      </div>
+      {% endif %}
+
+      {% if p.player_value %}
+      <div class="info-item">
+        <span class="info-label">Valeur du Joueur</span>
+        <span class="info-val" style="color:#f1b10f; font-weight:700;">{{ p.player_value }} {{ p.currency|default:"EUR" }}</span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Clubs Précédents -->
+  {% if p.previous_clubs.exists %}
+  <div class="p-card">
+    <div class="p-card-title"><i class="ti ti-history"></i> Parcours & Clubs Précédents</div>
+    {% for club in p.previous_clubs.all %}
+      <div class="season-item">
+        <div style="font-weight: 700; font-size: 1.1rem;">{{ club.club_name }}</div>
+        <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-bottom: 0.5rem;">
+          {{ club.country|default:"-" }} • {{ club.division|default:"-" }} • Saison {{ club.season|default:"N/A" }}
+        </div>
+        
+        <!-- Stats for this club -->
+        {% if club.seasons.exists %}
+          <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; font-size: 0.85rem;">
+            {% for stat in club.seasons.all %}
+              <div style="display:flex; gap:15px; flex-wrap:wrap;">
+                <div><span style="color:rgba(255,255,255,0.5)">Matchs:</span> <b style="color:#fff">{{ stat.matches }}</b></div>
+                <div><span style="color:rgba(255,255,255,0.5)">Buts:</span> <b style="color:#fff">{{ stat.goals }}</b></div>
+                <div><span style="color:rgba(255,255,255,0.5)">Passes D.:</span> <b style="color:#fff">{{ stat.assists }}</b></div>
+                <div><span style="color:rgba(255,255,255,0.5)">Minutes:</span> <b style="color:#fff">{{ stat.minutes }}</b></div>
+              </div>
+            {% endfor %}
+          </div>
         {% endif %}
       </div>
-    </div>
+    {% endfor %}
   </div>
+  {% endif %}
+
+  <!-- Fichiers -->
+  {% if p.files.exists %}
+  <div class="p-card">
+    <div class="p-card-title"><i class="ti ti-folder"></i> Documents & Médias</div>
+    {% for f in p.files.all %}
+      <a href="{{ f.file.url }}" target="_blank" class="file-item">
+        <div class="file-icon">
+          {% if f.file_type == 'VIDEO' %}<i class="ti ti-movie"></i>
+          {% elif f.file_type == 'CV' %}<i class="ti ti-file-text"></i>
+          {% elif f.file_type == 'PHOTO' %}<i class="ti ti-photo"></i>
+          {% else %}<i class="ti ti-paperclip"></i>{% endif %}
+        </div>
+        <div class="file-info">
+          <div class="file-name">{{ f.title|default:"Fichier joint" }}</div>
+          <div class="file-type">{{ f.get_file_type_display }}</div>
+        </div>
+        <i class="ti ti-download" style="color:rgba(255,255,255,0.3); font-size:1.2rem;"></i>
+      </a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
 </div>
 
-<div class="container">
-  <!-- Stats Grid -->
-  <div class="row g-4 mb-5">
-    <div class="col-lg-3 col-md-6">
-      <div class="stat-card-mini">
-        <div class="stat-icon"><i class="ti ti-ball-football"></i></div>
-        <span class="stat-value">{{ p.position }}</span>
-        <span class="stat-label">Position</span>
-      </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6">
-      <div class="stat-card-mini" style="border-left-color: var(--footop-orange);">
-        <div class="stat-icon"><i class="ti ti-calendar"></i></div>
-        <span class="stat-value">{{ p.age|default:"N/A" }}</span>
-        <span class="stat-label">Âge</span>
-      </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6">
-      <div class="stat-card-mini" style="border-left-color: var(--footop-gold);">
-        <div class="stat-icon"><i class="ti ti-chart-bar"></i></div>
-        <span class="stat-value">{{ p.status }}</span>
-        <span class="stat-label">Statut</span>
-      </div>
-    </div>
-    
-    <div class="col-lg-3 col-md-6">
-      <div class="stat-card-mini" style="border-left-color: var(--footop-blue);">
-        <div class="stat-icon"><i class="ti ti-eye"></i></div>
-        <span class="stat-value">{{ p.views|default:"124" }}</span>
-        <span class="stat-label">Vues de Profil</span>
-      </div>
-    </div>
-  </div>
-  
-  <div class="row g-4">
-    <!-- Club Information -->
-    <div class="col-lg-8">
-      <div class="card mb-4">
-        <div class="card-body p-4">
-          <h3 class="mb-4">
-            <span class="icon-football" style="color: var(--footop-green-dark);"></span>
-            Club Actuel
-          </h3>
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="text-muted mb-2" style="font-size: 0.875rem; text-transform: uppercase;">Nom du Club</label>
-              <p class="h5 mb-0">{{ p.current_club_name|default:"Libre" }}</p>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="text-muted mb-2" style="font-size: 0.875rem; text-transform: uppercase;">Pays</label>
-              <p class="h5 mb-0">{{ p.current_club_country|default:"N/A" }}</p>
-            </div>
-            <div class="col-md-6">
-              <label class="text-muted mb-2" style="font-size: 0.875rem; text-transform: uppercase;">Division</label>
-              <p class="h5 mb-0">{{ p.current_club_division|default:"N/A" }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Files Section -->
-      <div class="card">
-        <div class="card-body p-4">
-          <h3 class="mb-4">
-            <span class="icon-folder" style="color: var(--footop-green-dark);"></span>
-            Documents & Médias
-          </h3>
-          
-          {% if p.files.all %}
-            <div class="row g-3">
-              {% for f in p.files.all %}
-                <div class="col-md-6">
-                  <div class="file-card">
-                    <div class="file-icon">
-                      {% if f.file_type == 'VIDEO' %}
-                        <i class="ti ti-movie"></i>
-                      {% elif f.file_type == 'IMAGE' %}
-                        <i class="ti ti-photo"></i>
-                      {% elif f.file_type == 'PDF' %}
-                        <i class="ti ti-file-text"></i>
-                      {% else %}
-                        <i class="ti ti-paperclip"></i>
-                      {% endif %}
-                    </div>
-                    <div class="flex-grow-1">
-                      <h6 class="mb-1">{{ f.title|default:"Document" }}</h6>
-                      <small class="text-muted">{{ f.file_type }}</small>
-                    </div>
-                    <a href="{{ f.file.url }}" class="btn btn-sm btn-outline" target="_blank" download>
-                      <span class="icon-download"></span>
-                    </a>
-                  </div>
-                </div>
-              {% endfor %}
-            </div>
-          {% else %}
-            <div class="text-center py-5" style="background: var(--footop-gray-lighter); border-radius: var(--radius-md);">
-              <div style="font-size: 3rem; opacity: 0.3;"><i class="ti ti-folder"></i></div>
-              <p class="text-muted mb-0">Aucun fichier disponible</p>
-            </div>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-    
-    <!-- Sidebar -->
-    <div class="col-lg-4">
-      <!-- Contact Card -->
-      <div class="card mb-4" style="background: var(--gradient-primary); color: white;">
-        <div class="card-body p-4 text-center">
-          <h4 class="mb-3">Intéressé par ce joueur ?</h4>
-          <p class="mb-4" style="opacity: 0.9;">Contactez-le pour discuter d'opportunités professionnelles</p>
-          <button class="btn btn-gold btn-block">
-            <span class="icon-envelope me-2"></span> Envoyer un Message
-          </button>
-        </div>
-      </div>
-      
-      <!-- Quick Info Card -->
-      <div class="card">
-        <div class="card-body p-4">
-          <h5 class="mb-3">Informations Rapides</h5>
-          <ul class="list-unstyled mb-0">
-            <li class="mb-3 d-flex align-items-center">
-              <span class="icon-user me-3" style="color: var(--footop-green-dark); font-size: 1.25rem;"></span>
-              <div>
-                <small class="text-muted d-block">Type de Profil</small>
-                <strong>Joueur Professionnel</strong>
-              </div>
-            </li>
-            <li class="mb-3 d-flex align-items-center">
-              <span class="icon-calendar me-3" style="color: var(--footop-green-dark); font-size: 1.25rem;"></span>
-              <div>
-                <small class="text-muted d-block">Membre depuis</small>
-                <strong>Janvier 2024</strong>
-              </div>
-            </li>
-            <li class="d-flex align-items-center">
-              <span class="icon-check me-3" style="color: var(--footop-success); font-size: 1.25rem;"></span>
-              <div>
-                <small class="text-muted d-block">Statut</small>
-                <strong>Profil Vérifié</strong>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- Footer Mobile Premium for logged in owners -->
+{% if request.user.is_authenticated and request.user == p.user %}
+<div class="footer-outer">
+  <nav class="footer-pill">
+    <a href="{% url 'players:public_profile' p.pk %}" class="footer-pill-item is-active">
+      <i class="ti ti-user-circle"></i><span>Profil</span>
+    </a>
+    <a href="{% url 'players:public_profile' p.pk %}" class="footer-pill-item">
+      <i class="ti ti-eye"></i><span>Aperçu</span>
+    </a>
+    <a href="{% url 'players:profile_edit' %}" class="footer-pill-item">
+      <i class="ti ti-pencil"></i><span>Editer</span>
+    </a>
+    <a href="/offers/my/" class="footer-pill-item">
+      <i class="ti ti-clipboard-text"></i><span>Mes offres</span>
+    </a>
+    <a href="/accounts/logout/" class="footer-pill-item">
+      <i class="ti ti-logout"></i><span>Déconnexion</span>
+    </a>
+  </nav>
 </div>
+{% endif %}
 
-<!-- Floating Contact Button (Mobile) -->
-<a href="#" class="btn btn-primary btn-lg contact-btn-float d-lg-none">
-  <span class="icon-envelope"></span>
-</a>
 {% endblock %}

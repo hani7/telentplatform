@@ -701,7 +701,7 @@
     document.querySelectorAll('.fc input:not([type=hidden]):not([type=file]), .fc select, .fc textarea').forEach(el => {
       if (el.type === 'checkbox') {
         el.required = false;
-      } else if (skipRequired.includes(el.name)) {
+      } else if (skipRequired.includes(el.name) || el.name.startsWith('files-')) {
         el.required = false;
       } else {
         el.required = (el.offsetParent !== null);
