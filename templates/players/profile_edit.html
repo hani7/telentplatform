@@ -245,19 +245,24 @@
 
         <hr>
 
-        <div class="row g-2">
-          <div class="col-6">
+        <div class="row g-2" style="flex-wrap: nowrap; margin-bottom: 1rem;">
+          <div style="width: 35%;">
             {{ form.desired_salary.errors }}
             <span class="fl">{{ form.desired_salary.label }}</span>
             {{ form.desired_salary }}
-            <span class="helptext">{{ form.desired_salary.help_text }}</span>
           </div>
-          <div class="col-6">
+          <div style="width: 35%;">
             {{ form.player_value.errors }}
             <span class="fl">{{ form.player_value.label }}</span>
             {{ form.player_value }}
-            <span class="helptext">{{ form.player_value.help_text }}</span>
           </div>
+          <div style="width: 30%;">
+            {{ form.currency.errors }}
+            <span class="fl">{{ form.currency.label }}</span>
+            {{ form.currency }}
+          </div>
+        </div>
+        <div class="row g-2">
           <div class="col-12">
             {{ form.search_objective.errors }}
             <span class="fl">{{ form.search_objective.label }}</span>
@@ -468,6 +473,51 @@
       <div class="fc" data-step="3">
         <h5><i class="ti ti-file-upload"></i> Fichiers (CV / Photos / Vidéos)</h5>
         <p style="color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:1rem">Ajoute au moins un fichier pour compléter ton profil</p>
+
+        <!-- Profile Photo Area -->
+        <div class="fsi" style="margin-bottom: 1.5rem; text-align: center; border: 2px dashed rgba(255,255,255,.2); background: rgba(255,255,255,.02); border-radius: 20px;">
+          <label for="{{ form.profile_photo.id_for_label }}" style="display: block; cursor: pointer; padding: 1.5rem;">
+            {% if profile.profile_photo %}
+              <img src="{{ profile.profile_photo.url }}" alt="Profile Photo" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 3px solid #f1b10f; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+            {% else %}
+              <div style="width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,.05); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem; border: 3px dashed rgba(255,255,255,.3);">
+                <i class="ti ti-camera" style="font-size: 2rem; color: rgba(255,255,255,.5);"></i>
+              </div>
+            {% endif %}
+            <div style="font-size: .95rem; font-weight: 700; color: #fff;">{{ form.profile_photo.label }}</div>
+            <div style="font-size: .75rem; color: rgba(255,255,255,.5); margin-top: 5px;">Cliquez ici pour choisir une photo</div>
+          </label>
+          <div style="display: none;">
+            {{ form.profile_photo }}
+          </div>
+          {{ form.profile_photo.errors }}
+          <script>
+            document.addEventListener("DOMContentLoaded", function() {
+              const fileInput = document.getElementById("id_profile_photo");
+              if(fileInput) {
+                fileInput.addEventListener("change", function(e) {
+                  if(e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                      const label = fileInput.closest('.fsi').querySelector('label');
+                      let img = label.querySelector('img');
+                      if(!img) {
+                        const iconDiv = label.querySelector('div[style*="border-radius: 50%"]');
+                        if(iconDiv) iconDiv.remove();
+                        img = document.createElement('img');
+                        img.style.cssText = "width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 3px solid #f1b10f; box-shadow: 0 4px 15px rgba(0,0,0,0.3);";
+                        label.insertBefore(img, label.firstChild);
+                      }
+                      img.src = evt.target.result;
+                    }
+                    reader.readAsDataURL(e.target.files[0]);
+                  }
+                });
+              }
+            });
+          </script>
+        </div>
+
         {{ files_fs.management_form }}
         <div id="files-container">
           {% for f in files_fs %}

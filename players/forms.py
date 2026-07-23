@@ -28,6 +28,43 @@ class PlayerProfileForm(forms.ModelForm):
         widget=forms.Select()
     )
     
+    currency = forms.ChoiceField(
+        choices=[
+            ('EUR', 'Euro (€)'),
+            ('USD', 'US Dollar ($)'),
+            ('GBP', 'Livre Sterling (£)'),
+            ('DZD', 'Dinar Algérien (DZD)'),
+            ('MAD', 'Dirham Marocain (MAD)'),
+            ('TND', 'Dinar Tunisien (TND)'),
+            ('XOF', 'Franc CFA BCEAO (XOF)'),
+            ('XAF', 'Franc CFA BEAC (XAF)'),
+            ('ZAR', 'Rand Sud-Africain (ZAR)'),
+            ('SAR', 'Riyal Saoudien (SAR)'),
+            ('AED', 'Dirham EAU (AED)'),
+            ('QAR', 'Riyal Qatari (QAR)'),
+            ('CHF', 'Franc Suisse (CHF)'),
+            ('CAD', 'Dollar Canadien (CAD)'),
+            ('AUD', 'Dollar Australien (AUD)'),
+            ('JPY', 'Yen Japonais (JPY)'),
+            ('CNY', 'Yuan Chinois (CNY)'),
+            ('INR', 'Roupie Indienne (INR)'),
+            ('BRL', 'Réal Brésilien (BRL)'),
+            ('MXN', 'Peso Mexicain (MXN)'),
+            ('RUB', 'Rouble Russe (RUB)'),
+            ('TRY', 'Livre Turque (TRY)'),
+            ('NGN', 'Naira Nigérian (NGN)'),
+            ('EGP', 'Livre Égyptienne (EGP)'),
+            ('SEK', 'Couronne Suédoise (SEK)'),
+            ('NOK', 'Couronne Norvégienne (NOK)'),
+            ('DKK', 'Couronne Danoise (DKK)'),
+            ('PLN', 'Zloty Polonais (PLN)'),
+            ('OTHER', 'Autre devise')
+        ],
+        required=False,
+        label="Devise",
+        widget=forms.Select()
+    )
+    
     # Override position to be a dropdown
     position = forms.ChoiceField(
         choices=[
@@ -72,7 +109,7 @@ class PlayerProfileForm(forms.ModelForm):
     class Meta:
         model = PlayerProfile
         fields = [
-            "first_name", "last_name", "birth_date", "birth_place", "gender",
+            "first_name", "last_name", "birth_date", "birth_place", "gender", "profile_photo",
             # NOTE: nationality is a class-level ChoiceField resolved in save() — not in Meta.fields
             "is_minor",
             "parents_notes",
@@ -88,7 +125,7 @@ class PlayerProfileForm(forms.ModelForm):
             "availability", "current_club_name", "current_club_country", "current_club_division",
             "current_club_start", "current_club_end",
 
-            "player_value", "search_objective",
+            "player_value", "currency", "search_objective",
 
             "has_agent_contract", "agent_full_name", "agent_id", "looking_for_agent",
 
@@ -102,6 +139,7 @@ class PlayerProfileForm(forms.ModelForm):
             "birth_date": "Date de naissance",
             "birth_place": "Lieu de naissance",
             "gender": "Sexe",
+            "profile_photo": "Photo de profil",
             "nationality": "Nationalité",
 
             "is_minor": "Joueur mineur ?",
@@ -118,6 +156,8 @@ class PlayerProfileForm(forms.ModelForm):
             "status": "Statut",
             "position": "Poste",
             "desired_salary": "Salaire souhaité",
+            "player_value": "Valeur du joueur",
+            "currency": "Devise",
             "foot": "Pied",
             "height_cm": "Taille (cm)",
             "weight_kg": "Poids (kg)",

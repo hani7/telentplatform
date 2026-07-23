@@ -17,6 +17,8 @@ class PlayerProfile(models.Model):
     birth_date = models.DateField(null=True, blank=True)
     birth_place = models.CharField(max_length=120, blank=True)
 
+    profile_photo = models.ImageField(upload_to='players/avatars/', null=True, blank=True)
+
     class Gender(models.TextChoices):
         MALE = "M", "Masculin"
         FEMALE = "F", "Féminin"
@@ -82,7 +84,7 @@ class PlayerProfile(models.Model):
     contract_end_date = models.DateField(null=True, blank=True)
 
     player_value = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)])
-
+    currency = models.CharField(max_length=10, blank=True, null=True, default='EUR')
     search_objective = models.CharField(max_length=120, blank=True)
 
     has_agent_contract = models.BooleanField(default=False)
