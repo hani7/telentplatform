@@ -183,10 +183,10 @@
 
     <!-- Tabs -->
     <div class="ptabs">
-      <button class="ptab active" onclick="showTab(0)"><i class="ti ti-user"></i> Infos</button>
-      <button class="ptab" onclick="showTab(1)"><i class="ti ti-building"></i> Clubs</button>
-      <button class="ptab" onclick="showTab(2)"><i class="ti ti-chart-bar"></i> Stats</button>
-      <button class="ptab" onclick="showTab(3)"><i class="ti ti-file"></i> Fichiers</button>
+      <button class="ptab active" onclick="showTab(0)"><i class="ti ti-user"></i> <span data-i18n="complete.tab_infos">Infos</span></button>
+      <button class="ptab" onclick="showTab(1)"><i class="ti ti-building"></i> <span data-i18n="complete.tab_clubs">Clubs</span></button>
+      <button class="ptab" onclick="showTab(2)"><i class="ti ti-chart-bar"></i> <span data-i18n="complete.tab_stats">Stats</span></button>
+      <button class="ptab" onclick="showTab(3)"><i class="ti ti-file"></i> <span data-i18n="complete.tab_files">Fichiers</span></button>
     </div>
 
     <!-- ═══ Section 0: Infos ═══ -->
@@ -369,5 +369,6 @@
     if(f){const w=f.style.width;f.style.width='0%';setTimeout(()=>f.style.width=w,200)}
   });
 </script>
+<script src="{% static 'js/i18n.js' %}"></script>
 </body>
 </html>

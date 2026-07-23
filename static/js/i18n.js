@@ -76,6 +76,35 @@
       "reg_continue": "Continuer",
       "reg_already": "Déjà inscrit ?",
       "reg_login_link": "Se connecter",
+
+      // ── Profile Edit Page ──────────────────────────────────────────────
+      "edit.title":          "Profil Joueur",
+      "edit.subtitle":       "Complète ton profil pour le rendre visible aux clubs et agents",
+      "edit.tab_infos":      "Infos",
+      "edit.tab_clubs":      "Clubs",
+      "edit.tab_files":      "Fichiers",
+      "edit.tab_consent":    "Consentement",
+      "edit.step1_title":    "Informations du joueur",
+      "edit.step2_title":    "Clubs précédents",
+      "edit.step2_sub":      "Ajoute tes expériences dans des clubs",
+      "edit.step3_title":    "Fichiers & Médias",
+      "edit.step3_sub":      "Ajoute tes vidéos, CV ou documents",
+      "edit.prev":           "Précédent",
+      "edit.next":           "Suivant",
+      "edit.submit":         "Valider",
+      "edit.add_club":       "Ajouter un club",
+      "edit.add_file":       "Ajouter un fichier",
+      "edit.remove":         "Supprimer",
+      "edit_footer.profile": "Profil",
+      "edit_footer.apercu":  "Aperçu",
+      "edit_footer.edit":    "Editer",
+      "edit_footer.offers":  "Mes offres",
+      "edit_footer.logout":  "Déconnexion",
+      "complete.tab_infos":  "Infos",
+      "complete.tab_clubs":  "Clubs",
+      "complete.tab_stats":  "Stats",
+      "complete.tab_files":  "Fichiers",
+      "complete.modify":     "Modifier",
     },
 
     en: {
@@ -135,6 +164,35 @@
       "reg_continue": "Continue",
       "reg_already": "Already registered?",
       "reg_login_link": "Sign In",
+
+      // ── Profile Edit Page ──────────────────────────────────────────────
+      "edit.title":          "Player Profile",
+      "edit.subtitle":       "Complete your profile to be visible to clubs and agents",
+      "edit.tab_infos":      "Info",
+      "edit.tab_clubs":      "Clubs",
+      "edit.tab_files":      "Files",
+      "edit.tab_consent":    "Consent",
+      "edit.step1_title":    "Player Information",
+      "edit.step2_title":    "Previous Clubs",
+      "edit.step2_sub":      "Add your club experiences",
+      "edit.step3_title":    "Files & Media",
+      "edit.step3_sub":      "Add your videos, CV or documents",
+      "edit.prev":           "Previous",
+      "edit.next":           "Next",
+      "edit.submit":         "Submit",
+      "edit.add_club":       "Add a club",
+      "edit.add_file":       "Add a file",
+      "edit.remove":         "Remove",
+      "edit_footer.profile": "Profile",
+      "edit_footer.apercu":  "Preview",
+      "edit_footer.edit":    "Edit",
+      "edit_footer.offers":  "My Offers",
+      "edit_footer.logout":  "Logout",
+      "complete.tab_infos":  "Info",
+      "complete.tab_clubs":  "Clubs",
+      "complete.tab_stats":  "Stats",
+      "complete.tab_files":  "Files",
+      "complete.modify":     "Edit",
     },
 
     ar: {
@@ -194,6 +252,35 @@
       "reg_continue": "متابعة",
       "reg_already": "مسجّل مسبقاً؟",
       "reg_login_link": "تسجيل الدخول",
+
+      // ── Profile Edit Page ──────────────────────────────────────────────
+      "edit.title":          "ملف اللاعب",
+      "edit.subtitle":       "أكمل ملفك لكي يراك الأندية والوكلاء",
+      "edit.tab_infos":      "معلومات",
+      "edit.tab_clubs":      "الأندية",
+      "edit.tab_files":      "الملفات",
+      "edit.tab_consent":    "الموافقة",
+      "edit.step1_title":    "معلومات اللاعب",
+      "edit.step2_title":    "الأندية السابقة",
+      "edit.step2_sub":      "أضف تجاربك في الأندية",
+      "edit.step3_title":    "الملفات والوسائط",
+      "edit.step3_sub":      "أضف مقاطع الفيديو أو السيرة الذاتية",
+      "edit.prev":           "السابق",
+      "edit.next":           "التالي",
+      "edit.submit":         "إرسال",
+      "edit.add_club":       "إضافة نادٍ",
+      "edit.add_file":       "إضافة ملف",
+      "edit.remove":         "حذف",
+      "edit_footer.profile": "الملف",
+      "edit_footer.apercu":  "معاينة",
+      "edit_footer.edit":    "تعديل",
+      "edit_footer.offers":  "عروضي",
+      "edit_footer.logout":  "خروج",
+      "complete.tab_infos":  "معلومات",
+      "complete.tab_clubs":  "الأندية",
+      "complete.tab_stats":  "إحصاءات",
+      "complete.tab_files":  "الملفات",
+      "complete.modify":     "تعديل",
     },
   };
 
@@ -267,7 +354,7 @@
     });
 
     // Mettre à jour le sélecteur de langue (boutons actifs)
-    document.querySelectorAll(".lang-switcher-btn").forEach(function (btn) {
+    document.querySelectorAll(".lang-switcher-btn, .lang-btn").forEach(function (btn) {
       btn.classList.toggle("active", btn.dataset.lang === lang);
     });
 

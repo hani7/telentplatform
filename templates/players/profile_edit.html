@@ -116,8 +116,8 @@
     <!-- Header -->
     <div class="ph">
       <div class="logo-wrap"><img src="{% static 'img/core-img/footop-logo-white.png' %}" alt="FOOTOP"></div>
-      <h1><i class="ti ti-ball-football" style="color:#f1b10f"></i> Profil Joueur</h1>
-      <p>Complète ton profil pour le rendre visible aux clubs et agents</p>
+      <h1><i class="ti ti-ball-football" style="color:#f1b10f"></i> <span data-i18n="edit.title">Profil Joueur</span></h1>
+      <p data-i18n="edit.subtitle">Complète ton profil pour le rendre visible aux clubs et agents</p>
     </div>
 
     {% for msg in messages %}
@@ -126,10 +126,10 @@
 
     <!-- Step Tabs -->
     <div class="steps">
-      <div class="si active"><i class="ti ti-user"></i> Infos</div>
-      <div class="si"><i class="ti ti-building"></i> Clubs</div>
-      <div class="si"><i class="ti ti-file-upload"></i> Fichiers</div>
-      <div class="si"><i class="ti ti-shield-check"></i> Consent</div>
+      <div class="si active"><i class="ti ti-user"></i> <span data-i18n="edit.tab_infos">Infos</span></div>
+      <div class="si"><i class="ti ti-building"></i> <span data-i18n="edit.tab_clubs">Clubs</span></div>
+      <div class="si"><i class="ti ti-file-upload"></i> <span data-i18n="edit.tab_files">Fichiers</span></div>
+      <div class="si"><i class="ti ti-shield-check"></i> <span data-i18n="edit.tab_consent">Consent</span></div>
     </div>
 
     <!-- Form -->
@@ -614,9 +614,9 @@
 
       <!-- Nav -->
       <div class="wnav">
-        <button type="button" class="wb wb-prev" id="prevBtn" style="display:none"><i class="ti ti-arrow-left"></i> Précédent</button>
-        <button type="button" class="wb wb-next" id="nextBtn">Suivant <i class="ti ti-arrow-right"></i></button>
-        <button type="submit" class="wb wb-sub" id="subBtn" style="display:none"><i class="ti ti-check"></i> Valider</button>
+        <button type="button" class="wb wb-prev" id="prevBtn" style="display:none"><i class="ti ti-arrow-left"></i> <span data-i18n="edit.prev">Précédent</span></button>
+        <button type="button" class="wb wb-next" id="nextBtn"><span data-i18n="edit.next">Suivant</span> <i class="ti ti-arrow-right"></i></button>
+        <button type="submit" class="wb wb-sub" id="subBtn" style="display:none"><i class="ti ti-check"></i> <span data-i18n="edit.submit">Valider</span></button>
       </div>
     </form>
 
@@ -628,24 +628,24 @@
   <nav class="footer-pill">
     {% if profile.pk %}
       <a href="{% url 'players:public_profile' profile.pk %}" class="footer-pill-item">
-        <i class="ti ti-user-circle"></i><span>Profil</span>
+        <i class="ti ti-user-circle"></i><span data-i18n="edit_footer.profile">Profil</span>
       </a>
     {% else %}
       <a href="#" class="footer-pill-item">
-        <i class="ti ti-user-circle"></i><span>Profil</span>
+        <i class="ti ti-user-circle"></i><span data-i18n="edit_footer.profile">Profil</span>
       </a>
     {% endif %}
     <a href="{% url 'players:profile_complete' %}" class="footer-pill-item">
-      <i class="ti ti-eye"></i><span>Aperçu</span>
+      <i class="ti ti-eye"></i><span data-i18n="edit_footer.apercu">Aperçu</span>
     </a>
     <a href="{% url 'players:profile_edit' %}" class="footer-pill-item is-active">
-      <i class="ti ti-pencil"></i><span>Editer</span>
+      <i class="ti ti-pencil"></i><span data-i18n="edit_footer.edit">Editer</span>
     </a>
     <a href="/offers/my/" class="footer-pill-item">
-      <i class="ti ti-clipboard-text"></i><span>Mes offres</span>
+      <i class="ti ti-clipboard-text"></i><span data-i18n="edit_footer.offers">Mes offres</span>
     </a>
     <a href="/accounts/logout/" class="footer-pill-item">
-      <i class="ti ti-logout"></i><span>Déconnexion</span>
+      <i class="ti ti-logout"></i><span data-i18n="edit_footer.logout">Déconnexion</span>
     </a>
   </nav>
 </div>
@@ -1359,5 +1359,6 @@
     });
   })();
 </script>
+<script src="{% static 'js/i18n.js' %}"></script>
 </body>
 </html>
