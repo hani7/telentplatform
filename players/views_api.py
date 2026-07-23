@@ -70,12 +70,18 @@ def search_clubs_api(request):
                 formatted_results = []
                 for item in teams:
                     team = item.get('team', {})
+                    team_name = team.get('name', '')
+                    
+                    # Filter out youth teams (U21, U19, U23, etc.)
+                    if re.search(r'\bu\d{2}\b', team_name.lower()):
+                        continue
+
                     en_country = team.get('country', '')
                     fr_country = COUNTRY_MAP.get(en_country, en_country)
                         
                     formatted_results.append({
                         "id": team.get('id'),
-                        "name": team.get('name'),
+                        "name": team_name,
                         "logo": team.get('logo'),
                         "country": fr_country,
                         "division": ""  # Fetched separately if needed
