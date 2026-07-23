@@ -321,10 +321,11 @@ class SeasonStatForm(forms.ModelForm):
 
     class Meta:
         model = PlayerStat
-        fields = ["season", "matches", "goals", "assists", "clean_sheets", "saves", "goals_conceded", "tackles", "interceptions", "key_passes", "dribbles", "shots", "competitions", "collective_results"]
+        fields = ["season", "matches", "minutes", "goals", "assists", "clean_sheets", "saves", "goals_conceded", "tackles", "interceptions", "key_passes", "dribbles", "shots", "competitions", "collective_results"]
         labels = {
             "season": "Saison",
             "matches": "Matchs",
+            "minutes": "Minutes",
             "goals": "Buts",
             "assists": "Passes décisives",
             "clean_sheets": "Clean sheets",
@@ -339,6 +340,7 @@ class SeasonStatForm(forms.ModelForm):
         widgets = {
             "season": forms.TextInput(attrs={"placeholder": "Ex: 2023-2024"}),
             "matches": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
+            "minutes": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
             "goals": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
             "assists": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
             "clean_sheets": forms.NumberInput(attrs={"min": 0, "step": 1, "placeholder": "0"}),
