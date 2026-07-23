@@ -1,5 +1,6 @@
 import sys
 import os
+import traceback
 
 # ── Paths ──────────────────────────────────────────────────────────────
 APP_DIR  = '/home/baitmtzi/foot3'
@@ -26,7 +27,15 @@ try:
     from django.core.wsgi import get_wsgi_application
     application = get_wsgi_application()
 except Exception as e:
-    # Show error page instead of silent "It works!" fallback
+    # ✅ Show full traceback so you can diagnose production errors
+    _error_body = (
+        f'Django startup error:\n\n{e}\n\n'
+        f'--- Traceback ---\n{traceback.format_exc()}'
+    ).encode('utf-8', errors='replace')
+
     def application(environ, start_response):
-        start_response('500 Internal Server Error', [('Content-Type', 'text/plain')])
-        return [f'Django startup error:\n{e}'.encode()]
+        start_response('500 Internal Server Error', [
+            ('Content-Type', 'text/plain; charset=utf-8'),
+            ('Content-Length', str(len(_error_body))),
+        ])
+        return [_error_body]
