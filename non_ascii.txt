@@ -1,0 +1,93 @@
+templates/base.html:191: <!-- ── Figma Pill Footer ── -->
+templates/base.html:275: /* ── Fixed Back Button ── */
+templates/base.html:308: /* ── Dark outer wrapper ── */
+templates/base.html:319: /* ── Green pill ── */
+templates/base.html:331: /* ── Each nav item ── */
+templates/base.html:353: /* ── Active / current page ── */
+templates/base.html:360: /* ── Hover ── */
+templates/home.html:32: /* ── Language Switcher ── */
+templates/home.html:122: <!-- ── Figma Footer Nav ── -->
+templates/home.html:175: /* ── Outer dark bar ── */
+templates/home.html:186: /* ── Green pill ── */
+templates/home.html:199: /* ── Each item ── */
+templates/offline.html:113: <div class="offline-icon">⚽</div>
+templates\accounts/login.html:167: /* ── Language Switcher ── */
+templates\accounts/login.html:313: /* ── Password toggle ── */
+templates\accounts/register_role.html:193: /* ── Language Switcher ── */
+templates\accounts/register_role.html:339: /* ── Role selection ── */
+templates\accounts/verify_otp.html:272: // ── OTP digit boxes logic ──────────────────────────────────────────────
+templates\agents/dashboard.html:23: /* ── Footer Pill ── */
+templates\agents/dashboard.html:73: /* ── Top Bar ── */
+templates\agents/dashboard.html:123: /* ── Content ── */
+templates\agents/dashboard.html:137: /* ── Role Tabs ── */
+templates\agents/dashboard.html:164: /* ── Filter Card ── */
+templates\agents/dashboard.html:224: /* ── Section Headers ── */
+templates\agents/dashboard.html:245: /* ── Profile Card ── */
+templates\agents/dashboard.html:313: /* ── Empty State ── */
+templates\agents/dashboard.html:322: /* ── Modal override ── */
+templates\agents/dashboard.html:388: <!-- ── Role Tabs ── -->
+templates\agents/dashboard.html:401: <!-- ── Filters (when specific role selected) ── -->
+templates\agents/dashboard.html:481: <!-- ── Players ── -->
+templates\agents/dashboard.html:514: <!-- ── Coaches ── -->
+templates\agents/dashboard.html:546: <!-- ── Empty ── -->
+templates\agents/dashboard.html:557: <!-- ── Send Offer Modal ── -->
+templates\agents/dashboard.html:588: <!-- ── Fixed Footer Pill ── -->
+templates\agents/profile_edit.html:82: /* ── Form Card ── */
+templates\agents/profile_edit.html:172: /* ── Footer Pill ── */
+templates\agents/profile_edit.html:300: <span class="form-label-custom">N° Licence</span>
+templates\agents/profile_edit.html:331: <i class="ti ti-layout-dashboard"></i> Aller au Tableau de bord →
+templates\agents/profile_edit.html:338: <!-- ── Fixed Footer Pill ── -->
+templates\clubs/dashboard.html:323: /* ── Season auto-complete ──
+templates\clubs/profile_edit.html:141: <i class="ti ti-layout-dashboard"></i> Aller au Tableau de bord →
+templates\coaches/profile_complete.html:100: <!-- ═══ Section 0: Infos ═══ -->
+templates\coaches/profile_complete.html:129: <div class="ir"><span class="il">Salaire min</span><span class="iv {% if not profile.salary_min %}empty{% endif %}">{% if profile.salary_min %}{{ profile.salary_min }} €{% else %}—{% endif %}</span></div>
+templates\coaches/profile_complete.html:130: <div class="ir"><span class="il">Salaire max</span><span class="iv {% if not profile.salary_max %}empty{% endif %}">{% if profile.salary_max %}{{ profile.salary_max }} €{% else %}—{% endif %}</span></div>
+templates\coaches/profile_complete.html:157: <!-- ═══ Section 1: Clubs ═══ -->
+templates\coaches/profile_complete.html:182: <!-- ═══ Section 2: Files ═══ -->
+templates\coaches/profile_edit.html:114: <!-- ═══ STEP 1: Informations ═══ -->
+templates\coaches/profile_edit.html:279: <!-- ═══ STEP 2: Clubs précédents ═══ -->
+templates\coaches/profile_edit.html:296: <!-- ═══ STEP 3: Fichiers ═══ -->
+templates\offers/my_offers.html:30: /* ── Top Bar ── */
+templates\offers/my_offers.html:73: /* ── Content ── */
+templates\offers/my_offers.html:80: /* ── Messages ── */
+templates\offers/my_offers.html:89: /* ── Filter Tabs ── */
+templates\offers/my_offers.html:115: /* ── Empty State ── */
+templates\offers/my_offers.html:124: /* ── Offer Card ── */
+templates\offers/my_offers.html:238: <button class="filter-tab" onclick="filterOffers('PENDING', this)">⏳ En attente</button>
+templates\offers/my_offers.html:239: <button class="filter-tab" onclick="filterOffers('ACCEPTED', this)">✅ Acceptées</button>
+templates\offers/my_offers.html:240: <button class="filter-tab" onclick="filterOffers('DECLINED', this)">❌ Refusées</button>
+templates\offers/my_offers.html:256: &nbsp;·&nbsp;
+templates\offers/my_suggestions.html:201: <button class="filter-tab" onclick="filterOffers('PENDING', this)">⏳ En attente</button>
+templates\offers/my_suggestions.html:202: <button class="filter-tab" onclick="filterOffers('ACCEPTED', this)">✅ Acceptées</button>
+templates\offers/my_suggestions.html:203: <button class="filter-tab" onclick="filterOffers('DECLINED', this)">❌ Refusées</button>
+templates\offers/my_suggestions.html:217: &nbsp;·&nbsp;
+templates\players/profile_complete.html:116: <!-- ═══ Section 0: Infos ═══ -->
+templates\players/profile_complete.html:154: <div class="ir"><span class="il">Salaire souhaité</span><span class="iv {% if not profile.desired_salary %}empty{% endif %}">{% if profile.desired_salary %}{{ profile.desired_salary }} €{% else %}—{% endif %}</span></div>
+templates\players/profile_complete.html:155: <div class="ir"><span class="il">Valeur joueur</span><span class="iv {% if not profile.player_value %}empty{% endif %}">{% if profile.player_value %}{{ profile.player_value }} €{% else %}—{% endif %}</span></div>
+templates\players/profile_complete.html:182: <!-- ═══ Section 1: Clubs ═══ -->
+templates\players/profile_complete.html:207: <!-- ═══ Section 2: Stats ═══ -->
+templates\players/profile_complete.html:232: <!-- ═══ Section 3: Files ═══ -->
+templates\players/profile_edit.html:137: <!-- ═══ STEP 1 ═══ -->
+templates\players/profile_edit.html:318: <!-- ═══ STEP 2 : Clubs ═══ -->
+templates\players/profile_edit.html:368: <button type="button" onclick="removeSeason(this)" style="background:rgba(248,113,113,.15);border:none;border-radius:6px;padding:2px 8px;color:#f87171;font-size:.75rem;cursor:pointer">✕</button>
+templates\players/profile_edit.html:464: <!-- ═══ STEP 3 : Fichiers ═══ -->
+templates\players/profile_edit.html:487: <!-- ═══ STEP 4 : Consentement ═══ -->
+templates\players/profile_edit.html:952: /* ── File formset: add / remove ── */
+templates\players/profile_edit.html:1021: /* ── Dynamic Stats by Position ── */
+templates\players/profile_edit.html:1056: /* ── Auto-complete Season Input ── */
+templates\players/profile_edit.html:1072: /* ── API Club Autocomplete ── */
+templates\players/profile_edit.html:1151: /* ── Auto-Save Draft (Keep data on refresh) ── */
+templates\players/profile_edit.html:1205: /* ── Pull-to-Refresh ── */
+templates\players/profile_edit.html:1218: ind.innerHTML = '↓ Libérer pour actualiser';
+templates\players/profile_edit.html:1231: ind.innerHTML = dy >= PTR_THRESHOLD ? '↑ Libérer pour actualiser' : '↓ Tirer pour actualiser';
+templates\players/public_profile.html:122: ⚽
+templates\players/public_profile.html:127: <span class="profile-verified">✓ Vérifié</span>
+templates\players/public_profile.html:148: <div class="stat-icon">⚽</div>
+templates\players/public_profile.html:156: <div class="stat-icon">🎂</div>
+templates\players/public_profile.html:164: <div class="stat-icon">📊</div>
+templates\players/public_profile.html:172: <div class="stat-icon">👁️</div>
+templates\players/public_profile.html:220: 🎥
+templates\players/public_profile.html:222: 🖼️
+templates\players/public_profile.html:224: 📄
+templates\players/public_profile.html:226: 📎
+templates\players/public_profile.html:242: <div style="font-size: 3rem; opacity: 0.3;">📁</div>

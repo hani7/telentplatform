@@ -1,0 +1,8 @@
+templates\players/public_profile.html: <div class="stat-icon">🎂</div>
+templates\players/public_profile.html: <div class="stat-icon">📊</div>
+templates\players/public_profile.html: <div class="stat-icon">👁️</div>
+templates\players/public_profile.html: 🎥
+templates\players/public_profile.html: 🖼️
+templates\players/public_profile.html: 📄
+templates\players/public_profile.html: 📎
+templates\players/public_profile.html: <div style="font-size: 3rem; opacity: 0.3;">📁</div>
