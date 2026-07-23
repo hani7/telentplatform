@@ -133,8 +133,12 @@ def player_deactivate_ad(request):
     messages.info(request, "Annonce désactivée.")
     return redirect("players:profile_edit")
 
+from django.http import Http404
+
 def player_public_profile(request, pk):
-    profile = get_object_or_404(PlayerProfile, pk=pk, is_active=True)
+    profile = get_object_or_404(PlayerProfile, pk=pk)
+    if not profile.is_active and request.user != profile.user:
+        raise Http404("Profil inactif")
     return render(request, "players/public_profile.html", {"p": profile})
 
 @login_required
