@@ -13,6 +13,21 @@ def search_clubs_api(request):
     if not query:
         return JsonResponse({'results': []})
 
+    import re
+    # If query contains Arabic characters, translate it to English first
+    if re.search(r'[\u0600-\u06FF]', query):
+        try:
+            trans_url = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=ar&tl=en&dt=t&q=" + urllib.parse.quote(query)
+            trans_req = urllib.request.Request(trans_url, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(trans_req, timeout=3) as response:
+                if response.status == 200:
+                    data = json.loads(response.read().decode('utf-8'))
+                    translated = data[0][0][0]
+                    if translated:
+                        query = translated
+        except Exception:
+            pass # Silently fallback to original query if translation fails
+
     url = f"https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t={urllib.parse.quote(query)}"
     req = urllib.request.Request(url)
     # TheSportsDB recommends a user agent
