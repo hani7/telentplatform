@@ -132,7 +132,7 @@ class PlayerProfileForm(forms.ModelForm):
             "player_value": "Valeur du joueur",
             "search_objective": "Je cherche...",
 
-            "has_agent_contract": "Avez-vous un contrat avec un Agent de Football ?",
+            "has_agent_contract": "Contrat avec un Agent ?",
             "agent_full_name": "Nom complet",
             "agent_id": "ID",
             "looking_for_agent": "Cherchez-vous un agent ?",
