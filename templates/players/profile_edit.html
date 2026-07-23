@@ -703,6 +703,28 @@
     }
   });
 
+  // Navigation via les onglets (tabs)
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => {
+      const targetStep = i + 1;
+      if (targetStep === cur) return;
+      
+      // Si on avance, on vérifie que l'onglet actuel est valide
+      if (targetStep > cur) {
+        const currentCard = document.querySelector(`.fc[data-step="${cur}"]`);
+        if(currentCard) {
+          const inputs = Array.from(currentCard.querySelectorAll('input:not([type=checkbox]), select, textarea'));
+          const firstInvalid = inputs.find(inp => !inp.checkValidity());
+          if(firstInvalid) {
+            firstInvalid.reportValidity();
+            return; // Bloque la navigation si invalide
+          }
+        }
+      }
+      goStep(targetStep);
+    });
+  });
+
   function clearBlock(btn){
     const b=btn.closest('.fsi');
     if(!b)return;
