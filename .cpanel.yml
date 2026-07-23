@@ -3,6 +3,7 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/baitmtzi/foot3
     - export PYTHONPATH=/home/baitmtzi/virtualenv/foot3/3.12/bin
+    - cd $DEPLOYPATH && git checkout -- . && git clean -fd
     - $PYTHONPATH/pip install -r $DEPLOYPATH/requirements.txt --quiet
     - $PYTHONPATH/python $DEPLOYPATH/manage.py migrate --noinput
     - $PYTHONPATH/python $DEPLOYPATH/manage.py collectstatic --noinput
