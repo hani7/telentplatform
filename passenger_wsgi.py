@@ -21,7 +21,7 @@ if APP_DIR not in sys.path:
 
 # ── Django ─────────────────────────────────────────────────────────────
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'talent_platform.settings')
-os.environ['DEBUG'] = '1'  # TEMPORARY: see 500 traceback — revert after fix
+os.environ['DEBUG'] = '0'
 
 try:
     from django.core.wsgi import get_wsgi_application
