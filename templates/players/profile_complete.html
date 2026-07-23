@@ -1,438 +1,358 @@
-{% extends "base.html" %}
 {% load static %}
-{% block title %}{{ profile.first_name }} {{ profile.last_name }} - Profil{% endblock %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mon Profil - FOOTOP</title>
+  <link rel="icon" href="{% static 'img/core-img/favicon.ico' %}">
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tabler-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
 
-{% block head %}
-<style>
-  body {
-    background: #0f1e14;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding-bottom: 90px; /* Space for footer */
-  }
+  <style>
+    html,body{margin:0;padding:0;min-height:100vh;background:#0a1a0f}
 
-  /* Header / Cover */
-  .p-header {
-    background: linear-gradient(to bottom, rgba(29, 185, 91, 0.15), #0f1e14);
-    padding: 3rem 1.5rem 1.5rem;
-    text-align: center;
-    position: relative;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
+    .pw{min-height:100vh;background:linear-gradient(135deg,#0a1a0f 0%,#0d2b18 60%,#0a1a0f 100%);padding:0 0 6rem}
 
-  .p-avatar-box {
-    position: relative;
-    width: 140px;
-    height: 140px;
-    margin: 0 auto 1.5rem;
-  }
+    /* Top bar */
+    .topbar{background:rgba(255,255,255,.05);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.1);padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:20}
+    .topbar h1{color:#fff;font-size:1.15rem;font-weight:700;margin:0;flex:1}
+    .btn-edit{background:rgba(241,177,15,.15);border:1px solid rgba(241,177,15,.4);border-radius:20px;color:#f1b10f;font-weight:600;font-size:.82rem;padding:5px 14px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:background .2s}
+    .btn-edit:hover{background:rgba(241,177,15,.3);color:#f1b10f}
 
-  .p-avatar {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #f1b10f;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    background: rgba(255,255,255,0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    color: rgba(255,255,255,0.2);
-  }
+    .content{max-width:600px;margin:0 auto;padding:1.5rem 1rem}
 
-  .badge-mineur {
-    position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #e74c3c;
-    color: #fff;
-    font-size: 0.75rem;
-    font-weight: 800;
-    padding: 4px 12px;
-    border-radius: 50px;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
-    border: 2px solid #0f1e14;
-  }
+    /* Completion bar */
+    .comp-card{background:rgba(255,255,255,.06);backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,.12);border-radius:16px;padding:1rem;margin-bottom:1rem}
+    .comp-label{display:flex;justify-content:space-between;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.7);margin-bottom:8px}
+    .comp-track{background:rgba(255,255,255,.12);border-radius:50px;height:8px;overflow:hidden}
+    .comp-fill{height:100%;background:linear-gradient(90deg,#1db95b,#f1b10f);border-radius:50px;transition:width .8s ease}
 
-  .p-name {
-    font-size: 1.8rem;
-    font-weight: 800;
-    margin: 0 0 0.5rem;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
+    /* Tabs */
+    .ptabs{display:flex;gap:6px;margin-bottom:1rem;overflow-x:auto;padding-bottom:4px}
+    .ptab{flex-shrink:0;padding:8px 16px;border-radius:50px;font-size:.8rem;font-weight:600;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);cursor:pointer;transition:all .2s;white-space:nowrap}
+    .ptab.active{background:#f1b10f;border-color:#f1b10f;color:#000;font-weight:700}
 
-  .p-verified {
-    color: #1db95b;
-    font-size: 1.2rem;
-  }
+    /* Profile Header */
+    .p-header { text-align: center; margin-bottom: 1.5rem; }
+    .p-avatar-wrap { position: relative; width: 100px; height: 100px; margin: 0 auto 1rem; }
+    .p-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #f1b10f; box-shadow: 0 0 20px rgba(241, 177, 15, 0.3); background: #111; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: rgba(255,255,255,0.2); }
+    .badge-mineur { position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); background: #e74c3c; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 3px 8px; border-radius: 50px; border: 2px solid #0a1a0f; text-transform: uppercase; letter-spacing: 0.05em; }
+    .p-name { font-size: 1.6rem; font-weight: 800; margin: 0 0 0.5rem; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .p-verified { color: #3498db; font-size: 1.2rem; }
+    .p-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 1rem; }
+    .p-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 5px; color: rgba(255,255,255,0.9); }
+    .p-tag-gold { background: rgba(241, 177, 15, 0.1); border-color: rgba(241, 177, 15, 0.3); color: #f1b10f; }
+    .p-tag-green { background: rgba(29, 185, 91, 0.1); border-color: rgba(29, 185, 91, 0.3); color: #1db95b; }
 
-  .p-tags {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 1.5rem;
-  }
+    /* Section */
+    .psec{display:none}
+    .psec.active{display:block;animation:fadeUp .25s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-  .p-tag {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    padding: 6px 14px;
-    border-radius: 50px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: rgba(255,255,255,0.9);
-  }
+    /* Info card */
+    .ic{background:rgba(255,255,255,.06);backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,.12);border-radius:18px;padding:1rem;margin-bottom:.8rem}
+    .ic h5{color:#f1b10f;font-size:.95rem;font-weight:700;margin-bottom:.8rem;display:flex;align-items:center;gap:6px}
+    .ir{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:.84rem}
+    .ir:last-child{border-bottom:none}
+    .il{color:rgba(255,255,255,.55);font-weight:500;flex:0 0 45%}
+    .iv{color:#fff;font-weight:600;text-align:right;flex:1}
+    .iv.empty{color:rgba(255,255,255,.3);font-weight:400;font-style:italic}
 
-  .p-tag-gold {
-    background: rgba(241, 177, 15, 0.1);
-    border-color: rgba(241, 177, 15, 0.3);
-    color: #f1b10f;
-  }
+    /* Table */
+    .ptable{width:100%;border-collapse:collapse;font-size:.82rem}
+    .ptable th{background:rgba(241,177,15,.1);color:#f1b10f;font-weight:700;padding:8px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.12)}
+    .ptable td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.8)}
+    .ptable tr:last-child td{border-bottom:none}
 
-  .p-tag-green {
-    background: rgba(29, 185, 91, 0.1);
-    border-color: rgba(29, 185, 91, 0.3);
-    color: #1db95b;
-  }
+    .empty-state{text-align:center;padding:2rem 1rem;color:rgba(255,255,255,.4)}
+    .empty-state i{font-size:2rem;display:block;margin-bottom:8px;opacity:.5}
 
-  /* Cards */
-  .p-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+    /* File list */
+    .fi-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+    .fi-item:last-child{border-bottom:none}
+    .fi-icon{width:38px;height:38px;border-radius:10px;background:rgba(241,177,15,.12);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;color:#f1b10f}
+    .fi-info{flex:1}
+    .fi-name{font-size:.86rem;font-weight:600;color:#fff}
+    .fi-type{font-size:.72rem;color:rgba(255,255,255,.5)}
+    .fi-dl{color:#f1b10f;font-size:1.1rem;text-decoration:none}
 
-  .p-card {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 24px;
-    padding: 1.5rem;
-    backdrop-filter: blur(10px);
-  }
+    /* Nav buttons */
+    .snav{display:flex;gap:8px;margin-top:.8rem}
+    .sb{flex:1;padding:10px;border-radius:50px;font-weight:600;font-size:.85rem;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+    .sb-prev{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
+    .sb-prev:hover{background:rgba(255,255,255,.18);color:#fff}
+    .sb-next{background:#f1b10f;color:#000}
+    .sb-next:hover{background:#d9a00d}
 
-  .p-card-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .p-card-title i {
-    color: #1db95b;
-    font-size: 1.4rem;
-  }
+    /* Footer */
+    .footer-outer{position:fixed;bottom:0;left:0;right:0;background:transparent;padding:4px 14px calc(4px + env(safe-area-inset-bottom));z-index:999;display:flex;justify-content:center}
+    .footer-pill{background:#1db95b;border-radius:999px;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;width:100%;max-width:500px}
+    .footer-pill-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.67rem;font-weight:500;padding:4px 14px;border-radius:14px;border:none;transition:all .18s ease;white-space:nowrap;min-width:60px}
+    .footer-pill-item i{font-size:1.45rem;line-height:1}
+    .footer-pill-item.is-active{font-weight:700;color:#fff}
+    .footer-pill-item:hover{color:#fff;background:rgba(0,0,0,.12)}
+  </style>
+</head>
 
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1.2rem;
-  }
+<body>
+<div class="pw">
 
-  .info-item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .info-label {
-    font-size: 0.75rem;
-    color: rgba(255,255,255,0.5);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 600;
-  }
-
-  .info-val {
-    font-size: 0.95rem;
-    color: #fff;
-    font-weight: 500;
-  }
-
-  /* Files */
-  .file-item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: rgba(255,255,255,0.03);
-    padding: 12px 15px;
-    border-radius: 16px;
-    text-decoration: none;
-    color: #fff;
-    margin-bottom: 10px;
-    transition: background 0.2s;
-    border: 1px solid rgba(255,255,255,0.05);
-  }
-  .file-item:hover {
-    background: rgba(255,255,255,0.06);
-  }
-  .file-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(29,185,91,0.15);
-    color: #1db95b;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4rem;
-  }
-  .file-info {
-    flex: 1;
-  }
-  .file-name {
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin-bottom: 2px;
-  }
-  .file-type {
-    font-size: 0.75rem;
-    color: rgba(255,255,255,0.5);
-  }
-
-  /* Club Seasons */
-  .season-item {
-    padding-left: 15px;
-    border-left: 2px solid rgba(255,255,255,0.1);
-    margin-bottom: 1.5rem;
-    position: relative;
-  }
-  .season-item::before {
-    content: '';
-    position: absolute;
-    left: -6px;
-    top: 0;
-    width: 10px;
-    height: 10px;
-    background: #f1b10f;
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(241,177,15,0.5);
-  }
-
-  /* Mobile Footer Premium */
-  .footer-outer{position:fixed;bottom:0;left:0;right:0;padding:0 12px calc(10px + env(safe-area-inset-bottom));z-index:999;display:flex;justify-content:center;pointer-events:none}
-  .footer-pill{pointer-events:auto;background:linear-gradient(135deg, #2ecc71, #27ae60);border-radius:50px;display:flex;align-items:center;justify-content:space-around;padding:8px 6px;width:100%;max-width:480px;box-shadow:0 10px 30px rgba(39,174,96,.4)}
-  .footer-pill-item{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:rgba(255,255,255,.85);text-decoration:none;font-size:.65rem;font-weight:500;letter-spacing:.02em;padding:8px 6px;border-radius:16px;border:none;background:none;transition:all .25s cubic-bezier(.4,0,.2,1);flex:1;text-align:center;cursor:pointer}
-  .footer-pill-item i{font-size:1.35rem;line-height:1;display:block;transition:transform .25s cubic-bezier(.4,0,.2,1),color .25s}
-  .footer-pill-item span{transition:color .25s}
-  .footer-pill-item:hover{color:#fff}
-  .footer-pill-item:hover i{transform:translateY(-1px)}
-  .footer-pill-item:active i{transform:scale(.9)}
-  .footer-pill-item.is-active{color:#fff;font-weight:700}
-  .footer-pill-item.is-active i{color:#fff;transform:translateY(-2px);filter:drop-shadow(0 2px 6px rgba(255,255,255,.5))}
-</style>
-{% endblock %}
-
-{% block content %}
-<!-- Header -->
-<div class="p-header">
-  <div class="p-avatar-box">
-    {% if profile.profile_photo %}
-      <img src="{{ profile.profile_photo.url }}" class="p-avatar" alt="Photo de profil">
-    {% else %}
-      <div class="p-avatar"><i class="ti ti-user"></i></div>
-    {% endif %}
-    {% if profile.is_minor %}
-      <div class="badge-mineur">MINEUR</div>
-    {% endif %}
+  <!-- Top bar -->
+  <div class="topbar">
+    <h1>
+      <i class="ti ti-ball-football" style="color:#f1b10f"></i>
+      {% if profile.first_name %}{{ profile.first_name }} {{ profile.last_name }}{% else %}Mon Profil{% endif %}
+    </h1>
+    <a href="{% url 'players:profile_edit' %}" class="btn-edit"><i class="ti ti-edit"></i> Modifier</a>
   </div>
 
-  <h1 class="p-name">
-    {{ profile.first_name }} {{ profile.last_name }}
-    {% if profile.is_active %}<i class="ti ti-discount-check-filled p-verified" title="Vérifié"></i>{% endif %}
-  </h1>
+  <div class="content">
 
-  <div class="p-tags">
-    <!-- Account Status -->
-    {% if profile.profile_status == 'ACTIVE' %}
-      <div class="p-tag" style="background:rgba(16, 185, 129, 0.15); color:#10b981; border-color:rgba(16, 185, 129, 0.3);">
-        <i class="ti ti-circle-check"></i> Compte Actif
-      </div>
-    {% else %}
-      <div class="p-tag" style="background:rgba(245, 158, 11, 0.15); color:#f59e0b; border-color:rgba(245, 158, 11, 0.3);" onclick="alert('Votre profil est en cours de validation. Si vous êtes mineur, votre tuteur doit valider l\'email reçu.')">
-        <i class="ti ti-clock"></i> En attente de validation
-      </div>
-    {% endif %}
-    <!-- Club Logo & Name -->
-    <div class="p-tag p-tag-green">
-      <i class="ti ti-shield"></i> {{ profile.current_club_name|default:"Libre" }}
-    </div>
-    <!-- Nationality -->
-    <div class="p-tag">
-      <i class="ti ti-flag"></i> {{ profile.nationality|default:"International" }}
-    </div>
-    <!-- Age -->
-    {% if profile.age %}
-    <div class="p-tag">
-      <i class="ti ti-calendar"></i> {{ profile.age }} ans
-    </div>
-    {% endif %}
-    <!-- Position -->
-    <div class="p-tag p-tag-gold">
-      <i class="ti ti-shoe"></i> {{ profile.position|default:"Non spécifié" }}
-    </div>
-    <!-- Foot -->
-    {% if profile.get_foot_display %}
-    <div class="p-tag">
-      <i class="ti ti-footprints"></i> Pied: {{ profile.get_foot_display }}
-    </div>
-    {% endif %}
-  </div>
-</div>
-
-<div class="p-container">
-
-  <!-- Infos Personnelles -->
-  <div class="p-card">
-    <div class="p-card-title"><i class="ti ti-user-scan"></i> Informations du joueur</div>
-    <div class="info-grid">
-      <div class="info-item">
-        <span class="info-label">Statut</span>
-        <span class="info-val">{{ profile.get_status_display|default:"-" }}</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Disponibilité</span>
-        <span class="info-val">{{ profile.get_availability_display|default:"-" }}</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Taille</span>
-        <span class="info-val">{% if profile.height_cm %}{{ profile.height_cm }} cm{% else %}-{% endif %}</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Poids</span>
-        <span class="info-val">{% if profile.weight_kg %}{{ profile.weight_kg }} kg{% else %}-{% endif %}</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Agent</span>
-        <span class="info-val">{% if profile.has_agent_contract %}Oui ({{ profile.agent_full_name }}){% else %}Non{% endif %}</span>
-      </div>
-      <div class="info-item">
-        <span class="info-label">Recherche d'agent</span>
-        <span class="info-val">{% if profile.looking_for_agent %}Oui{% else %}Non{% endif %}</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Objectif de Recherche -->
-  {% if profile.search_objective or p.desired_salary or p.player_value %}
-  <div class="p-card">
-    <div class="p-card-title"><i class="ti ti-target"></i> Objectifs & Valeur</div>
-    <div class="info-grid">
-      {% if profile.search_objective %}
-      <div class="info-item" style="grid-column: 1 / -1;">
-        <span class="info-label">Je cherche...</span>
-        <span class="info-val">{{ profile.get_search_objective_display|default:p.search_objective }}</span>
-      </div>
-      {% endif %}
-      
-      {% if profile.desired_salary %}
-      <div class="info-item">
-        <span class="info-label">Salaire Souhaité</span>
-        <span class="info-val" style="color:#f1b10f; font-weight:700;">{{ profile.desired_salary }} {{ profile.currency|default:"EUR" }}</span>
-      </div>
-      {% endif %}
-
-      {% if profile.player_value %}
-      <div class="info-item">
-        <span class="info-label">Valeur du Joueur</span>
-        <span class="info-val" style="color:#f1b10f; font-weight:700;">{{ profile.player_value }} {{ profile.currency|default:"EUR" }}</span>
-      </div>
-      {% endif %}
-    </div>
-  </div>
-  {% endif %}
-
-  <!-- Clubs Précédents -->
-  {% if profile.previous_clubs.exists %}
-  <div class="p-card">
-    <div class="p-card-title"><i class="ti ti-history"></i> Parcours & Clubs Précédents</div>
-    {% for club in profile.previous_clubs.all %}
-      <div class="season-item">
-        <div style="font-weight: 700; font-size: 1.1rem;">{{ club.club_name }}</div>
-        <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-bottom: 0.5rem;">
-          {{ club.country|default:"-" }} • {{ club.division|default:"-" }} • Saison {{ club.season|default:"N/A" }}
-        </div>
-        
-        <!-- Stats for this club -->
-        {% if club.seasons.exists %}
-          <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; font-size: 0.85rem;">
-            {% for stat in club.seasons.all %}
-              <div style="display:flex; gap:15px; flex-wrap:wrap;">
-                <div><span style="color:rgba(255,255,255,0.5)">Matchs:</span> <b style="color:#fff">{{ stat.matches }}</b></div>
-                <div><span style="color:rgba(255,255,255,0.5)">Buts:</span> <b style="color:#fff">{{ stat.goals }}</b></div>
-                <div><span style="color:rgba(255,255,255,0.5)">Passes D.:</span> <b style="color:#fff">{{ stat.assists }}</b></div>
-                <div><span style="color:rgba(255,255,255,0.5)">Minutes:</span> <b style="color:#fff">{{ stat.minutes }}</b></div>
-              </div>
-            {% endfor %}
-          </div>
+    <!-- Profile Header -->
+    <div class="p-header" style="margin-bottom:1.5rem; text-align:center;">
+      <div class="p-avatar-wrap">
+        {% if profile.profile_photo %}
+          <img src="{{ profile.profile_photo.url }}" alt="Photo de profil" class="p-avatar">
+        {% else %}
+          <div class="p-avatar"><i class="ti ti-user"></i></div>
+        {% endif %}
+        {% if profile.is_minor %}
+          <div class="badge-mineur">MINEUR</div>
         {% endif %}
       </div>
-    {% endfor %}
-  </div>
-  {% endif %}
 
-  <!-- Fichiers -->
-  {% if profile.files.exists %}
-  <div class="p-card">
-    <div class="p-card-title"><i class="ti ti-folder"></i> Documents & Médias</div>
-    {% for f in profile.files.all %}
-      <a href="{{ f.file.url }}" target="_blank" class="file-item">
-        <div class="file-icon">
-          {% if f.file_type == 'VIDEO' %}<i class="ti ti-movie"></i>
-          {% elif f.file_type == 'CV' %}<i class="ti ti-file-text"></i>
-          {% elif f.file_type == 'PHOTO' %}<i class="ti ti-photo"></i>
-          {% else %}<i class="ti ti-paperclip"></i>{% endif %}
-        </div>
-        <div class="file-info">
-          <div class="file-name">{{ f.title|default:"Fichier joint" }}</div>
-          <div class="file-type">{{ f.get_file_type_display }}</div>
-        </div>
-        <i class="ti ti-download" style="color:rgba(255,255,255,0.3); font-size:1.2rem;"></i>
-      </a>
-    {% endfor %}
-  </div>
-  {% endif %}
+      <h1 class="p-name">
+        {{ profile.first_name }} {{ profile.last_name }}
+        {% if profile.is_active %}<i class="ti ti-discount-check-filled p-verified" title="Vérifié"></i>{% endif %}
+      </h1>
 
+      <div class="p-tags">
+        <!-- Account Status -->
+        
+        <!-- Club Logo & Name -->
+        <div class="p-tag p-tag-green">
+          <i class="ti ti-shield"></i> {{ profile.current_club_name|default:"Libre" }}
+        </div>
+        <!-- Nationality -->
+        <div class="p-tag">
+          <i class="ti ti-flag"></i> {{ profile.nationality|default:"International" }}
+        </div>
+        <!-- Age -->
+        {% if profile.age %}
+        <div class="p-tag">
+          <i class="ti ti-calendar"></i> {{ profile.age }} ans
+        </div>
+        {% endif %}
+        <!-- Position -->
+        <div class="p-tag p-tag-gold">
+          <i class="ti ti-shoe"></i> {{ profile.position|default:"Non spécifié" }}
+        </div>
+        <!-- Foot -->
+        {% if profile.get_foot_display %}
+        <div class="p-tag">
+          <i class="ti ti-footprints"></i> Pied: {{ profile.get_foot_display }}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+
+    <!-- Completion -->
+    <div class="comp-card">
+      <div class="comp-label"><span>Profil complété</span><span>{{ completion_percentage }}%</span></div>
+      <div class="comp-track"><div class="comp-fill" style="width:{{ completion_percentage }}%"></div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="ptabs">
+      <button class="ptab active" onclick="showTab(0)"><i class="ti ti-user"></i> Infos</button>
+      <button class="ptab" onclick="showTab(1)"><i class="ti ti-building"></i> Clubs</button>
+      <button class="ptab" onclick="showTab(2)"><i class="ti ti-chart-bar"></i> Stats</button>
+      <button class="ptab" onclick="showTab(3)"><i class="ti ti-file"></i> Fichiers</button>
+    </div>
+
+    <!-- ═══ Section 0: Infos ═══ -->
+    <div class="psec active" data-s="0">
+
+      <div class="ic">
+        <h5><i class="ti ti-user-circle"></i> Informations personnelles</h5>
+        <div class="ir"><span class="il">Prénom</span><span class="iv {% if not profile.first_name %}empty{% endif %}">{{ profile.first_name|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Nom</span><span class="iv {% if not profile.last_name %}empty{% endif %}">{{ profile.last_name|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Date de naissance</span><span class="iv {% if not profile.birth_date %}empty{% endif %}">{{ profile.birth_date|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Âge</span><span class="iv {% if not profile.age %}empty{% endif %}">{% if profile.age %}{{ profile.age }} ans{% else %}—{% endif %}</span></div>
+        <div class="ir"><span class="il">Lieu de naissance</span><span class="iv {% if not profile.birth_place %}empty{% endif %}">{{ profile.birth_place|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Nationalité</span><span class="iv {% if not profile.nationality %}empty{% endif %}">{{ profile.nationality|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Genre</span><span class="iv {% if not profile.gender %}empty{% endif %}">{{ profile.get_gender_display|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Joueur mineur</span><span class="iv">{% if profile.is_minor %}Oui{% else %}Non{% endif %}</span></div>
+      </div>
+
+      <div class="ic">
+        <h5><i class="ti ti-ball-football"></i> Informations football</h5>
+        <div class="ir"><span class="il">Statut</span><span class="iv {% if not profile.status %}empty{% endif %}">{{ profile.get_status_display|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Poste</span><span class="iv {% if not profile.position %}empty{% endif %}">{{ profile.position|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Pied fort</span><span class="iv {% if not profile.foot %}empty{% endif %}">{{ profile.get_foot_display|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Taille</span><span class="iv {% if not profile.height_cm %}empty{% endif %}">{% if profile.height_cm %}{{ profile.height_cm }} cm{% else %}—{% endif %}</span></div>
+        <div class="ir"><span class="il">Poids</span><span class="iv {% if not profile.weight_kg %}empty{% endif %}">{% if profile.weight_kg %}{{ profile.weight_kg }} kg{% else %}—{% endif %}</span></div>
+        <div class="ir"><span class="il">Disponibilité</span><span class="iv {% if not profile.availability %}empty{% endif %}">{{ profile.get_availability_display|default:"—" }}</span></div>
+      </div>
+
+      {% if profile.availability == 'IN_CLUB' %}
+      <div class="ic">
+        <h5><i class="ti ti-home"></i> Nom du club</h5>
+        <div class="ir"><span class="il">Nom du club</span><span class="iv {% if not profile.current_club_name %}empty{% endif %}">{{ profile.current_club_name|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Pays</span><span class="iv {% if not profile.current_club_country %}empty{% endif %}">{{ profile.current_club_country|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Division</span><span class="iv {% if not profile.current_club_division %}empty{% endif %}">{{ profile.current_club_division|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Début contrat</span><span class="iv {% if not profile.current_club_start %}empty{% endif %}">{{ profile.current_club_start|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Fin contrat</span><span class="iv {% if not profile.contract_end_date %}empty{% endif %}">{{ profile.contract_end_date|default:"—" }}</span></div>
+      </div>
+      {% endif %}
+
+      <div class="ic">
+        <h5><i class="ti ti-currency-euro"></i> Finances & Objectifs</h5>
+        <div class="ir"><span class="il">Salaire souhaité</span><span class="iv {% if not profile.desired_salary %}empty{% endif %}">{% if profile.desired_salary %}{{ profile.desired_salary }} {{ profile.currency|default:"EUR" }}{% else %}—{% endif %}</span></div>
+        <div class="ir"><span class="il">Valeur joueur</span><span class="iv {% if not profile.player_value %}empty{% endif %}">{% if profile.player_value %}{{ profile.player_value }} {{ profile.currency|default:"EUR" }}{% else %}—{% endif %}</span></div>
+        <div class="ir"><span class="il">Objectif</span><span class="iv {% if not profile.search_objective %}empty{% endif %}">{{ profile.search_objective|default:"—" }}</span></div>
+        <div class="ir"><span class="il">Clubs visés</span><span class="iv {% if not profile.target_club_notes %}empty{% endif %}">{{ profile.target_club_notes|default:"—" }}</span></div>
+      </div>
+
+      <div class="ic">
+        <h5><i class="ti ti-briefcase"></i> Agent</h5>
+        <div class="ir"><span class="il">Contrat agent</span><span class="iv">{% if profile.has_agent_contract %}Oui{% else %}Non{% endif %}</span></div>
+        {% if profile.has_agent_contract %}
+        <div class="ir"><span class="il">Nom de l'agent</span><span class="iv {% if not profile.agent_full_name %}empty{% endif %}">{{ profile.agent_full_name|default:"—" }}</span></div>
+        <div class="ir"><span class="il">ID de l'agent</span><span class="iv {% if not profile.agent_id %}empty{% endif %}">{{ profile.agent_id|default:"—" }}</span></div>
+        {% else %}
+        <div class="ir"><span class="il">Cherche un agent</span><span class="iv">{% if profile.looking_for_agent %}Oui{% else %}Non{% endif %}</span></div>
+        {% endif %}
+      </div>
+
+      <div class="ic">
+        <h5><i class="ti ti-link"></i> Transfermarkt</h5>
+        <div class="ir"><span class="il">Profil existant</span><span class="iv">{% if profile.has_transfermarkt %}Oui{% else %}Non{% endif %}</span></div>
+        {% if profile.has_transfermarkt %}
+        <div class="ir"><span class="il">Username ou lien</span><span class="iv {% if not profile.transfermarkt_username %}empty{% endif %}">{{ profile.transfermarkt_username|default:"—" }}</span></div>
+        {% endif %}
+      </div>
+
+      <div class="snav"><button class="sb sb-next" onclick="showTab(1)">Clubs <i class="ti ti-arrow-right"></i></button></div>
+    </div>
+
+    <!-- ═══ Section 1: Clubs ═══ -->
+    <div class="psec" data-s="1">
+      <div class="ic">
+        <h5><i class="ti ti-building"></i> Clubs précédents</h5>
+        {% if previous_clubs %}
+          <div style="overflow-x:auto">
+            <table class="ptable">
+              <thead><tr><th>Club</th><th>Pays</th><th>Division</th><th>Début</th><th>Fin</th></tr></thead>
+              <tbody>
+                {% for club in previous_clubs %}
+                <tr><td>{{ club.club_name|default:"—" }}</td><td>{{ club.country|default:"—" }}</td><td>{{ club.division|default:"—" }}</td><td>{{ club.start_date|default:"—" }}</td><td>{{ club.end_date|default:"—" }}</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="empty-state"><i class="ti ti-building-off"></i>Aucun club précédent renseigné</div>
+        {% endif %}
+      </div>
+      <div class="snav">
+        <button class="sb sb-prev" onclick="showTab(0)"><i class="ti ti-arrow-left"></i> Infos</button>
+        <button class="sb sb-next" onclick="showTab(2)">Stats <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══ Section 2: Stats ═══ -->
+    <div class="psec" data-s="2">
+      <div class="ic">
+        <h5><i class="ti ti-chart-bar"></i> Statistiques par saison</h5>
+        {% if stats %}
+          <div style="overflow-x:auto">
+            <table class="ptable">
+              <thead><tr><th>Saison</th><th>Matchs</th><th>Buts</th><th>Passes décisives</th><th>Minutes</th></tr></thead>
+              <tbody>
+                {% for s in stats %}
+                <tr><td>{{ s.season|default:"—" }}</td><td>{{ s.matches }}</td><td>{{ s.goals }}</td><td>{{ s.assists }}</td><td>{{ s.minutes }}</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="empty-state"><i class="ti ti-chart-off"></i>Aucune statistique renseignée</div>
+        {% endif %}
+      </div>
+      <div class="snav">
+        <button class="sb sb-prev" onclick="showTab(1)"><i class="ti ti-arrow-left"></i> Clubs</button>
+        <button class="sb sb-next" onclick="showTab(3)">Fichiers <i class="ti ti-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══ Section 3: Files ═══ -->
+    <div class="psec" data-s="3">
+      <div class="ic">
+        <h5><i class="ti ti-file-upload"></i> Fichiers</h5>
+        {% if files %}
+          {% for f in files %}
+          <div class="fi-item">
+            <div class="fi-icon">
+              {% if f.file_type == 'CV' %}<i class="ti ti-file-text"></i>
+              {% elif f.file_type == 'PHOTO' %}<i class="ti ti-photo"></i>
+              {% elif f.file_type == 'VIDEO' %}<i class="ti ti-video"></i>
+              {% else %}<i class="ti ti-paperclip"></i>{% endif %}
+            </div>
+            <div class="fi-info">
+              <div class="fi-name">{{ f.title|default:f.file.name }}</div>
+              <div class="fi-type">{{ f.get_file_type_display }}</div>
+            </div>
+            <a href="{{ f.file.url }}" target="_blank" class="fi-dl"><i class="ti ti-download"></i></a>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state"><i class="ti ti-file-off"></i>Aucun fichier téléchargé</div>
+        {% endif %}
+      </div>
+      <div class="snav">
+        <button class="sb sb-prev" onclick="showTab(2)"><i class="ti ti-arrow-left"></i> Stats</button>
+      </div>
+    </div>
+
+  </div>
 </div>
 
-<!-- Footer Mobile Premium for logged in owners -->
-{% if request.user.is_authenticated and request.user == profile.user %}
+<!-- Footer -->
 <div class="footer-outer">
   <nav class="footer-pill">
-    <a href="{% url 'players:public_profile' profile.pk %}" class="footer-pill-item">
-      <i class="ti ti-user-circle"></i><span>Profil</span>
-    </a>
-    <a href="{% url 'players:profile_complete' %}" class="footer-pill-item is-active">
-      <i class="ti ti-eye"></i><span>Aperçu</span>
-    </a>
-    <a href="{% url 'players:profile_edit' %}" class="footer-pill-item">
-      <i class="ti ti-pencil"></i><span>Editer</span>
-    </a>
-    <a href="/offers/my/" class="footer-pill-item">
-      <i class="ti ti-clipboard-text"></i><span>Mes offres</span>
-    </a>
-    <a href="/accounts/logout/" class="footer-pill-item">
-      <i class="ti ti-logout"></i><span>Déconnexion</span>
-    </a>
+    {% if profile.pk %}
+      <a href="{% url 'players:public_profile' profile.pk %}" class="footer-pill-item"><i class="ti ti-user-circle"></i><span>Profil</span></a>
+    {% else %}
+      <a href="#" class="footer-pill-item"><i class="ti ti-user-circle"></i><span>Profil</span></a>
+    {% endif %}
+    <a href="{% url 'players:profile_complete' %}" class="footer-pill-item is-active"><i class="ti ti-eye"></i><span>Aperçu</span></a>
+    <a href="{% url 'players:profile_edit' %}" class="footer-pill-item"><i class="ti ti-pencil"></i><span>Editer</span></a>
+    <a href="/offers/my/" class="footer-pill-item"><i class="ti ti-clipboard-list"></i><span>Mes offres</span></a>
+
+    <a href="/accounts/logout/" class="footer-pill-item"><i class="ti ti-logout"></i><span>Déconnexion</span></a>
   </nav>
 </div>
-{% endif %}
 
-{% endblock %}
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script>
+  const tabs=document.querySelectorAll('.ptab');
+  const secs=document.querySelectorAll('.psec');
+
+  function showTab(i){
+    tabs.forEach((t,j)=>t.classList.toggle('active',j===i));
+    secs.forEach((s,j)=>s.classList.toggle('active',j===i));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  window.addEventListener('load',function(){
+    const f=document.querySelector('.comp-fill');
+    if(f){const w=f.style.width;f.style.width='0%';setTimeout(()=>f.style.width=w,200)}
+  });
+</script>
+</body>
+</html>
