@@ -334,17 +334,23 @@
                 {{ club_form.club_name }}
                 <div class="club-autocomplete-results" style="display:none; position:absolute; z-index:100; background:#1c1c1e; border:1px solid rgba(255,255,255,.1); border-radius:8px; width:100%; max-height:200px; overflow-y:auto; box-shadow:0 10px 15px -3px rgba(0,0,0,0.5); margin-top:4px;"></div>
               </div>
-              <div class="col-6">
+              <div class="col-6 pays-col">
                 {{ club_form.country.errors }}
                 <span class="fl">{{ club_form.country.label }}</span>
                 {{ club_form.country }}
               </div>
-              <div class="col-6">
+              <div class="col-6 div-col">
                 {{ club_form.division.errors }}
                 <span class="fl">{{ club_form.division.label }}</span>
                 {{ club_form.division }}
               </div>
             </div>
+            <style>
+              .pays-col .sd-trigger, .div-col input {
+                border-radius: 50px !important;
+                height: 42px !important;
+              }
+            </style>
             {% for hidden in club_form.hidden_fields %}{{ hidden }}{% endfor %}
             {{ club_form.DELETE }}
 
