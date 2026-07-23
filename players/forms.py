@@ -169,15 +169,14 @@ class PlayerProfileForm(forms.ModelForm):
 
             "parent_email": forms.EmailInput(attrs={"type": "email", "placeholder": "Email du parent/tuteur"}),
             "parent_phone": forms.TextInput(attrs={"type": "tel", "placeholder": "Téléphone du parent/tuteur"}),
-            "parent_relation": forms.Select(attrs={"data-sd-skip": "1", "id": "id_parent_relation"}),
+            "parent_relation": forms.Select(attrs={"id": "id_parent_relation"}),
             "parent_relation_other": forms.TextInput(attrs={"id": "id_parent_relation_other"}),
             "parent_birth_date": forms.DateInput(attrs={"type": "date"}),
             # parent_nationality widget is defined on the class-level ChoiceField override
             "parent_address": forms.TextInput(attrs={"placeholder": "Adresse complète"}),
 
-            # Compact dropdowns (no pill, no search popup)
-            "gender": forms.Select(attrs={"data-sd-skip": "1"}),
-            "foot": forms.Select(attrs={"data-sd-skip": "1"}),
+            "gender": forms.Select(),
+            "foot": forms.Select(),
         }
 
     def __init__(self, *args, **kwargs):
@@ -186,7 +185,7 @@ class PlayerProfileForm(forms.ModelForm):
         for field in ['has_agent_contract', 'looking_for_agent', 'has_transfermarkt']:
             self.fields[field].widget = forms.Select(
                 choices=[('', '---------')] + bool_choices,
-                attrs={"class": "form-control", "data-sd-skip": "1"}
+                attrs={"class": "form-control"}
             )
             self.fields[field].required = False
 
