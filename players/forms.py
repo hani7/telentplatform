@@ -90,7 +90,7 @@ class PlayerProfileForm(forms.ModelForm):
 
             "player_value", "search_objective",
 
-            "has_agent_contract", "agent_full_name", "agent_id", "looking_for_agent", "represent_self",
+            "has_agent_contract", "agent_full_name", "agent_id", "looking_for_agent",
 
             "has_transfermarkt", "transfermarkt_username",
             "target_club_notes",
@@ -183,7 +183,7 @@ class PlayerProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         bool_choices = [(True, 'Oui'), (False, 'Non')]
-        for field in ['has_agent_contract', 'looking_for_agent', 'has_transfermarkt', 'represent_self']:
+        for field in ['has_agent_contract', 'looking_for_agent', 'has_transfermarkt']:
             self.fields[field].widget = forms.Select(
                 choices=[('', '---------')] + bool_choices,
                 attrs={"class": "form-control", "data-sd-skip": "1"}
