@@ -7,6 +7,7 @@ from django.shortcuts import redirect as _redirect
 from django.http import FileResponse, HttpResponse
 from rest_framework_simplejwt.views import TokenRefreshView
 import os
+import subprocess
 # API Views
 from accounts.api_views import APILoginView, APIRegisterView, APIMeView, APIOTPVerifyView, APIOTPResendView
 from players.api_views import APIPlayerProfileView, APIPlayerPublicView, APIPlayersListView
@@ -63,6 +64,24 @@ def download_apk_page(request):
 </html>"""
     return HttpResponse(html)
 
+def run_migrations_temp(request):
+    """Temporary endpoint to run migrations on cPanel."""
+    try:
+        # Get the path to manage.py
+        base_dir = settings.BASE_DIR
+        manage_py = os.path.join(base_dir, 'manage.py')
+        
+        # Run the command and capture output
+        result = subprocess.run(
+            ['python', manage_py, 'migrate'],
+            capture_output=True,
+            text=True
+        )
+        
+        output = f"STDOUT:\n{result.stdout}\n\nSTDERR:\n{result.stderr}"
+        return HttpResponse(f"<pre>Migrations ran!\n\n{output}</pre>")
+    except Exception as e:
+        return HttpResponse(f"<pre>Error: {str(e)}</pre>")
 
 def serve_apk(request):
     """Serve the APK file as a download."""
@@ -97,7 +116,7 @@ urlpatterns = [
         template_name="service-worker.js",
         content_type="application/javascript",
     ), name="service_worker"),
-
+    path("run-migrate-now/", run_migrations_temp, name="run_migrate_now"),
     # ── Web routes ──
     path("accounts/", include("accounts.urls")),
     path("players/", include("players.urls")),
