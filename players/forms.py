@@ -229,8 +229,8 @@ class PlayerProfileForm(forms.ModelForm):
                 attrs={"class": "form-control"}
             )
         self.fields['has_transfermarkt'].required = False
-        self.fields['has_agent_contract'].required = True
-        self.fields['looking_for_agent'].required = True
+        self.fields['has_agent_contract'].required = False
+        self.fields['looking_for_agent'].required = False
 
     def clean(self):
         cleaned = super().clean()
@@ -242,13 +242,11 @@ class PlayerProfileForm(forms.ModelForm):
             cleaned["transfermarkt_username"] = ""
 
         if cleaned.get("has_agent_contract"):
-            if not cleaned.get("agent_full_name") or not cleaned.get("agent_id"):
-                self.add_error("agent_full_name", "Veuillez renseigner le nom et l’ID de l’agent (contrat = OUI).")
-                self.add_error("agent_id", "Veuillez renseigner l’ID de l’agent (contrat = OUI).")
+            if not cleaned.get("agent_full_name"):
+                self.add_error("agent_full_name", "Veuillez renseigner le nom de l’agent (contrat = OUI).")
             cleaned["looking_for_agent"] = False
         else:
             cleaned["agent_full_name"] = ""
-            cleaned["agent_id"] = ""
 
         if cleaned.get("is_minor"):
             if not cleaned.get("parent_name"):
