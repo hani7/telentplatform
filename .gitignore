@@ -23,6 +23,9 @@ media/
 # Static collected
 staticfiles/
 
+# Passenger tmp
+tmp/
+
 # Environment
 .env
 .env.*
