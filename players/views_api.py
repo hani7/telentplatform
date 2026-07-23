@@ -37,6 +37,33 @@ def search_clubs_api(request):
         "wac": "wydad"
     }
 
+    OFFLINE_CLUBS = {
+        "usm alger": {"id": 9001, "name": "USM Alger", "logo": "https://media.api-sports.io/football/teams/965.png", "country": "Algérie", "division": "Ligue 1"},
+        "mc alger": {"id": 9002, "name": "MC Alger", "logo": "https://media.api-sports.io/football/teams/964.png", "country": "Algérie", "division": "Ligue 1"},
+        "js kabylie": {"id": 9003, "name": "JS Kabylie", "logo": "https://media.api-sports.io/football/teams/972.png", "country": "Algérie", "division": "Ligue 1"},
+        "cr belouizdad": {"id": 9004, "name": "CR Belouizdad", "logo": "https://media.api-sports.io/football/teams/966.png", "country": "Algérie", "division": "Ligue 1"},
+        "mc oran": {"id": 9005, "name": "MC Oran", "logo": "https://media.api-sports.io/football/teams/970.png", "country": "Algérie", "division": "Ligue 1"},
+        "cs constantine": {"id": 9006, "name": "CS Constantine", "logo": "https://media.api-sports.io/football/teams/968.png", "country": "Algérie", "division": "Ligue 1"},
+        "es setif": {"id": 9007, "name": "ES Sétif", "logo": "https://media.api-sports.io/football/teams/967.png", "country": "Algérie", "division": "Ligue 1"},
+        "paradou ac": {"id": 9008, "name": "Paradou AC", "logo": "https://media.api-sports.io/football/teams/976.png", "country": "Algérie", "division": "Ligue 1"},
+        "paris saint germain": {"id": 9009, "name": "Paris Saint Germain", "logo": "https://media.api-sports.io/football/teams/85.png", "country": "France", "division": "Ligue 1"},
+        "marseille": {"id": 9010, "name": "Marseille", "logo": "https://media.api-sports.io/football/teams/81.png", "country": "France", "division": "Ligue 1"},
+        "lyon": {"id": 9011, "name": "Lyon", "logo": "https://media.api-sports.io/football/teams/80.png", "country": "France", "division": "Ligue 1"},
+        "barcelona": {"id": 9012, "name": "Barcelona", "logo": "https://media.api-sports.io/football/teams/529.png", "country": "Espagne", "division": "La Liga"},
+        "real madrid": {"id": 9013, "name": "Real Madrid", "logo": "https://media.api-sports.io/football/teams/541.png", "country": "Espagne", "division": "La Liga"},
+        "liverpool": {"id": 9014, "name": "Liverpool", "logo": "https://media.api-sports.io/football/teams/40.png", "country": "Royaume-Uni", "division": "Premier League"},
+        "manchester city": {"id": 9015, "name": "Manchester City", "logo": "https://media.api-sports.io/football/teams/50.png", "country": "Royaume-Uni", "division": "Premier League"},
+        "manchester united": {"id": 9016, "name": "Manchester United", "logo": "https://media.api-sports.io/football/teams/33.png", "country": "Royaume-Uni", "division": "Premier League"},
+        "raja": {"id": 9017, "name": "Raja Casablanca", "logo": "https://media.api-sports.io/football/teams/982.png", "country": "Maroc", "division": "Botola Pro"},
+        "wydad": {"id": 9018, "name": "Wydad AC", "logo": "https://media.api-sports.io/football/teams/983.png", "country": "Maroc", "division": "Botola Pro"},
+        "usm": {"id": 9001, "name": "USM Alger", "logo": "https://media.api-sports.io/football/teams/965.png", "country": "Algérie", "division": "Ligue 1"},
+    }
+
+    # Match offline database first
+    for k, v in OFFLINE_CLUBS.items():
+        if query_lower in k or k in query_lower:
+            return JsonResponse({'results': [v]})
+
     if query_lower in ALIASES:
         query = ALIASES[query_lower]
 
