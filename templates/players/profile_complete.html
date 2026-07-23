@@ -260,6 +260,16 @@
   </h1>
 
   <div class="p-tags">
+    <!-- Account Status -->
+    {% if profile.profile_status == 'ACTIVE' %}
+      <div class="p-tag" style="background:rgba(16, 185, 129, 0.15); color:#10b981; border-color:rgba(16, 185, 129, 0.3);">
+        <i class="ti ti-circle-check"></i> Compte Actif
+      </div>
+    {% else %}
+      <div class="p-tag" style="background:rgba(245, 158, 11, 0.15); color:#f59e0b; border-color:rgba(245, 158, 11, 0.3);" onclick="alert('Votre profil est en cours de validation. Si vous êtes mineur, votre tuteur doit valider l\'email reçu.')">
+        <i class="ti ti-clock"></i> En attente de validation
+      </div>
+    {% endif %}
     <!-- Club Logo & Name -->
     <div class="p-tag p-tag-green">
       <i class="ti ti-shield"></i> {{ profile.current_club_name|default:"Libre" }}
