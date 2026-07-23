@@ -26,8 +26,12 @@ os.environ['DEBUG'] = '0'
 try:
     from django.core.wsgi import get_wsgi_application
     application = get_wsgi_application()
+
+    # Auto-migrate on startup (safe for single-process Passenger)
+    from django.core.management import call_command
+    call_command('migrate', '--noinput')
+
 except Exception as e:
-    # ✅ Show full traceback so you can diagnose production errors
     _error_body = (
         f'Django startup error:\n\n{e}\n\n'
         f'--- Traceback ---\n{traceback.format_exc()}'
