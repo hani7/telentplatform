@@ -27,7 +27,7 @@
     .sd-wrap { position:relative; margin-bottom:.6rem; }
     .sd-trigger {
       background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.22);
-      border-radius:50px; color:#fff; padding:.6rem .9rem; width:100%; font-size:.88rem;
+      border-radius:11px; color:#fff; padding:.6rem .9rem; width:100%; font-size:.88rem;
       box-sizing:border-box; cursor:pointer; display:flex; align-items:center;
       justify-content:space-between; gap:6px; transition:border-color .2s, background .2s;
     }
