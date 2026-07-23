@@ -8,10 +8,10 @@
 
     html,body { background: #f4f6f9; color: #1a1a1a; font-family: 'Inter', sans-serif; padding-bottom: 90px; }
 
-    .pw{min-height:100vh;background:linear-gradient(135deg,#0a1a0f 0%,#0d2b18 60%,#0a1a0f 100%);padding:0 0 6rem}
+    .pw{min-height:100vh;background:#f4f6f9;padding:0 0 6rem}
 
     /* Top bar */
-    .topbar{background:rgba(255,255,255,.05);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.1);padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:20}
+    .topbar{display:none;}
     .topbar h1{color:#fff;font-size:1.15rem;font-weight:700;margin:0;flex:1}
     .btn-edit{background:rgba(241,177,15,.15);border:1px solid rgba(241,177,15,.4);border-radius:20px;color:#f1b10f;font-weight:600;font-size:.82rem;padding:5px 14px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:background .2s}
     .btn-edit:hover{background:rgba(241,177,15,.3);color:#f1b10f}
@@ -83,14 +83,14 @@
 
     /* Footer */
     .footer-outer{position:fixed;bottom:0;left:0;right:0;background:transparent;padding:4px 14px calc(4px + env(safe-area-inset-bottom));z-index:999;display:flex;justify-content:center}
-    .footer-pill { background: #1db95b; border-radius: 999px; display: flex; align-items: center; justify-content: space-around; padding: 6px 8px; width: 100%; max-width: 480px; box-shadow: 0 10px 25px rgba(29,185,91,0.3); }
+    .footer-pill { pointer-events: auto; background: #1db95b; border-radius: 999px; display: flex; align-items: center; justify-content: space-around; padding: 6px 8px; width: 100%; max-width: 480px; box-shadow: 0 10px 25px rgba(29,185,91,0.3); }
     .footer-pill-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.65rem; font-weight: 500; padding: 6px 2px; border-radius: 14px; transition: all 0.2s ease; flex: 1; min-width: 0; text-align: center; overflow: hidden; text-overflow: ellipsis; }
     .footer-pill-item i{font-size:1.45rem;line-height:1}
     .footer-pill-item.is-active{font-weight:700;color:#fff}
     .footer-pill-item:hover{color:#fff;background:rgba(0,0,0,.12)}
     /* Hide Global Header for Profile */
   .header-area { display: none !important; }
-  .back-btn-fixed { background: #ffffff !important; color: #1a1a1a !important; border: 1px solid #e9ecef !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important; }
+  .back-btn-fixed { display: none !important; background: #ffffff !important; color: #1a1a1a !important; border: 1px solid #e9ecef !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important; }
 
 </style>
 {% endblock %}

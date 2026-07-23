@@ -5,16 +5,24 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
 import uuid
+import threading
 
 from .models import PlayerProfile
 from .forms import PlayerProfileForm, PreviousClubFormSet, SeasonStatFormSet, FileFormSet
 
 @login_required
 def player_profile_edit(request):
-    profile, _ = PlayerProfile.objects.get_or_create(
-        user=request.user,
-        defaults={"first_name": request.user.first_name or "", "last_name": request.user.last_name or ""}
-    )
+    # Fetch with select_related and prefetch_related for performance
+    try:
+        profile = PlayerProfile.objects.select_related('nationality').prefetch_related(
+            'previous_clubs', 'stats', 'files'
+        ).get(user=request.user)
+    except PlayerProfile.DoesNotExist:
+        profile = PlayerProfile.objects.create(
+            user=request.user,
+            first_name=request.user.first_name or "",
+            last_name=request.user.last_name or ""
+        )
 
     if request.method == "POST":
         form = PlayerProfileForm(request.POST, request.FILES, instance=profile)
@@ -41,14 +49,20 @@ def player_profile_edit(request):
                         <a href="{consent_url}" style="display:inline-block; padding:10px 20px; background-color:#10b981; color:#ffffff; text-decoration:none; border-radius:5px; font-weight:bold;">Confirmer le profil de mon enfant</a>
                         """
                         
-                        send_mail(
-                            "Consentement parental requis - Talent Platform",
-                            msg,
-                            settings.DEFAULT_FROM_EMAIL if hasattr(settings, 'DEFAULT_FROM_EMAIL') else 'noreply@talentplatform.com',
-                            [profile.parent_email],
-                            fail_silently=True,
-                            html_message=html_msg
-                        )
+                        def send_consent_email_task():
+                            try:
+                                send_mail(
+                                    "Consentement parental requis - Talent Platform",
+                                    msg,
+                                    settings.DEFAULT_FROM_EMAIL if hasattr(settings, 'DEFAULT_FROM_EMAIL') else 'noreply@talentplatform.com',
+                                    [profile.parent_email],
+                                    fail_silently=True,
+                                    html_message=html_msg
+                                )
+                            except Exception as e:
+                                print(f"[CONSENT EMAIL ERROR] {e}")
+                        
+                        threading.Thread(target=send_consent_email_task).start()
             else:
                 profile.profile_status = PlayerProfile.ProfileStatus.ACTIVE
             profile.save()
@@ -138,7 +152,7 @@ def player_deactivate_ad(request):
 from django.http import Http404
 
 def player_public_profile(request, pk):
-    profile = get_object_or_404(PlayerProfile, pk=pk)
+    profile = get_object_or_404(PlayerProfile.objects.select_related("nationality").prefetch_related("previous_clubs", "stats", "files"), pk=pk)
     if not profile.is_active and request.user != profile.user:
         raise Http404("Profil inactif")
     return render(request, "players/public_profile.html", {"p": profile})
@@ -146,10 +160,17 @@ def player_public_profile(request, pk):
 @login_required
 def profile_complete(request):
     """Show full player profile with all saved information"""
-    profile, _ = PlayerProfile.objects.get_or_create(
-        user=request.user,
-        defaults={"first_name": request.user.first_name or "", "last_name": request.user.last_name or ""}
-    )
+    # Fetch with select_related and prefetch_related for performance
+    try:
+        profile = PlayerProfile.objects.select_related('nationality').prefetch_related(
+            'previous_clubs', 'stats', 'files'
+        ).get(user=request.user)
+    except PlayerProfile.DoesNotExist:
+        profile = PlayerProfile.objects.create(
+            user=request.user,
+            first_name=request.user.first_name or "",
+            last_name=request.user.last_name or ""
+        )
 
     # Completion calculations
     personal_fields = ['first_name', 'last_name', 'birth_date', 'nationality', 'gender']

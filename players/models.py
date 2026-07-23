@@ -50,7 +50,7 @@ class PlayerProfile(models.Model):
     class Status(models.TextChoices):
         AMATEUR = "AMATEUR", "Amateur"
         PRO = "PRO", "Pro"
-    status = models.CharField(max_length=10, choices=Status.choices, blank=True)
+    status = models.CharField(max_length=10, choices=Status.choices, blank=True, db_index=True)
 
     class ProfileStatus(models.TextChoices):
         ACTIVE = "ACTIVE", "Actif"
@@ -58,7 +58,7 @@ class PlayerProfile(models.Model):
     profile_status = models.CharField(max_length=20, choices=ProfileStatus.choices, default=ProfileStatus.ACTIVE)
     consent_token = models.UUIDField(null=True, blank=True)
 
-    position = models.CharField(max_length=50, blank=True)
+    position = models.CharField(max_length=50, blank=True, db_index=True)
 
     desired_salary = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)])
 
@@ -77,7 +77,7 @@ class PlayerProfile(models.Model):
     availability = models.CharField(max_length=15, choices=Availability.choices, blank=True)
 
     current_club_name = models.CharField(max_length=140, blank=True)
-    current_club_country = models.CharField(max_length=80, blank=True)
+    current_club_country = models.CharField(max_length=80, blank=True, db_index=True)
     current_club_division = models.CharField(max_length=80, blank=True)
     current_club_start = models.DateField(null=True, blank=True)
     current_club_end = models.DateField(null=True, blank=True)
@@ -104,11 +104,11 @@ class PlayerProfile(models.Model):
         ALL_EXCEPT = "ALL_EXCEPT", "Pour tout le monde sauf"
         SOME = "SOME", "Pour quelques clubs"
 
-    visibility_mode = models.CharField(max_length=15, choices=VisibilityMode.choices, default=VisibilityMode.ALL)
+    visibility_mode = models.CharField(max_length=15, choices=VisibilityMode.choices, default=VisibilityMode.ALL, db_index=True)
     visibility_filters = models.JSONField(default=dict, blank=True)
     visibility_exceptions = models.JSONField(default=dict, blank=True)
 
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False, db_index=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

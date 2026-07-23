@@ -1,5 +1,6 @@
 from django.core.mail import send_mail
 from django.conf import settings
+import threading
 
 
 def send_otp_email(user, otp_code):
@@ -17,13 +18,20 @@ def send_otp_email(user, otp_code):
         f"— L'équipe FOOTOP"
     )
     try:
-        send_mail(
-            subject,
-            message,
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            fail_silently=False,
-        )
+        def send_email_task():
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [user.email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                print(f"[OTP EMAIL ERROR] Failed to send to {user.email}: {e}")
+        
+        # Run email sending in a background thread to prevent blocking
+        threading.Thread(target=send_email_task).start()
     except Exception as e:
         # Log but don't crash the registration flow
         print(f"[OTP EMAIL ERROR] Failed to send to {user.email}: {e}")
