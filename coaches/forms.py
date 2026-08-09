@@ -1,9 +1,23 @@
 from django import forms
 from django.forms import inlineformset_factory
 from .models import CoachProfile, CoachPreviousClub, CoachFile
+from players.countries import COUNTRIES
 
 
 class CoachProfileForm(forms.ModelForm):
+    nationality = forms.ChoiceField(
+        choices=[('', '-- Sélectionner une nationalité --')] + COUNTRIES,
+        required=True,
+        label="Nationalité",
+        widget=forms.Select(attrs={"class": "form-control"})
+    )
+    
+    current_club_country = forms.ChoiceField(
+        choices=[('', '-- Sélectionner un pays --')] + COUNTRIES,
+        required=False,
+        label="Pays"
+    )
+
     class Meta:
         model = CoachProfile
         fields = [
@@ -95,22 +109,47 @@ class CoachProfileForm(forms.ModelForm):
             
         return cleaned
 
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        from players.models import Nationality
+        
+        nationality_name = self.cleaned_data.get('nationality')
+        if nationality_name:
+            nationality_obj, _ = Nationality.objects.get_or_create(name=nationality_name)
+            instance.nationality = nationality_obj
+        else:
+            instance.nationality = None
+
+        if commit:
+            instance.save()
+        return instance
+
+
+class CoachPreviousClubForm(forms.ModelForm):
+    country = forms.ChoiceField(
+        choices=[('', '-- Sélectionner un pays --')] + COUNTRIES,
+        required=False,
+        label="Pays"
+    )
+    
+    class Meta:
+        model = CoachPreviousClub
+        fields = ["club_name", "country", "division", "start_date", "end_date"]
+        labels = {
+            "club_name": "Nom du club",
+            "division": "Division",
+            "start_date": "Date de début",
+            "end_date": "Date de fin",
+        }
+        widgets = {
+            "start_date": forms.DateInput(attrs={"type": "date"}),
+            "end_date": forms.DateInput(attrs={"type": "date"}),
+        }
 
 PreviousClubFormSet = inlineformset_factory(
     CoachProfile, CoachPreviousClub,
-    fields=["club_name", "country", "division", "start_date", "end_date"],
-    labels={
-        "club_name": "Nom du club",
-        "country": "Pays",
-        "division": "Division",
-        "start_date": "Date de début",
-        "end_date": "Date de fin",
-    },
+    form=CoachPreviousClubForm,
     extra=1, can_delete=True,
-    widgets={
-        "start_date": forms.DateInput(attrs={"type": "date"}),
-        "end_date": forms.DateInput(attrs={"type": "date"}),
-    }
 )
 
 FileFormSet = inlineformset_factory(
