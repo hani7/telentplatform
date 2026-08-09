@@ -805,6 +805,13 @@
     if (!firstEntry) return;
     const newEntry = firstEntry.cloneNode(true);
     
+    // Clean up cloned searchable dropdowns so they can be re-initialized
+    newEntry.querySelectorAll('.sd-wrap, .sd-pills').forEach(el => el.remove());
+    newEntry.querySelectorAll('select').forEach(sel => {
+      delete sel.dataset.sdDone;
+      sel.classList.remove('sd-hidden-select');
+    });
+
     // Reset seasons: keep only one season row
     const seasonContainer = newEntry.querySelector('.seasons-container');
     if (seasonContainer) {
@@ -1212,7 +1219,20 @@
                   // Auto-fill country if available and the country input exists
                   const countryInput = container.closest('.row').querySelector('select[name$="-country"], input[name$="-country"], select[name="current_club_country"], input[name="current_club_country"]');
                   if (countryInput && club.country) {
-                    countryInput.value = club.country;
+                    if (countryInput.tagName.toLowerCase() === 'select') {
+                      let optionFound = false;
+                      for (let i = 0; i < countryInput.options.length; i++) {
+                        let opt = countryInput.options[i];
+                        if (opt.text.toLowerCase() === club.country.toLowerCase() || opt.value === club.country) {
+                          countryInput.value = opt.value;
+                          optionFound = true;
+                          break;
+                        }
+                      }
+                      if (!optionFound) countryInput.value = club.country;
+                    } else {
+                      countryInput.value = club.country;
+                    }
                     // Trigger change in case it's a searchable dropdown
                     countryInput.dispatchEvent(new Event('change', { bubbles: true }));
                   }
