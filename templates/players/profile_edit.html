@@ -808,6 +808,7 @@
     // Clean up cloned searchable dropdowns so they can be re-initialized
     newEntry.querySelectorAll('.sd-wrap, .sd-pills').forEach(el => el.remove());
     newEntry.querySelectorAll('select').forEach(sel => {
+      sel.removeAttribute('data-sd-done');
       delete sel.dataset.sdDone;
       sel.classList.remove('sd-hidden-select');
     });
@@ -1223,10 +1224,20 @@
                       let optionFound = false;
                       for (let i = 0; i < countryInput.options.length; i++) {
                         let opt = countryInput.options[i];
-                        if (opt.text.toLowerCase() === club.country.toLowerCase() || opt.value === club.country) {
+                        if (opt.text.trim().toLowerCase() === club.country.trim().toLowerCase() || opt.value === club.country) {
                           countryInput.value = opt.value;
                           optionFound = true;
                           break;
+                        }
+                      }
+                      if (!optionFound) {
+                        for (let i = 0; i < countryInput.options.length; i++) {
+                          let opt = countryInput.options[i];
+                          if (opt.text.toLowerCase().includes(club.country.toLowerCase())) {
+                            countryInput.value = opt.value;
+                            optionFound = true;
+                            break;
+                          }
                         }
                       }
                       if (!optionFound) countryInput.value = club.country;
