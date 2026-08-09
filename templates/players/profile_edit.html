@@ -608,7 +608,7 @@
             J’accepte que les données de mon profil soient consultées par les clubs, leurs représentants et les agents de football autorisés, dans le cadre du recrutement, conformément aux règlements applicables de la FIFA et des fédérations concernées. En validant, je confirme l’exactitude des informations fournies.
           </label>
           <label id="consent_label_minor" for="consent_checkbox" style="display:none; line-height: 1.4;">
-            En tant que parent / tuteur légal, j’autorise la création et/ou la mise à jour du profil de mon enfant sur cette plateforme, par moi-même ou par mon enfant sous ma responsabilité. Je confirme avoir pris connaissance des informations saisies et j’accepte qu’elles puissent être consultées par des clubs, leurs représentants et des agents de football autorisés, conformément aux règles applicables. <br><br>Ce consentement a été envoyé à votre adresse e-mail pour validation.
+            En tant que parent / tuteur légal, j’autorise la création et/ou la mise à jour du profil de mon enfant sur cette plateforme, par moi-même ou par mon enfant sous ma responsabilité. Je confirme avoir pris connaissance des informations saisies et j’accepte qu’elles puissent être consultées par des clubs, leurs représentants et des agents de football autorisés, conformément aux règles applicables. <br><br>Ce consentement sera envoyé à votre adresse e-mail pour validation.
           </label>
         </div>
       </div>
@@ -808,7 +808,6 @@
     // Clean up cloned searchable dropdowns so they can be re-initialized
     newEntry.querySelectorAll('.sd-wrap, .sd-pills').forEach(el => el.remove());
     newEntry.querySelectorAll('select').forEach(sel => {
-      sel.removeAttribute('data-sd-done');
       delete sel.dataset.sdDone;
       sel.classList.remove('sd-hidden-select');
     });
@@ -1224,20 +1223,10 @@
                       let optionFound = false;
                       for (let i = 0; i < countryInput.options.length; i++) {
                         let opt = countryInput.options[i];
-                        if (opt.text.trim().toLowerCase() === club.country.trim().toLowerCase() || opt.value === club.country) {
+                        if (opt.text.toLowerCase() === club.country.toLowerCase() || opt.value === club.country) {
                           countryInput.value = opt.value;
                           optionFound = true;
                           break;
-                        }
-                      }
-                      if (!optionFound) {
-                        for (let i = 0; i < countryInput.options.length; i++) {
-                          let opt = countryInput.options[i];
-                          if (opt.text.toLowerCase().includes(club.country.toLowerCase())) {
-                            countryInput.value = opt.value;
-                            optionFound = true;
-                            break;
-                          }
                         }
                       }
                       if (!optionFound) countryInput.value = club.country;
