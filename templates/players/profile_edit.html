@@ -270,9 +270,7 @@
             {{ form.search_objective }}
           </div>
         </div>
-
         <hr>
-
         <div class="col-12">
           {{ form.has_agent_contract.errors }}
           <span class="fl">{{ form.has_agent_contract.label }}</span>
@@ -289,6 +287,22 @@
               {{ form.agent_id.errors }}
               <span class="fl">{{ form.agent_id.label }}</span>
               {{ form.agent_id }}
+            </div>
+          </div>
+          
+          <div style="margin-top: 15px; padding: 15px; border: 1px dashed rgba(241,177,15,0.6); border-radius: 8px; background: rgba(241,177,15,0.05);">
+            <h6 style="color:#f1b10f; font-size:0.9rem; margin-bottom:10px; width: 100%;">Accord de représentation</h6>
+            <div class="row g-2">
+              <div class="col-6">
+                {{ form.agent_contract_start.errors }}
+                <span class="fl">{{ form.agent_contract_start.label }}</span>
+                {{ form.agent_contract_start }}
+              </div>
+              <div class="col-6">
+                {{ form.agent_contract_end.errors }}
+                <span class="fl">{{ form.agent_contract_end.label }}</span>
+                {{ form.agent_contract_end }}
+              </div>
             </div>
           </div>
         </div>

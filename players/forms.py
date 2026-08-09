@@ -127,7 +127,8 @@ class PlayerProfileForm(forms.ModelForm):
 
             "player_value", "currency", "search_objective",
 
-            "has_agent_contract", "agent_full_name", "agent_id", "looking_for_agent",
+            "has_agent_contract", "agent_full_name", "agent_id", 
+            "agent_contract_start", "agent_contract_end", "looking_for_agent",
 
             "has_transfermarkt", "transfermarkt_username",
             "target_club_notes",
@@ -175,6 +176,8 @@ class PlayerProfileForm(forms.ModelForm):
             "has_agent_contract": "Contrat avec un Agent ?",
             "agent_full_name": "Nom complet",
             "agent_id": "ID",
+            "agent_contract_start": "Date début",
+            "agent_contract_end": "Date fin",
             "looking_for_agent": "Cherchez-vous un agent ?",
             "represent_self": "Voulez-vous vous représenter … ?",
 
@@ -194,6 +197,8 @@ class PlayerProfileForm(forms.ModelForm):
             "birth_date": forms.DateInput(attrs={"type": "date"}),
             "current_club_start": forms.DateInput(attrs={"type": "date"}),
             "current_club_end": forms.DateInput(attrs={"type": "date"}),
+            "agent_contract_start": forms.DateInput(attrs={"type": "date"}),
+            "agent_contract_end": forms.DateInput(attrs={"type": "date"}),
 
             # Integer
             "height_cm": forms.NumberInput(attrs={"type": "number", "min": 0, "step": 1}),
@@ -247,6 +252,9 @@ class PlayerProfileForm(forms.ModelForm):
             cleaned["looking_for_agent"] = False
         else:
             cleaned["agent_full_name"] = ""
+            cleaned["agent_id"] = ""
+            cleaned["agent_contract_start"] = None
+            cleaned["agent_contract_end"] = None
 
         if cleaned.get("is_minor"):
             if not cleaned.get("parent_name"):

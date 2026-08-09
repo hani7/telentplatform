@@ -90,6 +90,8 @@ class PlayerProfile(models.Model):
     has_agent_contract = models.BooleanField(default=False)
     agent_full_name = models.CharField(max_length=140, blank=True)
     agent_id = models.CharField(max_length=50, blank=True)
+    agent_contract_start = models.DateField(null=True, blank=True)
+    agent_contract_end = models.DateField(null=True, blank=True)
 
     looking_for_agent = models.BooleanField(default=False)
     represent_self = models.BooleanField(default=False)
