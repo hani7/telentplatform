@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from .models import CoachProfile, CoachPreviousClub, CoachFile
+from .models import CoachProfile, CoachPreviousClub, CoachFile, CoachStat
 from players.countries import COUNTRIES
 
 
@@ -18,17 +18,69 @@ class CoachProfileForm(forms.ModelForm):
         label="Pays"
     )
 
+    currency = forms.ChoiceField(
+        choices=[
+            ('EUR', 'Euro (EUR)'),
+            ('USD', 'Dollar Américain (USD)'),
+            ('GBP', 'Livre Sterling (GBP)'),
+            ('DZD', 'Dinar Algérien (DZD)'),
+            ('MAD', 'Dirham Marocain (MAD)'),
+            ('TND', 'Dinar Tunisien (TND)'),
+            ('XOF', 'Franc CFA (XOF)'),
+            ('XAF', 'Franc CFA (XAF)'),
+            ('ZAR', 'Rand Sud-Africain (ZAR)'),
+            ('CHF', 'Franc Suisse (CHF)'),
+            ('CAD', 'Dollar Canadien (CAD)'),
+            ('AUD', 'Dollar Australien (AUD)'),
+            ('JPY', 'Yen Japonais (JPY)'),
+            ('CNY', 'Yuan Chinois (CNY)'),
+            ('INR', 'Roupie Indienne (INR)'),
+            ('BRL', 'Réal Brésilien (BRL)'),
+            ('MXN', 'Peso Mexicain (MXN)'),
+            ('RUB', 'Rouble Russe (RUB)'),
+            ('TRY', 'Livre Turque (TRY)'),
+            ('NGN', 'Naira Nigérian (NGN)'),
+            ('EGP', 'Livre Égyptienne (EGP)'),
+            ('SEK', 'Couronne Suédoise (SEK)'),
+            ('NOK', 'Couronne Norvégienne (NOK)'),
+            ('DKK', 'Couronne Danoise (DKK)'),
+            ('PLN', 'Zloty Polonais (PLN)'),
+            ('OTHER', 'Autre devise')
+        ],
+        required=False,
+        label="Devise",
+        widget=forms.Select()
+    )
+
+    search_objective = forms.ChoiceField(
+        choices=[
+            ('', '-- Sélectionner --'),
+            ('Opportunités sportives', 'Opportunités sportives'),
+            ('Contrats', 'Contrats'),
+            ('Clubs', 'Clubs'),
+            ('Développement', 'Développement'),
+            ('Visibilité', 'Visibilité'),
+        ],
+        required=False,
+        label="Je cherche...",
+        widget=forms.Select()
+    )
+
     class Meta:
         model = CoachProfile
         fields = [
-            "first_name", "last_name", "birth_date", "birth_place", "gender", "nationality",
-            "diplomas_certificates", "status", "availability", "salary_min", "salary_max",
+            "first_name", "last_name", "birth_date", "birth_place", "gender", "nationality", "profile_photo",
+            "diplomas_certificates", "status", "availability", "salary_min", "salary_max", "currency",
             "current_club_name", "current_club_country", "current_club_division",
             "current_club_start", "current_club_end", "achievements",
-            "has_agent_contract", "agent_full_name", "agent_id", "looking_for_agent", "represent_self",
+            "has_agent_contract", "agent_full_name", "agent_id", "looking_for_agent",
+            "agent_contract_start", "agent_contract_end",
             "has_transfermarkt", "transfermarkt_username",
             "search_objective", "target_club_notes",
             "visibility_filters", "visibility_exceptions",
+            "is_minor", "parent_name", "parent_relation", "parent_relation_other",
+            "parent_birth_date", "parent_nationality", "parent_address",
+            "parent_phone", "parent_email", "parents_notes"
         ]
         labels = {
             "first_name": "Prénom",
@@ -37,6 +89,7 @@ class CoachProfileForm(forms.ModelForm):
             "birth_place": "Lieu de naissance",
             "gender": "Sexe",
             "nationality": "Nationalité",
+            "profile_photo": "Photo de profil",
             "diplomas_certificates": "Diplômes & Certificats",
             "status": "Statut",
             "availability": "Disponibilité actuelle",
@@ -48,22 +101,36 @@ class CoachProfileForm(forms.ModelForm):
             "current_club_start": "Date début",
             "current_club_end": "Date fin",
             "achievements": "Réalisations & Palmarès",
-            "has_agent_contract": "Avez-vous un contrat avec un Agent de Football ?",
-            "agent_full_name": "Nom complet de l'agent",
-            "agent_id": "ID de l'agent",
+            "has_agent_contract": "Contrat avec un Agent ?",
+            "agent_full_name": "Nom complet",
+            "agent_id": "ID",
+            "agent_contract_start": "Date début",
+            "agent_contract_end": "Date fin",
             "looking_for_agent": "Cherchez-vous un agent ?",
-            "represent_self": "Voulez-vous vous représenter … ?",
-            "search_objective": "Objectif sur la plateforme (Stage, Contrat, Test…)",
+            "search_objective": "Je cherche...",
             "target_club_notes": "Clubs visés (notes)",
             "has_transfermarkt": "Avez-vous un profil sur Transfermarkt ?",
             "transfermarkt_username": "Username ou lien",
             "visibility_filters": "Filtres de visibilité (JSON)",
             "visibility_exceptions": "Exceptions de visibilité (JSON)",
+            "is_minor": "Je suis mineur",
+            "parent_name": "Nom complet du représentant légal",
+            "parent_relation": "Lien de parenté",
+            "parent_relation_other": "Précisez (Autre)",
+            "parent_birth_date": "Date de naissance du représentant",
+            "parent_nationality": "Nationalité du représentant",
+            "parent_address": "Adresse complète du représentant",
+            "parent_phone": "Téléphone du représentant",
+            "parent_email": "Email du représentant",
+            "parents_notes": "Remarques (optionnel)",
         }
         widgets = {
             "birth_date": forms.DateInput(attrs={"type": "date"}),
+            "current_club_name": forms.TextInput(attrs={"autocomplete": "off", "placeholder": "Tapez le nom du club..."}),
             "current_club_start": forms.DateInput(attrs={"type": "date"}),
             "current_club_end": forms.DateInput(attrs={"type": "date"}),
+            "agent_contract_start": forms.DateInput(attrs={"type": "date"}),
+            "agent_contract_end": forms.DateInput(attrs={"type": "date"}),
             "diplomas_certificates": forms.Textarea(attrs={
                 "rows": 3,
                 "placeholder": "Ex: CAF-A, UEFA-Pro, Licence nationale..."
@@ -79,12 +146,16 @@ class CoachProfileForm(forms.ModelForm):
             "visibility_filters": forms.Textarea(attrs={"rows": 2}),
             "visibility_exceptions": forms.Textarea(attrs={"rows": 2}),
             "availability": forms.Select(attrs={"data-sd-skip": "1"}),
+            "parent_relation": forms.Select(attrs={"data-sd-skip": "1"}),
+            "parent_birth_date": forms.DateInput(attrs={"type": "date"}),
+            "parents_notes": forms.Textarea(attrs={"rows": 3}),
+            "is_minor": forms.CheckboxInput(),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         bool_choices = [(True, 'Oui'), (False, 'Non')]
-        for field in ['has_agent_contract', 'looking_for_agent', 'has_transfermarkt', 'represent_self']:
+        for field in ['has_agent_contract', 'looking_for_agent', 'has_transfermarkt']:
             self.fields[field].widget = forms.Select(choices=[('', '---------')] + bool_choices, attrs={"class": "form-control"})
             self.fields[field].required = False
         
@@ -151,6 +222,7 @@ class CoachPreviousClubForm(forms.ModelForm):
             "end_date": "Date de fin",
         }
         widgets = {
+            "club_name": forms.TextInput(attrs={"autocomplete": "off", "placeholder": "Tapez le nom du club..."}),
             "start_date": forms.DateInput(attrs={"type": "date"}),
             "end_date": forms.DateInput(attrs={"type": "date"}),
         }
@@ -158,6 +230,77 @@ class CoachPreviousClubForm(forms.ModelForm):
 PreviousClubFormSet = inlineformset_factory(
     CoachProfile, CoachPreviousClub,
     form=CoachPreviousClubForm,
+    extra=1, can_delete=True,
+)
+
+COMPETITION_CHOICES = [
+    ('championnat', 'Championnat'),
+    ('coupe_nationale', 'Coupe nationale'),
+    ('coupe_regionale', 'Coupe régionale'),
+    ('ligue_champions', 'Ligue des champions continentale'),
+    ('tournoi_international', 'Tournoi international'),
+    ('matchs_amicaux', 'Matchs amicaux'),
+    ('autre_competition', 'Autre'),
+]
+
+COLLECTIVE_RESULT_CHOICES = [
+    ('champion', 'Champion'),
+    ('vice_champion', 'Vice-champion'),
+    ('promotion', 'Promotion'),
+    ('maintien', 'Maintien'),
+    ('qualification_continentale', 'Qualification continentale'),
+    ('vainqueur_coupe', 'Vainqueur de coupe'),
+    ('relegation', 'Relégation'),
+    ('autre_resultat', 'Autre'),
+]
+
+class CoachSeasonStatForm(forms.ModelForm):
+    competitions = forms.MultipleChoiceField(
+        choices=COMPETITION_CHOICES,
+        required=False,
+        label="Compétitions disputées",
+        widget=forms.CheckboxSelectMultiple()
+    )
+    competitions_other = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 2, "placeholder": "Précisez l'autre compétition...", "style": "display:none;", "class": "form-control"})
+    )
+    collective_results = forms.MultipleChoiceField(
+        choices=COLLECTIVE_RESULT_CHOICES,
+        required=False,
+        label="Résultats collectifs",
+        widget=forms.CheckboxSelectMultiple()
+    )
+    collective_results_other = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 2, "placeholder": "Précisez l'autre résultat...", "style": "display:none;", "class": "form-control"})
+    )
+
+    class Meta:
+        model = CoachStat
+        fields = ["season", "competitions", "competitions_other", "collective_results", "collective_results_other"]
+        labels = {
+            "season": "Saison",
+        }
+        widgets = {
+            "season": forms.TextInput(attrs={"placeholder": "Ex: 2023-2024"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.initial['competitions'] = self.instance.competitions or []
+            self.initial['collective_results'] = self.instance.collective_results or []
+
+    def clean_competitions(self):
+        return self.cleaned_data.get('competitions', [])
+
+    def clean_collective_results(self):
+        return self.cleaned_data.get('collective_results', [])
+
+SeasonStatFormSet = inlineformset_factory(
+    CoachPreviousClub, CoachStat,
+    form=CoachSeasonStatForm,
     extra=1, can_delete=True,
 )
 

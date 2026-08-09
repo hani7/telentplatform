@@ -106,6 +106,7 @@
       <div class="si active"><i class="ti ti-user"></i> Infos</div>
       <div class="si"><i class="ti ti-building"></i> Clubs</div>
       <div class="si"><i class="ti ti-file-upload"></i> Fichiers</div>
+      <div class="si"><i class="ti ti-shield-check"></i> Consent</div>
     </div>
 
     <form method="post" enctype="multipart/form-data" id="pForm">
@@ -210,15 +211,20 @@
         </div>
 
         <div class="row g-2">
-          <div class="col-6">
+          <div class="col-5">
             {{ form.salary_min.errors }}
             <span class="fl">{{ form.salary_min.label }}</span>
             {{ form.salary_min }}
           </div>
-          <div class="col-6">
+          <div class="col-5">
             {{ form.salary_max.errors }}
             <span class="fl">{{ form.salary_max.label }}</span>
             {{ form.salary_max }}
+          </div>
+          <div class="col-2">
+            {{ form.currency.errors }}
+            <span class="fl">{{ form.currency.label }}</span>
+            {{ form.currency }}
           </div>
           <div class="col-12">
             {{ form.search_objective.errors }}
@@ -247,18 +253,28 @@
               {{ form.agent_id }}
             </div>
           </div>
+          
+          <div style="margin-top: 15px; padding: 15px; border: 1px dashed rgba(241,177,15,0.6); border-radius: 8px; background: rgba(241,177,15,0.05);">
+            <h6 style="color:#f1b10f; font-size:0.9rem; margin-bottom:10px; width: 100%;">Accord de représentation</h6>
+            <div class="row g-2">
+              <div class="col-6">
+                {{ form.agent_contract_start.errors }}
+                <span class="fl">{{ form.agent_contract_start.label }}</span>
+                {{ form.agent_contract_start }}
+              </div>
+              <div class="col-6">
+                {{ form.agent_contract_end.errors }}
+                <span class="fl">{{ form.agent_contract_end.label }}</span>
+                {{ form.agent_contract_end }}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div id="looking-for-agent-wrap" class="col-12" style="display:none; margin-top: 5px;">
           {{ form.looking_for_agent.errors }}
           <span class="fl">{{ form.looking_for_agent.label }}</span>
           {{ form.looking_for_agent }}
-        </div>
-
-        <div id="represent-self-wrap" class="col-12" style="display:none; margin-top: 5px;">
-          {{ form.represent_self.errors }}
-          <span class="fl">{{ form.represent_self.label }}</span>
-          {{ form.represent_self }}
         </div>
 
         <hr>
@@ -290,8 +306,9 @@
         <h5><i class="ti ti-building"></i> Clubs précédents</h5>
         <p style="color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:1rem">Ajoute tes expériences dans des clubs</p>
         {{ clubs_fs.management_form }}
-        {% for f in clubs_fs %}
-          <div class="fsi">
+        <div id="clubs-container">
+        {% for f, season_fs in clubs_with_seasons %}
+          <div class="fsi club-entry">
             <div class="fsi-head">
               <span class="fsi-title">Club {{ forloop.counter }}</span>
               <button type="button" class="btn-clear" onclick="clearBlock(this)"><i class="ti ti-eraser"></i> Vider</button>
@@ -326,27 +343,216 @@
                 {{ f.end_date }}
               </div>
             </div>
+
+            <!-- Seasons / Stats -->
+            <div class="seasons-block" style="margin-top:1rem;border-top:1px solid rgba(255,255,255,.1);padding-top:.8rem">
+              <div style="font-size:.8rem;font-weight:700;color:rgba(241,177,15,.8);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em">
+                <i class="ti ti-chart-bar" style="font-size:1rem; vertical-align:middle; margin-right:2px;"></i> Saisons &amp; Stats
+              </div>
+              {{ season_fs.management_form }}
+              <div class="seasons-container">
+              {% for sf in season_fs %}
+                <div class="season-row" style="background:rgba(255,255,255,.05);border-radius:20px;padding:.7rem;margin-bottom:.5rem;position:relative">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+                    <span style="font-size:.78rem;font-weight:600;color:rgba(255,255,255,.7)">Saison {{ forloop.counter }}</span>
+                    <button type="button" onclick="removeSeason(this)" style="background:rgba(248,113,113,.15);border:none;border-radius:6px;padding:2px 8px;color:#f87171;font-size:.75rem;cursor:pointer">✕</button>
+                  </div>
+                  <div class="row g-1">
+                    <div class="col-12">
+                      <span class="fl" style="font-size:.75rem">{{ sf.season.label }}</span>
+                      {{ sf.season }}
+                    </div>
+                    
+                    <!-- Compétitions -->
+                    <div class="col-12" style="margin-top:.5rem">
+                      <span class="fl" style="font-size:.75rem;margin-bottom:.3rem;display:block">{{ sf.competitions.label }}</span>
+                      <div style="display:flex;flex-wrap:wrap;gap:5px">
+                        {% for cb in sf.competitions %}
+                          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 9px;cursor:pointer;transition:all .15s">
+                            {{ cb.tag }} {{ cb.choice_label }}
+                          </label>
+                        {% endfor %}
+                      </div>
+                      <div style="margin-top: 5px;">
+                        {{ sf.competitions_other }}
+                      </div>
+                    </div>
+                    <!-- Résultats collectifs -->
+                    <div class="col-12" style="margin-top:.4rem">
+                      <span class="fl" style="font-size:.75rem;margin-bottom:.3rem;display:block">{{ sf.collective_results.label }}</span>
+                      <div style="display:flex;flex-wrap:wrap;gap:5px">
+                        {% for cb in sf.collective_results %}
+                          <label style="display:flex;align-items:center;gap:5px;font-size:.72rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 9px;cursor:pointer;transition:all .15s">
+                            {{ cb.tag }} {{ cb.choice_label }}
+                          </label>
+                        {% endfor %}
+                      </div>
+                      <div style="margin-top: 5px;">
+                        {{ sf.collective_results_other }}
+                      </div>
+                    </div>
+                  </div>
+                  {% for hidden in sf.hidden_fields %}{{ hidden }}{% endfor %}
+                  {{ sf.DELETE }}
+                </div>
+              {% endfor %}
+              </div>
+              <button type="button" onclick="addSeason(this)" style="width:100%;padding:8px;border-radius:20px;border:1px dashed rgba(255,255,255,.2);background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);font-size:.8rem;cursor:pointer;margin-top:.3rem;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(255,255,255,.04)'">
+                <i class="ti ti-plus"></i> Ajouter une saison
+              </button>
+            </div>
+
             {% for hidden in f.hidden_fields %}{{ hidden }}{% endfor %}
             <div style="display:none;">{{ f.DELETE }}</div>
           </div>
         {% endfor %}
+        </div>
+        <button type="button" class="btn-outline" onclick="addClub()" style="margin-top:10px; width:100%; border:1px dashed #f1b10f; color:#f1b10f; background:transparent;">
+          <i class="ti ti-plus"></i> Ajouter un club
+        </button>
       </div>
 
-      <!-- ═══ STEP 3: Fichiers ═══ -->
+      <!-- ═══ STEP 3 : Fichiers ═══ -->
       <div class="fc" data-step="3">
-        <h5><i class="ti ti-file-upload"></i> Fichiers (CV / Diplômes / Photos)</h5>
+        <h5><i class="ti ti-file-upload"></i> Fichiers (CV / Photos / Vidéos)</h5>
         <p style="color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:1rem">Ajoute au moins un fichier pour compléter ton profil</p>
-        {{ files_fs.management_form }}
-        {% for f in files_fs %}
-          <div class="fsi">
-            <div class="fsi-head">
-              <span class="fsi-title">Fichier {{ forloop.counter }}</span>
-              <button type="button" class="btn-clear" onclick="clearBlock(this)"><i class="ti ti-eraser"></i> Vider</button>
-            </div>
-            {{ f.as_p }}
-            {{ f.DELETE }}
+
+        <!-- Profile Photo Area -->
+        <div class="fsi" style="margin-bottom: 1.5rem; text-align: center; border: 2px dashed rgba(255,255,255,.2); background: rgba(255,255,255,.02); border-radius: 20px;">
+          <label for="{{ form.profile_photo.id_for_label }}" style="display: block; cursor: pointer; padding: 1.5rem;">
+            {% if profile.profile_photo %}
+              <img src="{{ profile.profile_photo.url }}" alt="Profile Photo" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 3px solid #f1b10f; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+            {% else %}
+              <div style="width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,.05); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1rem; border: 3px dashed rgba(255,255,255,.3);">
+                <i class="ti ti-camera" style="font-size: 2rem; color: rgba(255,255,255,.5);"></i>
+              </div>
+            {% endif %}
+            <div style="font-size: .95rem; font-weight: 700; color: #fff;">{{ form.profile_photo.label }}</div>
+            <div style="font-size: .75rem; color: rgba(255,255,255,.5); margin-top: 5px;">Cliquez ici pour choisir une photo</div>
+          </label>
+          <div style="display: none;">
+            {{ form.profile_photo }}
           </div>
-        {% endfor %}
+          {{ form.profile_photo.errors }}
+          <script>
+            document.addEventListener("DOMContentLoaded", function() {
+              const fileInput = document.getElementById("id_profile_photo");
+              if(fileInput) {
+                fileInput.addEventListener("change", function(e) {
+                  if(e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                      const label = fileInput.closest('.fsi').querySelector('label');
+                      let img = label.querySelector('img');
+                      if(!img) {
+                        const iconDiv = label.querySelector('div[style*="border-radius: 50%"]');
+                        if(iconDiv) iconDiv.remove();
+                        img = document.createElement('img');
+                        img.style.cssText = "width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; border: 3px solid #f1b10f; box-shadow: 0 4px 15px rgba(0,0,0,0.3);";
+                        label.insertBefore(img, label.firstChild);
+                      }
+                      img.src = evt.target.result;
+                    }
+                    reader.readAsDataURL(e.target.files[0]);
+                  }
+                });
+              }
+            });
+          </script>
+        </div>
+
+        {{ files_fs.management_form }}
+        <div id="files-container">
+          {% for f in files_fs %}
+            <div class="fsi file-entry">
+              <div class="fsi-head">
+                <span class="fsi-title">Fichier {{ forloop.counter }}</span>
+                <button type="button" class="btn-clear" onclick="removeFile(this)"><i class="ti ti-eraser"></i> Supprimer</button>
+              </div>
+              {{ f.as_p }}
+              <button type="button" onclick="saveDraft(true); const btn=this; btn.innerHTML='<i class=\'ti ti-loader\'></i> Sauvegarde...'; setTimeout(() => btn.innerHTML='<i class=\'ti ti-check\'></i> Sauvegardé !', 1200);" style="width:100%;padding:10px;border-radius:50px;background:var(--footop-green-dark, #27ae60);color:#fff;border:none;font-weight:600;font-size:.85rem;cursor:pointer;margin-top:5px;transition:all 0.2s;">
+                <i class="ti ti-device-floppy"></i> Sauvegarder ce fichier
+              </button>
+              {{ f.DELETE }}
+            </div>
+          {% endfor %}
+        </div>
+        <button type="button" id="add-file-btn" onclick="addFile()" style="margin-top:1rem;width:100%;padding:8px;border-radius:50px;border:2px dashed rgba(241,177,15,.5);background:rgba(241,177,15,.08);color:#f1b10f;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .2s" onmouseover="this.style.background='rgba(241,177,15,.18)'" onmouseout="this.style.background='rgba(241,177,15,.08)'">
+          <i class="ti ti-plus"></i> Ajouter un fichier
+        </button>
+        
+      </div>
+
+      <!-- ═══ STEP 4 : Consentement ═══ -->
+      <div class="fc" data-step="4">
+        <h5><i class="ti ti-shield-check"></i> Consentement</h5>
+        <p style="color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:1rem">Confirme tes informations et donne ton accord</p>
+
+        <div class="ck" style="display:none;">{{ form.is_minor }} <label>{{ form.is_minor.label }}</label></div>
+        <div id="minor-wrap" style="display:none; margin-top: 10px; padding: 15px; border: 1px dashed rgba(241,177,15,0.6); border-radius: 8px; background: rgba(241,177,15,0.05);">
+          <h6 style="color:#f1b10f; font-size:0.9rem; margin-bottom:10px;">Informations Parentales Obligatoires</h6>
+          
+          {{ form.parent_name.errors }}
+          <span class="fl">{{ form.parent_name.label }}</span>
+          {{ form.parent_name }}
+
+          {{ form.parent_relation.errors }}
+          <span class="fl">{{ form.parent_relation.label }}</span>
+          {{ form.parent_relation }}
+
+          <div id="parent-relation-other-wrap" style="display:none;">
+            {{ form.parent_relation_other.errors }}
+            <span class="fl">{{ form.parent_relation_other.label }}</span>
+            {{ form.parent_relation_other }}
+          </div>
+          
+          <div class="row g-2">
+            <div class="col-6">
+              {{ form.parent_birth_date.errors }}
+              <span class="fl">{{ form.parent_birth_date.label }}</span>
+              {{ form.parent_birth_date }}
+            </div>
+            <div class="col-6">
+              {{ form.parent_nationality.errors }}
+              <span class="fl">{{ form.parent_nationality.label }}</span>
+              {{ form.parent_nationality }}
+            </div>
+          </div>
+
+          {{ form.parent_address.errors }}
+          <span class="fl">{{ form.parent_address.label }}</span>
+          {{ form.parent_address }}
+
+          <hr style="margin: 1rem 0; border-top: 1px solid rgba(255,255,255,0.1);">
+
+          <div class="row g-2">
+            <div class="col-6">
+              {{ form.parent_phone.errors }}
+              <span class="fl">{{ form.parent_phone.label }}</span>
+              {{ form.parent_phone }}
+            </div>
+            <div class="col-6">
+              {{ form.parent_email.errors }}
+              <span class="fl">{{ form.parent_email.label }}</span>
+              {{ form.parent_email }}
+            </div>
+          </div>
+
+          {{ form.parents_notes.errors }}
+          <span class="fl">{{ form.parents_notes.label }}</span>
+          {{ form.parents_notes }}
+        </div>
+
+        <hr>
+        <div class="ck" style="margin-top: 1.5rem; align-items: flex-start;">
+          <input type="checkbox" id="consent_checkbox" required style="margin-top: 3px;">
+          <label id="consent_label_adult" for="consent_checkbox" style="line-height: 1.4;">
+            J’accepte que les données de mon profil soient consultées par les clubs, leurs représentants et les agents de football autorisés, dans le cadre du recrutement, conformément aux règlements applicables de la FIFA et des fédérations concernées. En validant, je confirme l’exactitude des informations fournies.
+          </label>
+          <label id="consent_label_minor" for="consent_checkbox" style="display:none; line-height: 1.4;">
+            En tant que parent / tuteur légal, j’autorise la création et/ou la mise à jour du profil de mon enfant sur cette plateforme, par moi-même ou par mon enfant sous ma responsabilité. Je confirme avoir pris connaissance des informations saisies et j’accepte qu’elles puissent être consultées par des clubs, leurs représentants et des agents de football autorisés, conformément aux règles applicables. <br><br>Ce consentement sera envoyé à votre adresse e-mail pour validation.
+          </label>
+        </div>
       </div>
 
       <!-- Nav -->
@@ -372,7 +578,7 @@
 
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
 <script>
-  let cur=1;const tot=3;
+  let cur=1;const tot=4;
   const tabs=document.querySelectorAll('.si');
   const cards=document.querySelectorAll('.fc');
   const prev=document.getElementById('prevBtn');
@@ -409,6 +615,222 @@
     b.querySelectorAll('textarea').forEach(t=>t.value='');
     b.querySelectorAll('select').forEach(s=>s.selectedIndex=0);
     b.style.borderColor='rgba(241,177,15,.4)';setTimeout(()=>b.style.borderColor='',400);
+    if(typeof updateValidationUI === 'function') updateValidationUI();
+  }
+
+  function addClub() {
+    const container = document.getElementById('clubs-container');
+    const totalForms = document.getElementById('id_previous_clubs-TOTAL_FORMS');
+    const formNum = parseInt(totalForms.value);
+    const firstEntry = container.querySelector('.club-entry');
+    if (!firstEntry) return;
+    const newEntry = firstEntry.cloneNode(true);
+    
+    newEntry.querySelectorAll('.sd-wrap, .sd-pills').forEach(el => el.remove());
+    newEntry.querySelectorAll('select').forEach(sel => {
+      delete sel.dataset.sdDone;
+      sel.classList.remove('sd-hidden-select');
+    });
+
+    newEntry.querySelectorAll('input, select, textarea').forEach(el => {
+      if (el.name) {
+        el.name = el.name.replace(/previous_clubs-\d+-/, `previous_clubs-${formNum}-`);
+      }
+      if (el.id) {
+        el.id = el.id.replace(/previous_clubs_\d+_/, `previous_clubs_${formNum}_`);
+      }
+      if (el.type !== 'checkbox' && el.type !== 'hidden') el.value = '';
+      if (el.type === 'checkbox') el.checked = false;
+    });
+
+    const label = newEntry.querySelector('.fsi-title');
+    if (label) label.textContent = `Club ${formNum + 1}`;
+    
+    const deleteDiv = newEntry.querySelector('div[style*="display:none"]');
+    if (deleteDiv) deleteDiv.innerHTML = '';
+
+    container.appendChild(newEntry);
+    totalForms.value = formNum + 1;
+    
+    if(typeof initSearchableDropdowns === 'function') initSearchableDropdowns();
+  }
+
+  function addSeason(btn) {
+    const container = btn.closest('.seasons-block').querySelector('.seasons-container');
+    const mgmtTotal = container.closest('.seasons-block').querySelector('input[name$="-TOTAL_FORMS"]');
+    const formNum = parseInt(mgmtTotal.value);
+    
+    // Use the first row as a template
+    const firstRow = container.querySelector('.season-row');
+    if (!firstRow) return;
+    
+    const newRow = firstRow.cloneNode(true);
+    
+    // Make sure it's visible if it was hidden (due to being a deleted entry)
+    newRow.style.display = 'block';
+    
+    newRow.querySelectorAll('input, select, textarea').forEach(el => {
+      if (el.name) {
+        el.name = el.name.replace(/-\d+-/, `-${formNum}-`);
+      }
+      if (el.id) {
+        el.id = el.id.replace(/_\d+_/, `_${formNum}_`);
+      }
+      if (el.type !== 'checkbox' && el.type !== 'hidden' && el.type !== 'radio') {
+        el.value = '';
+      } else if (el.type === 'checkbox') {
+        el.checked = false;
+      }
+    });
+    
+    // Hide textareas for "Autre" by default in the new row
+    newRow.querySelectorAll('textarea').forEach(textarea => {
+      textarea.style.display = 'none';
+      textarea.value = '';
+    });
+
+    const label = newRow.querySelector('span[style*="font-weight:600"]');
+    if (label) label.textContent = `Saison ${formNum + 1}`;
+    container.appendChild(newRow);
+    mgmtTotal.value = formNum + 1;
+  }
+
+  function removeSeason(btn) {
+    const row = btn.closest('.season-row');
+    if (!row) return;
+    
+    const container = row.closest('.seasons-container');
+    const allRows = container.querySelectorAll('.season-row');
+    const isFirstRow = (allRows.length > 0 && allRows[0] === row);
+    
+    const deleteInput = row.querySelector('input[name*="-DELETE"]');
+    
+    if (isFirstRow) {
+      row.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.type !== 'checkbox' && el.type !== 'hidden' && el.type !== 'radio') {
+          el.value = '';
+        } else if (el.type === 'checkbox' && el.name.indexOf('-DELETE') === -1) {
+          el.checked = false;
+        }
+      });
+      if (deleteInput) deleteInput.checked = false;
+    } else {
+      if (deleteInput) {
+        deleteInput.checked = true;
+        row.style.display = 'none';
+      } else {
+        row.remove();
+      }
+    }
+  }
+
+  /* ── Auto-complete Season Input ── */
+  document.addEventListener('input', function(e) {
+    if (e.target && e.target.name && e.target.name.includes('-season')) {
+      if (e.inputType && e.inputType.startsWith('delete')) return;
+      let val = e.target.value.trim();
+      if (/^\d{4}$/.test(val)) {
+        let nextYear = parseInt(val) + 1;
+        e.target.value = val + '-' + nextYear;
+        e.target.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
+  });
+
+  /* ── Toggle "Autre" Textareas ── */
+  document.addEventListener('change', function(e) {
+    if (e.target && e.target.type === 'checkbox') {
+      const name = e.target.name;
+      if (name && (name.includes('-competitions') || name.includes('-collective_results'))) {
+        const isAutre = e.target.value === 'autre_competition' || e.target.value === 'autre_resultat';
+        if (isAutre) {
+          const container = e.target.closest('.col-12');
+          if (container) {
+            const textarea = container.querySelector('textarea');
+            if (textarea) {
+              textarea.style.display = e.target.checked ? 'block' : 'none';
+              if (!e.target.checked) textarea.value = '';
+            }
+          }
+        }
+      }
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('input[type="checkbox"][value="autre_competition"], input[type="checkbox"][value="autre_resultat"]').forEach(cb => {
+      if (cb.checked) {
+        const container = cb.closest('.col-12');
+        if (container) {
+          const textarea = container.querySelector('textarea');
+          if (textarea) textarea.style.display = 'block';
+        }
+      }
+    });
+  });
+
+  function addFile() {
+    const totalForms = document.querySelector('input[name="files-TOTAL_FORMS"]');
+    if (!totalForms) return;
+    const prefix = 'files';
+    const formNum = parseInt(totalForms.value);
+    const container = document.getElementById('files-container');
+
+    const entry = document.createElement('div');
+    entry.className = 'fsi file-entry';
+    entry.innerHTML = `
+      <div class="fsi-head">
+        <span class="fsi-title">Fichier ${formNum + 1}</span>
+        <button type="button" class="btn-clear" onclick="removeFile(this)">
+          <i class="ti ti-eraser"></i> Supprimer
+        </button>
+      </div>
+      <p style="margin-bottom:.4rem">
+        <label style="color:rgba(255,255,255,.62);font-size:.78rem;font-weight:600;display:block;margin-bottom:4px">Type de fichier</label>
+        <select name="${prefix}-${formNum}-file_type" id="id_${prefix}_${formNum}_file_type"
+                style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:50px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box">
+          <option value="">---------</option>
+          <option value="CV">CV (PDF)</option>
+          <option value="PHOTO">Photo</option>
+          <option value="PROFILE_PHOTO">Photo de profil</option>
+          <option value="VIDEO">Vidéo</option>
+          <option value="OTHER">Autre</option>
+        </select>
+      </p>
+      <p style="margin-bottom:.4rem">
+        <label style="color:rgba(255,255,255,.62);font-size:.78rem;font-weight:600;display:block;margin-bottom:4px">Fichier</label>
+        <input type="file" name="${prefix}-${formNum}-file" id="id_${prefix}_${formNum}_file"
+               style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:50px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box">
+      </p>
+      <p style="margin-bottom:.4rem">
+        <label style="color:rgba(255,255,255,.62);font-size:.78rem;font-weight:600;display:block;margin-bottom:4px">Titre (optionnel)</label>
+        <input type="text" name="${prefix}-${formNum}-title" id="id_${prefix}_${formNum}_title"
+               placeholder="Ex: CV 2025"
+               style="background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);border-radius:50px;color:#fff;padding:6px 10px;width:100%;font-size:.85rem;box-sizing:border-box">
+      </p>
+      <button type="button" onclick="saveDraft(true); const btn=this; btn.innerHTML='<i class=\\'ti ti-loader\\'></i> Sauvegarde...'; setTimeout(() => btn.innerHTML='<i class=\\'ti ti-check\\'></i> Sauvegardé !', 1200);" style="width:100%;padding:10px;border-radius:50px;background:var(--footop-green-dark, #27ae60);color:#fff;border:none;font-weight:600;font-size:.85rem;cursor:pointer;margin-top:5px;transition:all 0.2s;">
+        <i class="ti ti-device-floppy"></i> Sauvegarder ce fichier
+      </button>
+      <p style="margin-bottom:.4rem">
+      <input type="hidden" name="${prefix}-${formNum}-id" value="">
+    `;
+    container.appendChild(entry);
+    totalForms.value = formNum + 1;
+
+    if (typeof initSearchableDropdowns === 'function') initSearchableDropdowns(entry);
+  }
+
+  function removeFile(btn) {
+    const entry = btn.closest('.file-entry');
+    if (!entry) return;
+    const deleteInput = entry.querySelector('input[name*="-DELETE"]');
+    if (deleteInput) {
+      deleteInput.checked = true;
+      entry.style.opacity = '0.3';
+      entry.style.pointerEvents = 'none';
+    } else {
+      entry.remove();
+    }
   }
 
   (function(){
@@ -416,22 +838,16 @@
     const lfaInput=document.querySelector('select[name=looking_for_agent]');
     const aw=document.getElementById('agent-wrap');
     const lfa=document.getElementById('looking-for-agent-wrap');
-    const rsWrap=document.getElementById('represent-self-wrap');
     if(ac&&aw&&lfa){
       const t=()=>{
         if(ac.value === 'True'){
           aw.style.display='block';
           lfa.style.display='none';
-          if(rsWrap) rsWrap.style.display='none';
         }else{
           lfa.style.display='block';
           aw.style.display='none';
-          if(lfaInput && lfaInput.value === 'False') {
-            if(rsWrap) rsWrap.style.display='block';
-          } else {
-            if(rsWrap) rsWrap.style.display='none';
-          }
         }
+        if (typeof updateValidationUI === 'function') updateValidationUI();
       };
       ac.addEventListener('change',t);
       if(lfaInput) lfaInput.addEventListener('change',t);
@@ -453,7 +869,7 @@
       f();
     }
     
-    const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent', 'salary_min', 'salary_max', 'current_club_end'];
+    const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent', 'salary_min', 'salary_max', 'current_club_end', 'is_minor', 'parents_notes'];
     let clubSearchTimeout;
     document.addEventListener('input', function(e) {
       if (e.target && e.target.name && (e.target.name.includes('-club_name') || e.target.name === 'current_club_name')) {
@@ -575,6 +991,61 @@
         }
       });
     }
+
+    const birthDateInput = document.getElementById('id_birth_date');
+    const minorCheckbox = document.querySelector('input[name=is_minor]');
+    const minorWrap = document.getElementById('minor-wrap');
+    const lblAdult = document.getElementById('consent_label_adult');
+    const lblMinor = document.getElementById('consent_label_minor');
+
+    function calculateAge(birthday) {
+        const ageDifMs = Date.now() - birthday.getTime();
+        const ageDate = new Date(ageDifMs);
+        return Math.abs(ageDate.getUTCFullYear() - 1970);
+    }
+
+    function updateMinorStatus() {
+        if(!birthDateInput || !minorCheckbox) return;
+        
+        let isMinor = false;
+        if(birthDateInput.value) {
+            const dob = new Date(birthDateInput.value);
+            if(!isNaN(dob)) {
+                isMinor = calculateAge(dob) < 18;
+            }
+        }
+        
+        minorCheckbox.checked = isMinor;
+        if(minorWrap) minorWrap.style.display = isMinor ? 'block' : 'none';
+        
+        if(lblAdult && lblMinor) {
+            lblAdult.style.display = isMinor ? 'none' : 'block';
+            lblMinor.style.display = isMinor ? 'block' : 'none';
+        }
+    }
+
+    if(birthDateInput) {
+        birthDateInput.addEventListener('change', updateMinorStatus);
+        updateMinorStatus();
+    }
+
+    // Toggle pour le champ "Autre" parent
+    const parentRel = document.getElementById('id_parent_relation');
+    const parentOtherWrap = document.getElementById('parent-relation-other-wrap');
+    if(parentRel) {
+      parentRel.addEventListener('change', function() {
+        if(this.value === 'AUTRE') {
+          parentOtherWrap.style.display = 'block';
+        } else {
+          parentOtherWrap.style.display = 'none';
+          const otherInput = document.getElementById('id_parent_relation_other');
+          if (otherInput) otherInput.value = '';
+        }
+        if(typeof updateValidationUI === 'function') updateValidationUI();
+      });
+      if(parentRel.value === 'AUTRE') parentOtherWrap.style.display = 'block';
+    }
+
     document.addEventListener('change', updateValidationUI);
     updateValidationUI();
   })();

@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import CoachProfile
-from .forms import CoachProfileForm, PreviousClubFormSet, FileFormSet
+from .forms import CoachProfileForm, PreviousClubFormSet, FileFormSet, SeasonStatFormSet
 
 @login_required
 def coach_profile_edit(request):
@@ -19,6 +19,24 @@ def coach_profile_edit(request):
         if form.is_valid() and clubs_fs.is_valid() and files_fs.is_valid():
             form.save()
             clubs_fs.save()
+            
+            for i, club_form in enumerate(clubs_fs.forms):
+                if club_form.cleaned_data.get('DELETE'):
+                    continue
+                club_instance = club_form.instance
+                if not club_instance.pk:
+                    continue
+                prefix = f"seasons_form_{i}"
+                season_fs = SeasonStatFormSet(request.POST, instance=club_instance, prefix=prefix)
+                if season_fs.is_valid():
+                    seasons = season_fs.save(commit=False)
+                    for s in seasons:
+                        s.coach = profile
+                        s.club = club_instance
+                        s.save()
+                    for obj in season_fs.deleted_objects:
+                        obj.delete()
+
             files_fs.save()
             messages.success(request, "Profil entraîneur mis à jour ✅")
             return redirect("coaches:profile_edit")
@@ -27,8 +45,18 @@ def coach_profile_edit(request):
         clubs_fs = PreviousClubFormSet(instance=profile)
         files_fs = FileFormSet(instance=profile)
 
+    clubs_with_seasons = []
+    for i, club_form in enumerate(clubs_fs.forms):
+        club_instance = club_form.instance
+        prefix = f"seasons_form_{i}"
+        if club_instance.pk:
+            season_fs = SeasonStatFormSet(instance=club_instance, prefix=prefix)
+        else:
+            season_fs = SeasonStatFormSet(prefix=prefix)
+        clubs_with_seasons.append((club_form, season_fs))
+
     return render(request, "coaches/profile_edit.html", {
-        "form": form, "clubs_fs": clubs_fs, "files_fs": files_fs, "profile": profile
+        "form": form, "clubs_fs": clubs_fs, "clubs_with_seasons": clubs_with_seasons, "files_fs": files_fs, "profile": profile
     })
 
 @login_required

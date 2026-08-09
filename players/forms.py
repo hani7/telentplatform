@@ -356,16 +356,24 @@ class SeasonStatForm(forms.ModelForm):
         label="Compétitions disputées",
         widget=forms.CheckboxSelectMultiple()
     )
+    competitions_other = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 2, "placeholder": "Précisez l'autre compétition...", "style": "display:none;", "class": "form-control"})
+    )
     collective_results = forms.MultipleChoiceField(
         choices=COLLECTIVE_RESULT_CHOICES,
         required=False,
         label="Résultats collectifs",
         widget=forms.CheckboxSelectMultiple()
     )
+    collective_results_other = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 2, "placeholder": "Précisez l'autre résultat...", "style": "display:none;", "class": "form-control"})
+    )
 
     class Meta:
         model = PlayerStat
-        fields = ["season", "matches", "goals", "assists", "clean_sheets", "saves", "goals_conceded", "tackles", "interceptions", "key_passes", "dribbles", "shots", "competitions", "collective_results"]
+        fields = ["season", "matches", "goals", "assists", "clean_sheets", "saves", "goals_conceded", "tackles", "interceptions", "key_passes", "dribbles", "shots", "competitions", "competitions_other", "collective_results", "collective_results_other"]
         labels = {
             "season": "Saison",
             "matches": "Matchs",

@@ -453,6 +453,9 @@
                           </label>
                         {% endfor %}
                       </div>
+                      <div style="margin-top: 5px;">
+                        {{ sf.competitions_other }}
+                      </div>
                     </div>
                     <!-- Résultats collectifs -->
                     <div class="col-12" style="margin-top:.4rem">
@@ -463,6 +466,9 @@
                             {{ cb.tag }} {{ cb.choice_label }}
                           </label>
                         {% endfor %}
+                      </div>
+                      <div style="margin-top: 5px;">
+                        {{ sf.collective_results_other }}
                       </div>
                     </div>
                   </div>
@@ -1186,6 +1192,38 @@
         e.target.dispatchEvent(new Event('change', { bubbles: true }));
       }
     }
+  });
+
+  /* ── Toggle "Autre" Textareas ── */
+  document.addEventListener('change', function(e) {
+    if (e.target && e.target.type === 'checkbox') {
+      const name = e.target.name;
+      if (name && (name.includes('-competitions') || name.includes('-collective_results'))) {
+        const isAutre = e.target.value === 'autre_competition' || e.target.value === 'autre_resultat';
+        if (isAutre) {
+          const container = e.target.closest('.col-12');
+          if (container) {
+            const textarea = container.querySelector('textarea');
+            if (textarea) {
+              textarea.style.display = e.target.checked ? 'block' : 'none';
+              if (!e.target.checked) textarea.value = '';
+            }
+          }
+        }
+      }
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('input[type="checkbox"][value="autre_competition"], input[type="checkbox"][value="autre_resultat"]').forEach(cb => {
+      if (cb.checked) {
+        const container = cb.closest('.col-12');
+        if (container) {
+          const textarea = container.querySelector('textarea');
+          if (textarea) textarea.style.display = 'block';
+        }
+      }
+    });
   });
 
   /* ── API Club Autocomplete ── */

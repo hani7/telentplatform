@@ -156,7 +156,9 @@ class PlayerStat(models.Model):
     dribbles = models.PositiveIntegerField(default=0)
     shots = models.PositiveIntegerField(default=0)
     competitions = models.JSONField(default=list, blank=True)
+    competitions_other = models.TextField(blank=True)
     collective_results = models.JSONField(default=list, blank=True)
+    collective_results_other = models.TextField(blank=True)
 
 class PlayerFile(models.Model):
     class FileType(models.TextChoices):

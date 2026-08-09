@@ -15,6 +15,9 @@ def search_clubs_api(request):
 
     query_lower = query.lower()
     ALIASES = {
+        "barcelone": "barcelona",
+        "barcelone fc": "barcelona",
+        "fc barcelone": "barcelona",
         "psg": "paris saint germain",
         "fcb": "barcelona",
         "mca": "mc alger",

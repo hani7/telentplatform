@@ -12,6 +12,7 @@ class CoachProfile(models.Model):
 
     birth_date = models.DateField(null=True, blank=True)
     birth_place = models.CharField(max_length=120, blank=True)
+    profile_photo = models.ImageField(upload_to='coaches/avatars/', null=True, blank=True)
 
     class Gender(models.TextChoices):
         MALE = "M", "Masculin"
@@ -34,6 +35,7 @@ class CoachProfile(models.Model):
 
     salary_min = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)])
     salary_max = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)])
+    currency = models.CharField(max_length=10, blank=True, null=True, default='EUR')
 
     current_club_name = models.CharField(max_length=140, blank=True)
     current_club_country = models.CharField(max_length=80, blank=True)
@@ -47,15 +49,43 @@ class CoachProfile(models.Model):
     has_agent_contract = models.BooleanField(default=False)
     agent_full_name = models.CharField(max_length=140, blank=True)
     agent_id = models.CharField(max_length=50, blank=True)
+    agent_contract_start = models.DateField(null=True, blank=True)
+    agent_contract_end = models.DateField(null=True, blank=True)
 
     looking_for_agent = models.BooleanField(default=False)
-    represent_self = models.BooleanField(default=False)
 
     has_transfermarkt = models.BooleanField(default=False)
     transfermarkt_username = models.CharField(max_length=150, blank=True)
 
     search_objective = models.CharField(max_length=120, blank=True)
     target_club_notes = models.TextField(blank=True)
+
+    is_minor = models.BooleanField(default=False)
+    parents_declaration = models.FileField(upload_to="coaches/parents/", null=True, blank=True)
+    parents_notes = models.TextField(blank=True)
+    
+    parent_name = models.CharField(max_length=140, blank=True)
+    
+    class ParentRelation(models.TextChoices):
+        PERE = "PERE", "Père"
+        MERE = "MERE", "Mère"
+        TUTEUR = "TUTEUR", "Tuteur légal"
+        AUTRE = "AUTRE", "Autre"
+        
+    parent_relation = models.CharField(max_length=15, choices=ParentRelation.choices, blank=True)
+    parent_relation_other = models.CharField(max_length=80, blank=True)
+    parent_birth_date = models.DateField(null=True, blank=True)
+    parent_nationality = models.ForeignKey(Nationality, on_delete=models.SET_NULL, null=True, blank=True, related_name="coach_parent_profiles")
+    parent_address = models.CharField(max_length=255, blank=True)
+    
+    parent_email = models.EmailField(blank=True)
+    parent_phone = models.CharField(max_length=50, blank=True)
+
+    class ProfileStatus(models.TextChoices):
+        ACTIVE = "ACTIVE", "Actif"
+        PENDING_CONSENT = "PENDING_CONSENT", "En cours de validation"
+    profile_status = models.CharField(max_length=20, choices=ProfileStatus.choices, default=ProfileStatus.ACTIVE)
+    consent_token = models.UUIDField(null=True, blank=True)
 
     class VisibilityMode(models.TextChoices):
         ALL = "ALL", "Pour tout le monde"
@@ -89,15 +119,25 @@ class CoachPreviousClub(models.Model):
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
 
+class CoachStat(models.Model):
+    coach = models.ForeignKey(CoachProfile, on_delete=models.CASCADE, related_name="stats")
+    club = models.ForeignKey('CoachPreviousClub', on_delete=models.CASCADE, null=True, blank=True, related_name="seasons")
+    season = models.CharField(max_length=20, blank=True)
+    competitions = models.JSONField(default=list, blank=True)
+    competitions_other = models.TextField(blank=True)
+    collective_results = models.JSONField(default=list, blank=True)
+    collective_results_other = models.TextField(blank=True)
+
 class CoachFile(models.Model):
     class FileType(models.TextChoices):
         CV = "CV", "CV (PDF)"
         PHOTO = "PHOTO", "Photo"
+        PROFILE_PHOTO = "PROFILE_PHOTO", "Photo de profil"
         VIDEO = "VIDEO", "Vidéo"
         OTHER = "OTHER", "Autre"
 
     coach = models.ForeignKey(CoachProfile, on_delete=models.CASCADE, related_name="files")
-    file_type = models.CharField(max_length=10, choices=FileType.choices)
+    file_type = models.CharField(max_length=20, choices=FileType.choices)
     file = models.FileField(upload_to="coaches/files/")
     title = models.CharField(max_length=120, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
