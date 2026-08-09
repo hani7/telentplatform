@@ -22,7 +22,7 @@ class CoachProfileForm(forms.ModelForm):
         model = CoachProfile
         fields = [
             "first_name", "last_name", "birth_date", "birth_place", "gender", "nationality",
-            "diplomas_certificates", "status", "salary_min", "salary_max",
+            "diplomas_certificates", "status", "availability", "salary_min", "salary_max",
             "current_club_name", "current_club_country", "current_club_division",
             "current_club_start", "current_club_end", "achievements",
             "has_agent_contract", "agent_full_name", "agent_id", "looking_for_agent", "represent_self",
@@ -39,6 +39,7 @@ class CoachProfileForm(forms.ModelForm):
             "nationality": "Nationalité",
             "diplomas_certificates": "Diplômes & Certificats",
             "status": "Statut",
+            "availability": "Disponibilité actuelle",
             "salary_min": "Salaire minimum",
             "salary_max": "Salaire maximum",
             "current_club_name": "Club actuel",
@@ -77,6 +78,7 @@ class CoachProfileForm(forms.ModelForm):
             }),
             "visibility_filters": forms.Textarea(attrs={"rows": 2}),
             "visibility_exceptions": forms.Textarea(attrs={"rows": 2}),
+            "availability": forms.Select(attrs={"data-sd-skip": "1"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -106,6 +108,13 @@ class CoachProfileForm(forms.ModelForm):
                 self.add_error("transfermarkt_username", "Veuillez renseigner votre username ou lien Transfermarkt.")
         else:
             cleaned["transfermarkt_username"] = ""
+
+        if cleaned.get("availability") == "FREE":
+            cleaned["current_club_name"] = ""
+            cleaned["current_club_country"] = ""
+            cleaned["current_club_division"] = ""
+            cleaned["current_club_start"] = None
+            cleaned["current_club_end"] = None
             
         return cleaned
 

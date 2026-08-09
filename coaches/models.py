@@ -27,6 +27,11 @@ class CoachProfile(models.Model):
         PRO = "PRO", "Pro"
     status = models.CharField(max_length=10, choices=Status.choices, blank=True)
 
+    class Availability(models.TextChoices):
+        IN_CLUB = "IN_CLUB", "En poste"
+        FREE = "FREE", "Libre"
+    availability = models.CharField(max_length=15, choices=Availability.choices, blank=True)
+
     salary_min = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)])
     salary_max = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)])
 

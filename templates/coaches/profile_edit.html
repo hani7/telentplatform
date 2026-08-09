@@ -161,6 +161,11 @@
             <span class="fl">{{ form.status.label }}</span>
             {{ form.status }}
           </div>
+          <div class="col-6">
+            {{ form.availability.errors }}
+            <span class="fl">{{ form.availability.label }}</span>
+            {{ form.availability }}
+          </div>
           <div class="col-12">
             {{ form.achievements.errors }}
             <span class="fl">{{ form.achievements.label }}</span>
@@ -170,35 +175,39 @@
 
         <hr>
 
-        <div class="row g-2">
-          <div class="col-6">
-            {{ form.current_club_name.errors }}
-            <span class="fl">{{ form.current_club_name.label }}</span>
-            {{ form.current_club_name }}
+        <div id="current-club-wrap" style="display:none;">
+          <div class="row g-2">
+            <div class="col-6">
+              {{ form.current_club_name.errors }}
+              <span class="fl">{{ form.current_club_name.label }}</span>
+              <div class="club-name-container" style="position:relative;">
+                {{ form.current_club_name }}
+                <div class="club-autocomplete-results" style="position:absolute;top:100%;left:0;right:0;background:#0d2b18;border:1px solid rgba(255,255,255,.2);border-radius:8px;z-index:999;max-height:250px;overflow-y:auto;display:none;box-shadow:0 8px 16px rgba(0,0,0,.3);"></div>
+              </div>
+            </div>
+            <div class="col-6">
+              {{ form.current_club_country.errors }}
+              <span class="fl">{{ form.current_club_country.label }}</span>
+              {{ form.current_club_country }}
+            </div>
+            <div class="col-4">
+              {{ form.current_club_division.errors }}
+              <span class="fl">{{ form.current_club_division.label }}</span>
+              {{ form.current_club_division }}
+            </div>
+            <div class="col-4">
+              {{ form.current_club_start.errors }}
+              <span class="fl">{{ form.current_club_start.label }}</span>
+              {{ form.current_club_start }}
+            </div>
+            <div class="col-4">
+              {{ form.current_club_end.errors }}
+              <span class="fl">{{ form.current_club_end.label }}</span>
+              {{ form.current_club_end }}
+            </div>
           </div>
-          <div class="col-6">
-            {{ form.current_club_country.errors }}
-            <span class="fl">{{ form.current_club_country.label }}</span>
-            {{ form.current_club_country }}
-          </div>
-          <div class="col-4">
-            {{ form.current_club_division.errors }}
-            <span class="fl">{{ form.current_club_division.label }}</span>
-            {{ form.current_club_division }}
-          </div>
-          <div class="col-4">
-            {{ form.current_club_start.errors }}
-            <span class="fl">{{ form.current_club_start.label }}</span>
-            {{ form.current_club_start }}
-          </div>
-          <div class="col-4">
-            {{ form.current_club_end.errors }}
-            <span class="fl">{{ form.current_club_end.label }}</span>
-            {{ form.current_club_end }}
-          </div>
+          <hr>
         </div>
-
-        <hr>
 
         <div class="row g-2">
           <div class="col-6">
@@ -287,8 +296,38 @@
               <span class="fsi-title">Club {{ forloop.counter }}</span>
               <button type="button" class="btn-clear" onclick="clearBlock(this)"><i class="ti ti-eraser"></i> Vider</button>
             </div>
-            {{ f.as_p }}
-            {{ f.DELETE }}
+            <div class="row g-2">
+              <div class="col-12">
+                {{ f.club_name.errors }}
+                <span class="fl">{{ f.club_name.label }}</span>
+                <div class="club-name-container" style="position:relative;">
+                  {{ f.club_name }}
+                  <div class="club-autocomplete-results" style="position:absolute;top:100%;left:0;right:0;background:#0d2b18;border:1px solid rgba(255,255,255,.2);border-radius:8px;z-index:999;max-height:250px;overflow-y:auto;display:none;box-shadow:0 8px 16px rgba(0,0,0,.3);"></div>
+                </div>
+              </div>
+              <div class="col-6">
+                {{ f.country.errors }}
+                <span class="fl">{{ f.country.label }}</span>
+                {{ f.country }}
+              </div>
+              <div class="col-6">
+                {{ f.division.errors }}
+                <span class="fl">{{ f.division.label }}</span>
+                {{ f.division }}
+              </div>
+              <div class="col-6">
+                {{ f.start_date.errors }}
+                <span class="fl">{{ f.start_date.label }}</span>
+                {{ f.start_date }}
+              </div>
+              <div class="col-6">
+                {{ f.end_date.errors }}
+                <span class="fl">{{ f.end_date.label }}</span>
+                {{ f.end_date }}
+              </div>
+            </div>
+            {% for hidden in f.hidden_fields %}{{ hidden }}{% endfor %}
+            <div style="display:none;">{{ f.DELETE }}</div>
           </div>
         {% endfor %}
       </div>
@@ -402,7 +441,123 @@
     const tmk=document.querySelector('select[name=has_transfermarkt]');
     const tmw=document.getElementById('transfermarkt-wrap');
     if(tmk&&tmw){const f=()=>tmw.style.display=tmk.value==='True'?'block':'none';tmk.addEventListener('change',f);f()}
-    const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent', 'salary_min', 'salary_max'];
+    
+    const availability=document.querySelector('select[name=availability]');
+    const currentClubWrap=document.getElementById('current-club-wrap');
+    if(availability&&currentClubWrap){
+      const f=()=>{
+        currentClubWrap.style.display=availability.value==='IN_CLUB'?'block':'none';
+        updateValidationUI();
+      };
+      availability.addEventListener('change',f);
+      f();
+    }
+    
+    const skipRequired = ['target_club_notes', 'has_transfermarkt', 'transfermarkt_username', 'has_agent_contract', 'looking_for_agent', 'salary_min', 'salary_max', 'current_club_end'];
+    let clubSearchTimeout;
+    document.addEventListener('input', function(e) {
+      if (e.target && e.target.name && (e.target.name.includes('-club_name') || e.target.name === 'current_club_name')) {
+        const input = e.target;
+        const query = input.value.trim();
+        const container = input.closest('.club-name-container');
+        if (!container) return;
+        const resultsDiv = container.querySelector('.club-autocomplete-results');
+        if (!resultsDiv) return;
+
+        if (query.length < 2) {
+          resultsDiv.style.display = 'none';
+          return;
+        }
+
+        clearTimeout(clubSearchTimeout);
+        clubSearchTimeout = setTimeout(() => {
+          fetch(`/players/api/clubs/search/?q=${encodeURIComponent(query)}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.results && data.results.length > 0) {
+                resultsDiv.innerHTML = '';
+                data.results.forEach(club => {
+                  const item = document.createElement('div');
+                  item.style.cssText = 'padding:10px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,.05); display:flex; align-items:center; gap:10px; transition:background 0.2s;';
+                  item.onmouseover = () => item.style.background = 'rgba(255,255,255,.05)';
+                  item.onmouseout = () => item.style.background = 'transparent';
+                  
+                  let imgHtml = club.logo ? `<img src="${club.logo}" style="width:24px;height:24px;object-fit:contain;border-radius:4px;">` : `<div style="width:24px;height:24px;border-radius:4px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;"><i class="ti ti-building" style="font-size:12px;"></i></div>`;
+                  
+                  item.innerHTML = `
+                    ${imgHtml}
+                    <div style="display:flex;flex-direction:column;">
+                      <span style="font-size:.85rem;color:#fff;font-weight:600;">${club.name}</span>
+                      <span style="font-size:.7rem;color:rgba(255,255,255,.5);">${club.country || ''}</span>
+                    </div>
+                  `;
+                  
+                  item.addEventListener('click', () => {
+                    input.value = club.name;
+                    resultsDiv.style.display = 'none';
+                    const countryInput = container.closest('.row').querySelector('select[name$="-country"], input[name$="-country"], select[name="current_club_country"], input[name="current_club_country"]');
+                    if (countryInput && club.country) {
+                      if (countryInput.tagName.toLowerCase() === 'select') {
+                        let optionFound = false;
+                        for (let i = 0; i < countryInput.options.length; i++) {
+                          let opt = countryInput.options[i];
+                          if (opt.text.toLowerCase() === club.country.toLowerCase() || opt.value === club.country) {
+                            countryInput.value = opt.value;
+                            optionFound = true;
+                            break;
+                          }
+                        }
+                        if (!optionFound) countryInput.value = club.country;
+                      } else {
+                        countryInput.value = club.country;
+                      }
+                      countryInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                    const divisionInput = container.closest('.row').querySelector('input[name$="-division"], input[name="current_club_division"]');
+                    if (divisionInput) {
+                      if (club.division) {
+                        divisionInput.value = club.division;
+                      } else if (club.id) {
+                        const originalValue = divisionInput.value;
+                        divisionInput.value = "Chargement...";
+                        fetch(`/players/api/clubs/division/?team_id=${club.id}`)
+                          .then(res => res.json())
+                          .then(data => {
+                            if (data.division) {
+                              divisionInput.value = data.division;
+                            } else {
+                              divisionInput.value = "";
+                            }
+                            divisionInput.dispatchEvent(new Event('change', { bubbles: true }));
+                          })
+                          .catch(() => {
+                            divisionInput.value = "";
+                          });
+                      }
+                    }
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                  });
+                  resultsDiv.appendChild(item);
+                });
+                resultsDiv.style.display = 'block';
+              } else {
+                resultsDiv.style.display = 'none';
+              }
+            })
+            .catch(err => {
+              console.error('Club API Error:', err);
+              resultsDiv.style.display = 'none';
+            });
+        }, 300);
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.club-name-container')) {
+        document.querySelectorAll('.club-autocomplete-results').forEach(el => el.style.display = 'none');
+      }
+    });
+
     function updateValidationUI() {
       document.querySelectorAll('.fc input:not([type=hidden]):not([type=checkbox]):not([type=file]), .fc select, .fc textarea').forEach(el => {
         if (skipRequired.includes(el.name)) {
